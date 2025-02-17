@@ -1,0 +1,14 @@
+.editorconfig
+.env
+.env.example
+.gitattributes
+.prettierrc.yml
+.vscode/
+build/
+doc/
+eslint.config.js
+package.json
+tsconfig.base.json
+tsconfig.json
+tsconfig.test.json
+tsconfig.test.tsbuildinfo

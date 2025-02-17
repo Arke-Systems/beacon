@@ -12,6 +12,7 @@
     "#cli/*": "../cli/src/*",
     "#test/*": "./*"
   },
+  "license": "MIT",
   "name": "@arke-systems/beacon-test",
   "private": true,
   "scripts": {
