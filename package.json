@@ -1,5 +1,6 @@
 {
   "author": "Chris Nielsen <cnielsen@arke.com>",
+  "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "description": "Development scripts for the Beacon project",
   "devDependencies": {
     "@eslint/js": "^9.20.0",
@@ -14,6 +15,7 @@
   "engines": {
     "node": "22.X"
   },
+  "homepage": "https://github.com/Arke-Systems/beacon",
   "imports": {
     "#cli/*": "./cli/src/*",
     "#test/*": "./test/*"
@@ -21,6 +23,7 @@
   "license": "MIT",
   "name": "@arke-systems/beacon",
   "packageManager": "yarn@4.6.0",
+  "repository": "github:Arke-Systems/beacon",
   "scripts": {
     "build": "node ./build/build.js",
     "clean": "node ./build/clean.js",
