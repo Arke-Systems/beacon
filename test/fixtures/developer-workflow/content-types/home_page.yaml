@@ -1,0 +1,185 @@
+description: ''
+options:
+  is_page: false
+  singleton: true
+  sub_title: []
+  title: title
+schema:
+  - data_type: text
+    display_name: Title
+    field_metadata:
+      _default: true
+      version: 3
+    mandatory: true
+    multiple: false
+    non_localizable: false
+    uid: title
+    unique: true
+  - data_type: file
+    dimension:
+      height:
+        max: null
+        min: null
+      width:
+        max: null
+        min: null
+    display_name: Header Image
+    field_metadata:
+      description: ''
+      image: true
+      rich_text_type: standard
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    uid: header_image
+    unique: false
+  - config: {}
+    data_type: json
+    display_name: Background Image
+    extension_uid:
+      $beacon:
+        extension: Bynder
+    field_metadata:
+      extension: true
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    uid: background_image
+    unique: false
+  - blocks:
+      - schema:
+          - data_type: text
+            display_name: Content
+            field_metadata:
+              allow_rich_text: true
+              description: ''
+              multiline: false
+              options: []
+              rich_text_type: advanced
+              version: 3
+            mandatory: false
+            multiple: false
+            non_localizable: false
+            uid: content
+            unique: false
+        title: Rich Text
+        uid: rte
+      - reference_to: contact
+        title: Contact
+        uid: contact
+      - schema:
+          - data_type: text
+            display_name: Title
+            error_messages:
+              format: ''
+            field_metadata:
+              default_value: ''
+              description: ''
+              version: 3
+            format: ''
+            mandatory: false
+            multiple: false
+            non_localizable: false
+            uid: title
+            unique: false
+          - data_type: file
+            dimension:
+              height:
+                max: null
+                min: null
+              width:
+                max: null
+                min: null
+            display_name: Images
+            field_metadata:
+              description: ''
+              image: true
+              rich_text_type: standard
+            mandatory: false
+            multiple: true
+            non_localizable: false
+            uid: images
+            unique: false
+        title: Carousel
+        uid: carousel
+    data_type: blocks
+    display_name: Main
+    field_metadata:
+      description: ''
+      instruction: ''
+    mandatory: false
+    multiple: true
+    non_localizable: false
+    uid: main
+    unique: false
+  - data_type: group
+    display_name: Links
+    field_metadata:
+      description: ''
+      instruction: ''
+    mandatory: false
+    multiple: true
+    non_localizable: false
+    schema:
+      - data_type: link
+        display_name: Link
+        field_metadata:
+          default_value:
+            title: ''
+            url: ''
+          description: ''
+          isTitle: true
+        mandatory: false
+        multiple: false
+        non_localizable: false
+        uid: link
+        unique: false
+      - data_type: text
+        display_name: Description
+        error_messages:
+          format: ''
+        field_metadata:
+          default_value: ''
+          description: ''
+          multiline: true
+          version: 3
+        format: ''
+        mandatory: false
+        multiple: false
+        non_localizable: false
+        uid: description
+        unique: false
+      - data_type: file
+        dimension:
+          height:
+            max: null
+            min: null
+          width:
+            max: null
+            min: null
+        display_name: Thumbnail
+        field_metadata:
+          description: ''
+          image: true
+          rich_text_type: standard
+        mandatory: false
+        multiple: true
+        non_localizable: false
+        uid: thumbnail
+        unique: false
+    uid: links
+    unique: false
+  - data_type: reference
+    display_name: Featured Events
+    field_metadata:
+      ref_multiple: true
+      ref_multiple_content_types: true
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    reference_to:
+      - event
+    uid: featured_events
+    unique: false
+title: Home Page
+uid: home_page

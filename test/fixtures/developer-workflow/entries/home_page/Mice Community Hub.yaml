@@ -1,0 +1,87 @@
+background_image:
+  - extensions:
+      - webp
+    files:
+      webImage:
+        fileSize: null
+        height: 333
+        url: https://loremflickr.com/2722/660?lock=4992473553629438
+        width: 800
+    id: KEFzc2V0X2lkIDM4QzU2MjRCLUQyNDgtNEQzRC1BOUU2NDg5MTczNEQ1MkIwKQ==
+    metaproperties:
+      nodes:
+        - name: Year
+          options:
+            - displayLabel: Evergreen
+              name: Evergreen
+          type: select
+        - name: Asset_Type
+          options:
+            - displayLabel: Photo
+              name: Photo
+          type: select2
+        - name: Status
+          options:
+            - displayLabel: Current
+              name: Current
+          type: select2
+        - name: People_Type
+          options:
+            - displayLabel: No People
+              name: No_People
+          type: select2
+        - name: Approval
+          options:
+            - displayLabel: Approved for all uses
+              name: Approved_for_all_uses
+          type: select2
+        - name: File_Type
+          options:
+            - displayLabel: webp
+              name: webp
+          type: autocomplete
+        - name: Image_Size
+          options:
+            - displayLabel: 1680x700
+              name: 1680x700
+          type: autocomplete
+        - name: Visible_To
+          options:
+            - displayLabel: Web Content Managers
+              name: Web_Content_Managers
+          type: select
+    name: i1
+    type: IMAGE
+    url: https://loremflickr.com/2722/660?lock=4992473553629438
+featured_events:
+  - $beacon:
+      reference: event/Community Gardening Workshop
+  - $beacon:
+      reference: event/Autumn Feast and Social
+header_image:
+  $beacon:
+    asset: Mariel.webp
+links:
+  - description: ''
+    link:
+      href: /skarlath
+      title: Skarlath
+    thumbnail:
+      - $beacon:
+          asset: links/Skarlath_&_Sunflash.webp
+locale: en-us
+main:
+  - rte:
+      content: <p>Welcome to the Mice Community Hub!</p>
+  - contact:
+      email: martin@example.com
+      phone: ''
+  - carousel:
+      images:
+        - $beacon:
+            asset: Mariel.webp
+        - $beacon:
+            asset: events/Bellmaker.webp
+      title: Day at the Market
+tags: []
+title: Mice Community Hub

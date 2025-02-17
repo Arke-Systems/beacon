@@ -1,0 +1,120 @@
+title: Event
+uid: event
+schema:
+  - data_type: text
+    display_name: Title
+    field_metadata:
+      _default: true
+      version: 3
+    mandatory: true
+    uid: title
+    unique: true
+    multiple: false
+    non_localizable: false
+  - data_type: file
+    display_name: Main Image
+    uid: main_image
+    field_metadata:
+      description: ''
+      rich_text_type: standard
+      image: true
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    unique: false
+    dimension:
+      width:
+        min: null
+        max: null
+      height:
+        min: null
+        max: null
+  - data_type: isodate
+    display_name: Date
+    uid: date
+    startDate: null
+    endDate: null
+    field_metadata:
+      description: ''
+      default_value: {}
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    unique: false
+  - data_type: text
+    display_name: Description
+    uid: description
+    field_metadata:
+      allow_rich_text: true
+      description: ''
+      multiline: false
+      rich_text_type: advanced
+      options: []
+      version: 3
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    unique: false
+  - data_type: json
+    display_name: Travel Info
+    error_messages:
+      format: ''
+    field_metadata:
+      allow_json_rte: true
+      default_value: ''
+      description: ''
+      embed_entry: false
+      multiline: false
+      options: []
+      rich_text_type: advanced
+    format: ''
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    plugins:
+      - $beacon: { jsonRtePlugin: Bynder }
+    reference_to:
+      - sys_assets
+    uid: travel_info
+    unique: false
+  - data_type: reference
+    display_name: Related Events
+    reference_to:
+      - event
+    field_metadata:
+      ref_multiple: true
+      ref_multiple_content_types: true
+    uid: related_events
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    unique: false
+  - data_type: taxonomy
+    display_name: Taxonomy
+    uid: taxonomies
+    taxonomies:
+      - taxonomy_uid: location
+        max_terms: 1
+        mandatory: true
+        multiple: true
+        non_localizable: false
+      - taxonomy_uid: event_category
+        mandatory: false
+        multiple: true
+        non_localizable: false
+    field_metadata:
+      description: ''
+      default_value: ''
+    format: ''
+    error_messages:
+      format: ''
+    mandatory: false
+    multiple: true
+    non_localizable: false
+    unique: false
+description: ''
+options:
+  is_page: false
+  singleton: false
+  sub_title: []
+  title: title

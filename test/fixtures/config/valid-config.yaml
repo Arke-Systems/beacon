@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../../cli/src/cfg/Config.schema.yaml
+
+client:
+  api-key: api key
+  management-token: management token
+  branch: branch name
+  base-url: https://example.com
+
+schema:
+  deletion-strategy: delete
+
+  extension:
+    key1: value1
+    key2: value2
+
+  json-rte-plugin:
+    key3: value3
+    key4: value4
+
+  schema-path: schema path
+
+  taxonomies:
+    tax_and_terms: taxonomy and terms
+    only_tax: only taxonomy
+    '*': taxonomy and terms
+
+verbose: true

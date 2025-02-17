@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+		"allowArbitraryExtensions": true,
+		"declaration": true,
+		"declarationMap": true,
+		"esModuleInterop": true,
+		"exactOptionalPropertyTypes": true,
+		"forceConsistentCasingInFileNames": true,
+		"importHelpers": true,
+		"inlineSources": true,
+		"lib": ["ES2023", "ESNext.Disposable"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"newLine": "LF",
+		"noEmitOnError": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noUncheckedIndexedAccess": true,
+		// noUnusedLocals and noUnusedParameters are enforced through eslint
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"rootDir": ".",
+		"skipLibCheck": false,
+		"sourceMap": true,
+		"strict": true,
+		"target": "ES2023",
+		"typeRoots": ["./node_modules/@types"],
+		"types": ["node"],
+		"useUnknownInCatchVariables": true
+	}
+}

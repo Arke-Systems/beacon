@@ -1,0 +1,31 @@
+title: Referenced content type
+uid: referenced_content_type
+schema:
+  - data_type: text
+    display_name: Title
+    field_metadata:
+      _default: true
+      version: 3
+    mandatory: true
+    uid: title
+    unique: true
+    multiple: false
+    non_localizable: false
+  - data_type: text
+    display_name: URL
+    uid: url
+    field_metadata:
+      _default: true
+      version: 3
+    multiple: false
+    unique: false
+    mandatory: false
+    non_localizable: false
+description: This content type is referenced by a global field.
+options:
+  is_page: true
+  singleton: false
+  sub_title: []
+  title: title
+  url_pattern: /:title
+  url_prefix: /

@@ -1,0 +1,16 @@
+title: Global with reference
+uid: global_with_reference
+schema:
+  - data_type: reference
+    display_name: Reference
+    reference_to:
+      - referenced_content_type
+    field_metadata:
+      ref_multiple: false
+      ref_multiple_content_types: true
+    uid: reference
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    unique: false
+description: This global field references a content type.

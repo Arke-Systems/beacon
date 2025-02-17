@@ -1,0 +1,32 @@
+title: Autumn Feast and Social
+main_image:
+  $beacon:
+    asset: events/Salamandastron.webp
+date: '2024-10-31'
+description: <p>A feast to celebrate the autumn harvest.</p>
+related_events:
+  - $beacon:
+      reference: event/Community Gardening Workshop
+taxonomies:
+  - taxonomy_uid: location
+    term_uid: skeleton_rocks
+  - taxonomy_uid: event_category
+    term_uid: social_gathering
+tags: []
+locale: en-us
+travel_info:
+  attrs: {}
+  children:
+    - attrs: {}
+      children:
+        - text: >-
+            Hike down from the rim (approximately 3 miles or 5 km) to Skeleton
+            Point, where the River comes into view.
+      type: p
+    - attrs: {}
+      children:
+        - text: >-
+            From there, follow the trail down into the inner gorge, which
+            involves a steep descent through switchbacks.
+      type: p
+  type: doc

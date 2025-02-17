@@ -1,0 +1,23 @@
+{
+	"configurations": [
+		{
+			"args": [
+				"--test-timeout=-1",
+				"--hook-timeout=-1",
+				"run",
+				"../${relativeFile}"
+			],
+			"autoAttachChildProcesses": true,
+			"console": "integratedTerminal",
+			"envFile": "${workspaceFolder}/.env",
+			"name": "Debug Current Test File",
+			"cwd": "${workspaceRoot}/test",
+			"program": "../node_modules/vitest/vitest.mjs",
+			"request": "launch",
+			"skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+			"smartStep": true,
+			"type": "node"
+		}
+	],
+	"version": "0.2.0"
+}

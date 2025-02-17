@@ -1,0 +1,10 @@
+taxonomy:
+  uid: location
+  name: Location
+terms:
+  - uid: redwall_abbey
+    name: Redwall Abbey
+  - uid: skeleton_rocks
+    name: Skeleton Rocks
+  - uid: quarry
+    name: Quarry

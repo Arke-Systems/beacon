@@ -1,0 +1,7 @@
+client:
+  base-url: this is not a url
+  wrong-key: wrong value
+
+schema:
+  deletion-strategy: panic
+  extension: this is not supposed to be a string

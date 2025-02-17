@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"noEmit": true,
+		"rootDir": ".",
+		"skipLibCheck": true,
+		"module": "preserve",
+		"moduleResolution": "bundler",
+		"paths": {
+			"#cli/*": ["cli/src/*"],
+			"#test/*": ["test/*"]
+		}
+	},
+	"exclude": ["node_modules"],
+	"extends": "./tsconfig.base.json",
+	"files": [],
+	"include": ["test/**/*.ts", "cli/src/**/*.test.ts"],
+	"references": [{ "path": "cli/src" }]
+}

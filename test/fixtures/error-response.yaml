@@ -1,0 +1,3 @@
+errors:
+  file:
+    - Failed to import taxonomy. Please send your attributes wrapped in 'taxonomy'.

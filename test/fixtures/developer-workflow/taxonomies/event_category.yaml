@@ -1,0 +1,24 @@
+taxonomy:
+  name: Event Category
+  uid: event_category
+terms:
+  - children:
+      - name: Food Prep
+        uid: food_prep
+      - children:
+          - name: Copper
+            uid: copper
+          - name: Iron
+            uid: iron
+          - name: Steel
+            uid: steel
+        name: Smithing
+        uid: smithing
+      - name: Fabric Arts
+        uid: fabric_arts
+    name: Workshop
+    uid: workshop
+  - name: Social Gathering
+    uid: social_gathering
+  - name: Charity Event
+    uid: charity_event

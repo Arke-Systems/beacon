@@ -1,0 +1,7 @@
+{
+	"extends": "./tsconfig.base.json",
+	"exclude": ["node_modules", "cli", "test"],
+	"files": [],
+	"include": [],
+	"references": [{ "path": "cli/src" }, { "path": "tsconfig.test.json" }]
+}

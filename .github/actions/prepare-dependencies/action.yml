@@ -1,0 +1,32 @@
+name: Prepare Dependencies
+
+description: Checkout code, set up Node.js, and install dependencies.
+
+inputs:
+  github-token:
+    description: GitHub private registry token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare Corepack
+      run: corepack enable
+      shell: bash
+
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: yarn
+        cache-dependency-path: ./yarn.lock
+        registry-url: https://npm.pkg.github.com
+        scope: '@arke-systems'
+      env:
+        GitHub_Package_Token: ${{ inputs.github-token }}
+
+    - name: Install dependencies
+      run: yarn install --immutable
+      shell: bash
+      env:
+        GitHub_Package_Token: ${{ inputs.github-token }}

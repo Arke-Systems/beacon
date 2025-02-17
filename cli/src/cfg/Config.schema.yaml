@@ -1,0 +1,84 @@
+# yaml-language-server: $schema=http://json-schema.org/draft-07/schema
+
+type: object
+additionalProperties: false
+properties:
+  client:
+    type: object
+    additionalProperties: false
+    properties:
+      api-key:
+        type: string
+        minLength: 1
+
+      management-token:
+        type: string
+        minLength: 1
+
+      branch:
+        type: string
+        minLength: 1
+        default: main
+
+      base-url:
+        type: string
+        minLength: 8
+        format: uri
+
+  schema:
+    type: object
+    additionalProperties: false
+    properties:
+      deletion-strategy:
+        type: string
+        enum: ['delete', 'ignore', 'warn']
+        default: warn
+
+      extension:
+        type: object
+        minProperties: 1
+        additionalProperties:
+          type: string
+          minLength: 1
+
+      json-rte-plugin:
+        type: object
+        minProperties: 1
+        additionalProperties:
+          type: string
+          minLength: 1
+
+      schema-path:
+        type: string
+        minLength: 1
+
+      assets:
+        type: object
+        additionalProperties: false
+        default:
+          include: ['**']
+          exclude: []
+        properties:
+          include:
+            type: array
+            items:
+              type: string
+              minLength: 1
+          exclude:
+            type: array
+            items:
+              type: string
+              minLength: 1
+
+      taxonomies:
+        type: object
+        minProperties: 1
+        additionalProperties:
+          type: string
+          enum: ['only taxonomy', 'taxonomy and terms']
+        default:
+          '*': 'taxonomy and terms'
+
+  verbose:
+    type: boolean
+    default: false

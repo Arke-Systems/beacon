@@ -1,0 +1,43 @@
+# This fixture is used to compose a content type during e2e tests.
+# The title and uid are dynamically generated.
+
+created_at: 2024-08-11T17:13:02.667Z
+updated_at: 2024-08-11T17:13:02.667Z
+_version: 1
+inbuilt_class: false
+last_activity: {}
+maintain_revisions: true
+description: ''
+SYS_ACL: { roles: [] }
+
+schema:
+  - data_type: text
+    display_name: Title
+    mandatory: true
+    uid: title
+    unique: true
+    multiple: false
+    non_localizable: false
+    field_metadata:
+      _default: true
+      version: 3
+
+DEFAULT_ACL:
+  others:
+    read: false
+    create: false
+  management_token: { read: true }
+
+options:
+  is_page: false
+  singleton: false
+  sub_title: []
+  title: title
+
+abilities:
+  get_one_object: true
+  get_all_objects: true
+  create_object: true
+  update_object: true
+  delete_object: true
+  delete_all_objects: true

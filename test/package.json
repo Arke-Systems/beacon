@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "http-status-codes": "^2.3.0",
+    "js-yaml": "^4.1.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "3.0.5"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9"
+  },
+  "imports": {
+    "#cli/*": "../cli/src/*",
+    "#test/*": "./*"
+  },
+  "name": "@arke-systems/beacon-test",
+  "private": true,
+  "scripts": {
+    "clean": "node ./build/clean.js"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}

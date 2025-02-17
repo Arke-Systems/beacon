@@ -1,0 +1,16 @@
+title: Community Gardening Workshop
+main_image:
+  $beacon:
+    asset: events/Bellmaker.webp
+date: '2024-10-02'
+description: <p>A workshop on sustainable gardening practices.</p>
+related_events:
+  - $beacon:
+      reference: event/Autumn Feast and Social
+taxonomies:
+  - taxonomy_uid: location
+    term_uid: redwall_abbey
+  - taxonomy_uid: event_category
+    term_uid: workshop
+tags: []
+locale: en-us

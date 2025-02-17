@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"composite": true,
+		"outDir": "../dist",
+		"rootDir": ".",
+		"skipLibCheck": true,
+		"paths": {
+			"#cli/*": ["*"]
+		}
+	},
+	"exclude": ["**/*.test.ts"],
+	"extends": "../../tsconfig.base.json",
+	"include": ["**/*.ts"]
+}
