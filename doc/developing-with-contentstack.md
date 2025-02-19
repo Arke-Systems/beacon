@@ -1,15 +1,13 @@
 # Developing with Contentstack
 
 For purposes of local development, individual developers should maintain their
-own account and their own private development stack within Contentstack. Use
-the Arke Partner Sandbox account for this purpose.
+own account and their own private development stack within Contentstack.
 
 ## Preparing your Stack
 
-- Get access to the Arke Partner Sandbox. Reach out to team members for help.
-
-- Create a stack in the Arke Partner Sandbox. Name it something descriptive,
-  preferably `Beacon Dev (<your last name>)`.
+- Create a personal development stack. Be aware that integration tests run by
+  the Beacon test suite will use this stack and will _wipe all data_ as part
+  of the test process.
 
 - In your stack settings, create a management token. The token should have
   **Write** permission to **All Branches**. Store the token in the `.env` file
