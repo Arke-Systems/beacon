@@ -1,6 +1,6 @@
 import type NormalizedTaxonomy from '#cli/dto/taxonomy/NormalizedTaxonomy.js';
 import type { TermTreeNode } from '#cli/dto/taxonomy/NormalizedTaxonomy.js';
-import type CsTermCollection from '#cli/schema/ctx/lib/CsTermCollection.js';
+import type Collection from '#cli/schema/terms/collection/Collection.js';
 import deletions from './deletions.js';
 import type TermAction from './TermAction.js';
 
@@ -10,7 +10,7 @@ type MaybeTermAction = Omit<TermAction, 'fn'> & {
 
 export default function mutations(
 	fs: NormalizedTaxonomy,
-	csTerms: CsTermCollection,
+	csTerms: Collection,
 ): readonly TermAction[] {
 	function* traverse(
 		fsTerms: readonly TermTreeNode[],

@@ -1,6 +1,6 @@
 import type Ctx from '../ctx/Ctx.js';
-import CsTermCollection from '../ctx/lib/CsTermCollection.js';
 import type TransferResults from '../xfer/TransferResults.js';
+import Collection from './collection/Collection.js';
 import filterTaxonomies from './lib/filterTaxonomies.js';
 import mutations from './lib/mutations.js';
 import processActions from './lib/processActions.js';
@@ -20,7 +20,7 @@ export default async function* toContentstack(
 		}
 
 		const human = `${normalized.taxonomy.name} Terms`;
-		const csTerms = new CsTermCollection(ctx.cs.client, csTaxonomy);
+		const csTerms = new Collection(ctx.cs.client, csTaxonomy);
 		const actions = mutations(normalized, csTerms);
 		const allTerms = [...csTerms.all()];
 		yield [human, await processActions(human, actions, allTerms)];
