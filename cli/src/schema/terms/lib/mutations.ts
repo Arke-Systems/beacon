@@ -5,7 +5,7 @@ import deletions from './deletions.js';
 import type TermAction from './TermAction.js';
 
 type MaybeTermAction = Omit<TermAction, 'fn'> & {
-	readonly fn: (() => Promise<void>) | undefined;
+	readonly fn: TermAction['fn'] | undefined;
 };
 
 export default function mutations(
