@@ -1,6 +1,6 @@
 import type ProgressBar from '#cli/ui/progress/ProgressBar.js';
 import type TransferResults from '../TransferResults.js';
-import { MutableTransferResults } from '../TransferResults.js';
+import { merge, MutableTransferResults } from '../TransferResults.js';
 import handleCreations from './handleCreations.js';
 import handleDeletions from './handleDeletions.js';
 import handleUnmodified from './handleUnmodified.js';
@@ -54,33 +54,5 @@ export default async function processPlan<TItem>(
 	const created = await handleCreations(ctx, collectError);
 	const updated = await handleUpdates(ctx, collectError);
 
-	return {
-		...mergeDeletionResults(unmodified, deleted),
-		created,
-		errored,
-		updated,
-	};
-}
-
-function mergeDeletionResults(
-	unmodified: ReadonlySet<string>,
-	{
-		deleted = new Set<string>(),
-		unmodified: skippedDeletion = new Set<string>(),
-	}: Awaited<ReturnType<typeof handleDeletions>>,
-) {
-	if (skippedDeletion.size === 0) {
-		return { deleted, unmodified };
-	}
-
-	const mergedUnmodified = new Set<string>(unmodified);
-
-	for (const key of skippedDeletion) {
-		mergedUnmodified.add(key);
-	}
-
-	return {
-		deleted,
-		unmodified: mergedUnmodified,
-	};
+	return merge({ created, errored, updated, unmodified }, deleted);
 }
