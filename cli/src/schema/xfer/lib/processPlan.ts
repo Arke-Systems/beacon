@@ -54,5 +54,5 @@ export default async function processPlan<TItem>(
 	const created = await handleCreations(ctx, collectError);
 	const updated = await handleUpdates(ctx, collectError);
 
-	return merge({ created, errored, updated, unmodified }, deleted);
+	return merge({ created, errored, unmodified, updated }, deleted);
 }

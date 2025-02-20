@@ -27,30 +27,20 @@ export default function remove(
 	return async (bar) => {
 		const results = new MutableTransferResults();
 		const strategy = getUi().options.schema.deletionStrategy;
-		const toDelete = [term, ...descendants].map((d) => d.uid);
-		const descendantCount = descendants.length;
-
-		const descendantMsg =
-			descendantCount === 0
-				? ''
-				: descendantCount === 1
-					? '1 descendant'
-					: `${descendantCount.toLocaleString()} descendants`;
-
-		const msg = [term.name, descendantMsg].filter(Boolean).join(' and ');
+		const msg = humanizeKey(term, descendants);
 
 		if (strategy === 'delete') {
 			using reporter = new ProgressReporter(bar, 'deleting', msg);
 
 			try {
 				await apiRemove(this.client, this.taxonomy.uid, term.uid);
-				toDelete.forEach((d) => results.deleted.add(d));
+				results.deleted.add(term.uid);
+				descendants.forEach((d) => results.deleted.add(d.uid));
 			} catch (ex: unknown) {
 				results.errored.set(term.uid, ex);
 				// Do we include descendants here as well? They didn't really error.
 			} finally {
 				reporter.finish('deleted');
-				bar.increment();
 			}
 		}
 
@@ -60,9 +50,22 @@ export default function remove(
 
 		if (strategy === 'ignore' || strategy === 'warn') {
 			results.unmodified.add(term.uid);
-			bar.increment();
 		}
 
+		bar.increment();
 		return results;
 	};
+}
+
+function humanizeKey(term: Term, descendants: readonly Term[]) {
+	const descendantCount = descendants.length;
+
+	const descendantMsg =
+		descendantCount === 0
+			? ''
+			: descendantCount === 1
+				? '1 descendant'
+				: `${descendantCount.toLocaleString()} descendants`;
+
+	return [term.name, descendantMsg].filter(Boolean).join(' and ');
 }
