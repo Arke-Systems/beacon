@@ -1,10 +1,10 @@
 import type NormalizedTaxonomy from '#cli/dto/taxonomy/NormalizedTaxonomy.js';
+import { isDeepStrictEqual } from 'node:util';
 import type Ctx from '../ctx/Ctx.js';
 import createProgressBar from '../lib/createProgressBar.js';
 import getUi from '../lib/SchemaUi.js';
 import planMerge from '../xfer/lib/planMerge.js';
 import processPlan from '../xfer/lib/processPlan.js';
-import equality from './equality.js';
 
 export default async function toContentstack(ctx: Ctx) {
 	using bar = createProgressBar(
@@ -27,4 +27,8 @@ export default async function toContentstack(ctx: Ctx) {
 		remove: async (x) => ctx.cs.taxonomies.remove(x),
 		update: async (x) => ctx.cs.taxonomies.update(x),
 	});
+}
+
+function equality(a: NormalizedTaxonomy, b: NormalizedTaxonomy) {
+	return isDeepStrictEqual(a.taxonomy, b.taxonomy);
 }
