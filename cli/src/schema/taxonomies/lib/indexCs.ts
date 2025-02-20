@@ -39,7 +39,7 @@ async function* taxonomiesWithTerms(
 	}
 
 	const ui = getUi();
-	using bar = ui.createProgressBar('terms', toExport.size);
+	using bar = ui.createProgressBar('Taxonomy terms', toExport.size);
 
 	for (const taxonomy of toExport) {
 		using reporter = new ProgressReporter(
