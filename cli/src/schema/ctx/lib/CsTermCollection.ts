@@ -6,6 +6,11 @@ import type Term from '#cli/cs/terms/Term.js';
 import update from '#cli/cs/terms/update.js';
 import flatten from '#cli/dto/taxonomy/flatten.js';
 import type NormalizedTaxonomy from '#cli/dto/taxonomy/NormalizedTaxonomy.js';
+import type ProgressBar from '../../../ui/progress/ProgressBar.js';
+import ProgressReporter from '../../../ui/progress/ProgressReporter.js';
+import getUi from '../../lib/SchemaUi.js';
+import type TransferResults from '../../xfer/TransferResults.js';
+import { MutableTransferResults } from '../../xfer/TransferResults.js';
 
 interface MutableTerm {
 	readonly uid: string;
@@ -60,23 +65,61 @@ export default class CsTermCollection {
 		return this.#byUid.get(termUid);
 	}
 
-	public create(term: Term, idx?: number): () => Promise<void> {
+	public create(
+		term: Term,
+		idx?: number,
+	): (bar: ProgressBar) => Promise<TransferResults> {
 		this.#byUid.set(term.uid, term);
 		const order = this.#insertTermIntoSiblings(term, idx) + 1;
-		return async () => create(this.client, this.#taxonomy.uid, term, order);
+
+		return async (bar) => {
+			const results = new MutableTransferResults();
+			using reporter = new ProgressReporter(bar, 'creating', term.name);
+
+			try {
+				await create(this.client, this.#taxonomy.uid, term, order);
+				results.created.add(term.uid);
+			} catch (ex: unknown) {
+				results.errored.set(term.uid, ex);
+			} finally {
+				reporter.finish('created');
+				bar.increment();
+			}
+
+			return results;
+		};
 	}
 
-	public update(term: Term, name: string): (() => Promise<void>) | undefined {
+	public update(
+		term: Term,
+		name: string,
+	): ((bar: ProgressBar) => Promise<TransferResults>) | undefined {
 		const existing = this.#getRequired(term.uid);
 		if (existing.name === name) {
 			return;
 		}
 
 		existing.name = name;
-		return async () => update(this.client, this.#taxonomy.uid, term.uid, name);
+
+		return async (bar) => {
+			const results = new MutableTransferResults();
+			using reporter = new ProgressReporter(bar, 'updating', term.uid);
+
+			try {
+				await update(this.client, this.#taxonomy.uid, term.uid, name);
+				results.updated.add(term.uid);
+			} catch (ex: unknown) {
+				results.errored.set(term.uid, ex);
+			} finally {
+				reporter.finish('updated');
+				bar.increment();
+			}
+
+			return results;
+		};
 	}
 
-	public remove(term: Term): () => Promise<void> {
+	public remove(term: Term): (bar: ProgressBar) => Promise<TransferResults> {
 		const existing = this.#getRequired(term.uid);
 		const descendants = [...this.descendants(existing.uid)];
 		const { siblings, idx } = this.#getSiblingContext(existing);
@@ -90,14 +133,54 @@ export default class CsTermCollection {
 			this.#byParentUid.delete(descendant.uid);
 		}
 
-		return async () => remove(this.client, this.#taxonomy.uid, term.uid);
+		return async (bar) => {
+			const results = new MutableTransferResults();
+			const strategy = getUi().options.schema.deletionStrategy;
+			const toDelete = [term, ...descendants].map((d) => d.uid);
+			const descendantCount = descendants.length;
+
+			const descendantMsg =
+				descendantCount === 0
+					? ''
+					: descendantCount === 1
+						? '1 descendant'
+						: `${descendantCount.toLocaleString()} descendants`;
+
+			const msg = [term.name, descendantMsg].filter(Boolean).join(' and ');
+
+			if (strategy === 'delete') {
+				using reporter = new ProgressReporter(bar, 'deleting', msg);
+
+				try {
+					await remove(this.client, this.#taxonomy.uid, term.uid);
+					toDelete.forEach((d) => results.deleted.add(d));
+				} catch (ex: unknown) {
+					results.errored.set(term.uid, ex);
+					// Do we include descendants here as well? They didn't really error.
+				} finally {
+					reporter.finish('deleted');
+					bar.increment();
+				}
+			}
+
+			if (strategy === 'warn') {
+				bar.update({ action: 'skipping', key: `deletion of ${msg}` });
+			}
+
+			if (strategy === 'ignore' || strategy === 'warn') {
+				results.unmodified.add(term.uid);
+				bar.increment();
+			}
+
+			return results;
+		};
 	}
 
 	public move(
 		term: Term,
 		newParentUid: string | null,
 		newIdx?: number,
-	): (() => Promise<void>) | undefined {
+	): ((bar: ProgressBar) => Promise<TransferResults>) | undefined {
 		const existing = this.#getRequired(term.uid);
 		if (existing.parent_uid === newParentUid) {
 			return;
@@ -110,8 +193,29 @@ export default class CsTermCollection {
 		existing.parent_uid = newParentUid;
 		const order = this.#insertTermIntoSiblings(existing, newIdx) + 1;
 
-		return async () =>
-			move(this.client, this.#taxonomy.uid, term.uid, newParentUid, order);
+		return async (bar) => {
+			const results = new MutableTransferResults();
+			using reporter = new ProgressReporter(bar, 'moving', term.name);
+
+			try {
+				await move(
+					this.client,
+					this.#taxonomy.uid,
+					term.uid,
+					newParentUid,
+					order,
+				);
+
+				results.updated.add(term.uid);
+			} catch (ex: unknown) {
+				results.errored.set(term.uid, ex);
+			} finally {
+				reporter.finish('moved');
+				bar.increment();
+			}
+
+			return results;
+		};
 	}
 
 	#getRequired(uid: Term['uid']) {
