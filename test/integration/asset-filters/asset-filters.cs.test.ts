@@ -69,7 +69,7 @@ describe(
 
 		theories.forEach((theory) => {
 			ctx.test(
-				inspect(theory, { colors: true, compact: true }),
+				inspect(theory, { breakLength: Infinity, colors: true, compact: true }),
 				async ({ client, currentFixturePath, originalFixturePath, ui }) =>
 					Store.run(ui, async () => {
 						// Arrange

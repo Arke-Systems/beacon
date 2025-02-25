@@ -11,8 +11,8 @@ export default function fromCs(
 	taxonomy: Taxonomy,
 	terms?: readonly Term[],
 ): NormalizedTaxonomy {
-	return terms
-		? { taxonomy: transformTaxonomy(taxonomy), terms: organize(terms) }
+	return (terms?.length ?? 0) > 0
+		? { taxonomy: transformTaxonomy(taxonomy), terms: organize(terms ?? []) }
 		: { taxonomy: transformTaxonomy(taxonomy) };
 }
 

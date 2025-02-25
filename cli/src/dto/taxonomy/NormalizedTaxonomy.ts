@@ -9,7 +9,7 @@ export default interface NormalizedTaxonomy {
 		readonly name: Taxonomy['name'];
 		readonly uid: Taxonomy['uid'];
 	};
-	terms?: readonly TermTreeNode[];
+	readonly terms?: readonly TermTreeNode[];
 }
 
 export interface TermTreeNode {

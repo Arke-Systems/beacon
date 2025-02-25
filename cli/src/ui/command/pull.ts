@@ -24,7 +24,7 @@ pull
 	.addOption(Options.managementToken)
 	.addOption(Options.schemaPath)
 	.addOption(Options.verbose)
-	.description('Serialized data and schema from a stack into the file system.');
+	.description('Serialize data and schema from a stack into the file system.');
 
 type CommandOptions = Options.ApiKeyOption &
 	Options.BaseUrlOption &

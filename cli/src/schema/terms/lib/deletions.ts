@@ -1,11 +1,11 @@
 import flatten from '#cli/dto/taxonomy/flatten.js';
 import type NormalizedTaxonomy from '#cli/dto/taxonomy/NormalizedTaxonomy.js';
-import type CsTermCollection from '#cli/schema/ctx/lib/CsTermCollection.js';
+import type Collection from '#cli/schema/terms/collection/Collection.js';
 import type TermAction from './TermAction.js';
 
 export default function* deletions(
 	fs: NormalizedTaxonomy,
-	csTerms: CsTermCollection,
+	csTerms: Collection,
 ): Generator<TermAction> {
 	const fsTermUids = new Set(flatten(fs.terms ?? []).map((x) => x.uid));
 
