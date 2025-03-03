@@ -9,7 +9,6 @@ env:
   Contentstack_Branch: ${{ vars.CONTENTSTACK_BRANCH }}
   Contentstack_Management_API: ${{ vars.CONTENTSTACK_MANAGEMENT_API }}
   Contentstack_Management_Token: ${{ secrets.CONTENTSTACK_MANAGEMENT_TOKEN }}
-  GitHub_Package_Token: ${{ secrets.READ_PACKAGES }}
   Beacon_Extension: ${{ vars.BEACON_EXTENSION }}
   Beacon_Plugin: ${{ vars.BEACON_PLUGIN }}
 
@@ -27,8 +26,6 @@ jobs:
 
       - name: Prepare dependencies
         uses: ./.github/actions/prepare-dependencies
-        with:
-          github-token: ${{ env.GitHub_Package_Token }}
 
       - name: Check white-space
         run: yarn pretty

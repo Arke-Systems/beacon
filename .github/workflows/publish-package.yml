@@ -28,17 +28,11 @@ jobs:
 
       - name: Prepare dependencies
         uses: ./.github/actions/prepare-dependencies
-        with:
-          github-token: ${{ secrets.READ_PACKAGES }}
 
       - name: Build project
         run: yarn build
-        env:
-          GitHub_Package_Token: ${{ secrets.READ_PACKAGES }}
 
       - name: Publish CLI package
         run: |
           yarn workspace @arke-systems/beacon-cli \
             npm publish --tolerate-republish
-        env:
-          GitHub_Package_Token: ${{ secrets.GITHUB_TOKEN }}
