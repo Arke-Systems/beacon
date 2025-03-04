@@ -3,6 +3,7 @@ name: Publish Package
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   Contentstack_Api_Key: ${{ vars.CONTENTSTACK_API_KEY }}
@@ -17,11 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
 
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +28,15 @@ jobs:
       - name: Build project
         run: yarn build
 
+        # Based on https://github.com/actions/setup-node/issues/942
+      - name: Authentication
+        run: 'echo npmAuthToken: "$NPM_AUTH_TOKEN" >> ./.yarnrc.yml'
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
+
       - name: Publish CLI package
         run: |
           yarn workspace @arke-systems/beacon-cli \
-            npm publish --tolerate-republish
+            npm publish --access public
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}

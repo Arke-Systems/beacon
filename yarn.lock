@@ -20,7 +20,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@arke-systems/beacon-cli@workspace:cli"
   dependencies:
-    "@arke-systems/cs-rate-limit-middleware": "npm:^1.0.1"
+    "@arke-systems/cs-rate-limit-middleware": "npm:^1.0.3"
     "@types/asciichart": "npm:^1.5.8"
     "@types/cli-progress": "npm:^3.11.6"
     "@types/js-yaml": "npm:^4.0.9"
@@ -73,12 +73,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@arke-systems/cs-rate-limit-middleware@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@arke-systems/cs-rate-limit-middleware@npm:1.0.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40arke-systems%2Fcs-rate-limit-middleware%2F1.0.1%2F2b6f3a95ece822bc86b0f6e3b1bc0a5eb51f279b"
+"@arke-systems/cs-rate-limit-middleware@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@arke-systems/cs-rate-limit-middleware@npm:1.0.3"
   dependencies:
     tslib: "npm:^2.8.1"
-  checksum: 10c0/65a32cc309f8793c77122452450aa3cc73347a872534aefa48af099da84d5e1c12151580bb45db6b422e17896d4aa9f9066657413734681602d62a0d9842eda4
+  checksum: 10c0/597c9bd90d97f4eb061bc013802438fb24d61b6f4c01a249bf1785af7e1c894dba580b5b126e67642453adbc8e984ec95fdc540ccd2d28fc1dd24cd4974de0a1
   languageName: node
   linkType: hard
 

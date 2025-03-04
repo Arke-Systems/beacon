@@ -5,7 +5,7 @@
   },
   "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "dependencies": {
-    "@arke-systems/cs-rate-limit-middleware": "^1.0.1",
+    "@arke-systems/cs-rate-limit-middleware": "^1.0.3",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "asciichart": "^1.5.25",
@@ -40,11 +40,9 @@
   "license": "MIT",
   "name": "@arke-systems/beacon-cli",
   "publishConfig": {
-    "access": "restricted",
     "executableFiles": [
       "./dist/beacon.js"
-    ],
-    "registry": "https://npm.pkg.github.com"
+    ]
   },
   "repository": "github:Arke-Systems/beacon",
   "scripts": {
@@ -55,5 +53,5 @@
     "prepublish": "yarn workspace @arke-systems/beacon prepublish"
   },
   "type": "module",
-  "version": "1.9.1"
+  "version": "1.9.2"
 }
