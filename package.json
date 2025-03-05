@@ -29,14 +29,13 @@
     "clean": "node ./build/clean.js",
     "cli": "yarn build && node --enable-source-maps --trace-exit ./cli/dist/beacon.js",
     "lint": "eslint",
-    "prepack": "yarn clean && yarn build",
     "prepublish": "yarn pretty && yarn lint && yarn test run --no-api --bail 1",
     "pretty": "prettier --check .",
     "pretty:fix": "prettier --write .",
     "test": "yarn workspace @arke-systems/beacon-test vitest"
   },
   "type": "module",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "workspaces": [
     "cli",
     "test"
