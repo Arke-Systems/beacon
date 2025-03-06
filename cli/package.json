@@ -5,7 +5,7 @@
   },
   "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "dependencies": {
-    "@arke-systems/cs-rate-limit-middleware": "^1.0.3",
+    "@arke-systems/cs-rate-limit-middleware": "^1.0.4",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "asciichart": "^1.5.25",
@@ -53,5 +53,5 @@
     "prepublish": "yarn workspace @arke-systems/beacon prepublish"
   },
   "type": "module",
-  "version": "1.9.3"
+  "version": "1.9.4"
 }

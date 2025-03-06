@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
 
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,18 +30,16 @@ jobs:
       - name: Prepare dependencies
         uses: ./.github/actions/prepare-dependencies
 
-      - name: Build project
-        run: yarn build
-
-        # Based on https://github.com/actions/setup-node/issues/942
-      - name: Authentication
-        run: 'echo npmAuthToken: "$NPM_AUTH_TOKEN" >> ./.yarnrc.yml'
+      - name: Publish CLI package to NPM
+        shell: bash
+        run: yarn workspace @arke-systems/beacon-cli npm publish --access public
         env:
-          NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
+          YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
 
-      - name: Publish CLI package
-        run: |
-          yarn workspace @arke-systems/beacon-cli \
-            npm publish --access public
+      - name: Publish CLI package to GitHub
+        shell: bash
+        run: yarn workspace @arke-systems/beacon-cli npm publish
         env:
-          NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
+          YARN_NPM_PUBLISH_REGISTRY: https://npm.pkg.github.com
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
