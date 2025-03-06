@@ -49,8 +49,7 @@
     "build": "node ./build/build.js",
     "clean": "node ./build/clean.js",
     "generate": "node ./build/generate.js",
-    "prepack": "node ./build/prepack.js",
-    "prepublish": "yarn workspace @arke-systems/beacon prepublish"
+    "prepack": "node ./build/prepack.js"
   },
   "type": "module",
   "version": "1.9.4"

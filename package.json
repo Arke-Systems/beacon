@@ -29,7 +29,6 @@
     "clean": "node ./build/clean.js",
     "cli": "yarn build && node --enable-source-maps --trace-exit ./cli/dist/beacon.js",
     "lint": "eslint",
-    "prepublish": "yarn pretty && yarn lint && yarn test run --no-api --bail 1",
     "pretty": "prettier --check .",
     "pretty:fix": "prettier --write .",
     "test": "yarn workspace @arke-systems/beacon-test vitest"

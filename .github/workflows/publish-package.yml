@@ -17,6 +17,7 @@ jobs:
   publish-package:
     runs-on: ubuntu-latest
     environment: dev
+    concurrency: dev-stack
 
     permissions:
       contents: read

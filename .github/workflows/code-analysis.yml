@@ -16,6 +16,7 @@ jobs:
   code-analysis:
     runs-on: ubuntu-latest
     environment: dev
+    concurrency: dev-stack
 
     steps:
       - name: Checkout
