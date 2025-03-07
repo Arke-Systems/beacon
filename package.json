@@ -6,7 +6,7 @@
     "@eslint/js": "^9.21.0",
     "@types/node": "^22.13.9",
     "eslint": "^9.21.0",
-    "eslint-config-prettier": "^10.0.2",
+    "eslint-config-prettier": "^10.1.1",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
@@ -34,7 +34,7 @@
     "test": "yarn workspace @arke-systems/beacon-test vitest"
   },
   "type": "module",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "workspaces": [
     "cli",
     "test"
