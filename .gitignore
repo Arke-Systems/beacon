@@ -22,3 +22,5 @@ package.tgz
 src/lib/cs
 test/.tmp*
 cli/src/cfg/Config.schema.d.yaml.ts
+cli/LICENSE
+cli/README.md
