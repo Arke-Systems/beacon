@@ -5,7 +5,7 @@
 There are times when we depend on specific UID values as they exist in the
 target stack. For instance, the "Site Settings" single entry's UID is placed
 into an environment variable for later consumption. Beacon should have a means
-of outputting such values are a sync.
+of outputting such values after a sync.
 
 - This implies we will need a way to define which entries get output. That sort
   of configuration goes beyond what I would want to manage with environment

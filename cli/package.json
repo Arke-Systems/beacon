@@ -5,7 +5,7 @@
   },
   "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "dependencies": {
-    "@arke-systems/cs-rate-limit-middleware": "^1.0.1",
+    "@arke-systems/cs-rate-limit-middleware": "^1.0.4",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "asciichart": "^1.5.25",
@@ -16,7 +16,7 @@
     "mime": "^4.0.6",
     "minimatch": "^10.0.1",
     "openapi-fetch": "^0.13.4",
-    "prettier": "^3.5.1",
+    "prettier": "^3.5.3",
     "sanitize-filename": "^1.6.3",
     "tslib": "^2.8.1"
   },
@@ -25,10 +25,10 @@
     "@types/asciichart": "^1.5.8",
     "@types/cli-progress": "^3.11.6",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.13.4",
+    "@types/node": "^22.13.9",
     "json-schema-to-typescript": "^15.0.4",
     "openapi-typescript": "^7.6.1",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": "22.X"
@@ -40,20 +40,17 @@
   "license": "MIT",
   "name": "@arke-systems/beacon-cli",
   "publishConfig": {
-    "access": "restricted",
     "executableFiles": [
       "./dist/beacon.js"
-    ],
-    "registry": "https://npm.pkg.github.com"
+    ]
   },
   "repository": "github:Arke-Systems/beacon",
   "scripts": {
     "build": "node ./build/build.js",
     "clean": "node ./build/clean.js",
     "generate": "node ./build/generate.js",
-    "prepack": "yarn workspace @arke-systems/beacon prepack",
-    "prepublish": "yarn workspace @arke-systems/beacon prepublish"
+    "prepack": "node ./build/prepack.js"
   },
   "type": "module",
-  "version": "1.9.1"
+  "version": "1.9.4"
 }

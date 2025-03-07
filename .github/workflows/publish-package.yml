@@ -3,6 +3,7 @@ name: Publish Package
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   Contentstack_Api_Key: ${{ vars.CONTENTSTACK_API_KEY }}
@@ -16,6 +17,7 @@ jobs:
   publish-package:
     runs-on: ubuntu-latest
     environment: dev
+    concurrency: dev-stack
 
     permissions:
       contents: read
@@ -28,17 +30,17 @@ jobs:
 
       - name: Prepare dependencies
         uses: ./.github/actions/prepare-dependencies
-        with:
-          github-token: ${{ secrets.READ_PACKAGES }}
 
-      - name: Build project
-        run: yarn build
+      - name: Publish CLI package to NPM
+        shell: bash
+        run: yarn workspace @arke-systems/beacon-cli npm publish --access public
         env:
-          GitHub_Package_Token: ${{ secrets.READ_PACKAGES }}
+          YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
 
-      - name: Publish CLI package
-        run: |
-          yarn workspace @arke-systems/beacon-cli \
-            npm publish --tolerate-republish
+      - name: Publish CLI package to GitHub
+        shell: bash
+        run: yarn workspace @arke-systems/beacon-cli npm publish
         env:
-          GitHub_Package_Token: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_PUBLISH_REGISTRY: https://npm.pkg.github.com
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
