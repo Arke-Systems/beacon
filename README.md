@@ -52,7 +52,7 @@ package manager:
 ```sh
 yarn beacon <command>
 # or
-npm run beacon <command>
+npx beacon <command>
 ```
 
 ### Available Commands
