@@ -18,13 +18,14 @@
     "openapi-fetch": "^0.13.5",
     "prettier": "^3.5.3",
     "sanitize-filename": "^1.6.3",
-    "tslib": "^2.8.1"
+    "tslib": "^2.8.1",
+    "yaml": "^2.7.1"
   },
   "description": "Beacon facilitates serialization and deserialization of Contentstack content",
   "devDependencies": {
     "@types/asciichart": "^1.5.8",
     "@types/cli-progress": "^3.11.6",
-    "@types/js-yaml": "^4.0.9",
+    "@types/js-yaml": "^4",
     "@types/node": "^22.14.0",
     "json-schema-to-typescript": "^15.0.4",
     "openapi-typescript": "^7.6.1",

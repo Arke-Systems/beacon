@@ -1,7 +1,6 @@
 import { Ajv } from 'ajv';
 import formats from 'ajv-formats';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
+import readYaml from '../fs/readYaml.js';
 import isRecord from '../util/isRecord.js';
 import type { Config } from './Config.schema.yaml';
 
@@ -15,8 +14,7 @@ export default async function createSchemaValidationFn() {
 	addFormats(ajv);
 
 	const schemaUrl = new URL('./Config.schema.yaml', import.meta.url);
-	const schemaFile = await readFile(schemaUrl, 'utf8');
-	const schema = yaml.load(schemaFile);
+	const schema = await readYaml(schemaUrl);
 	if (!isRecord(schema)) {
 		throw new Error('Invalid schema');
 	}

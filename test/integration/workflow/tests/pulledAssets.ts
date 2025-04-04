@@ -1,6 +1,6 @@
+import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
-import yaml from 'js-yaml';
-import { readdir, readFile } from 'node:fs/promises';
+import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
 import type { WorkflowFixtures } from '../lib/WorkflowTestContext.js';
@@ -29,15 +29,12 @@ export default async function pulledAssets({
 			const pulledPath = resolve(pulled, name);
 			const fixturePath = resolve(original, name);
 
-			const [pulledRaw, fixtureRaw] = await Promise.all([
-				readFile(pulledPath, 'utf8'),
-				readFile(fixturePath, 'utf8'),
+			const [pulledContent, fixtureContent] = await Promise.all([
+				readYaml(pulledPath),
+				readYaml(fixturePath),
 			]);
 
-			const pulledParsed = yaml.load(pulledRaw);
-			const fixtureParsed = yaml.load(fixtureRaw);
-
-			expect(pulledParsed).toEqual(fixtureParsed);
+			expect(pulledContent).toEqual(fixtureContent);
 		}
 	});
 }

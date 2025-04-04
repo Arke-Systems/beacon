@@ -1,6 +1,6 @@
-import yaml from 'js-yaml';
 import type { PathLike } from 'node:fs';
 import { readFile } from 'node:fs/promises';
+import { parse } from 'yaml';
 import type { PartialOptions } from '../ui/PartialOptions.js';
 import ConfigMissingError from './ConfigMissingError.js';
 import ConfigurationError from './ConfigurationError.js';
@@ -32,7 +32,7 @@ export default async function loadConfig(
 		);
 	}
 
-	const cfg = yaml.load(raw);
+	const cfg: unknown = parse(raw);
 	const validate = await createSchemaValidationFn();
 
 	if (!validate(cfg)) {

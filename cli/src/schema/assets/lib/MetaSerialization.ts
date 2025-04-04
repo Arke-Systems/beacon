@@ -1,7 +1,7 @@
+import readYaml from '#cli/fs/readYaml.js';
 import writeYaml from '#cli/fs/writeYaml.js';
 import isRecord from '#cli/util/isRecord.js';
-import yaml from 'js-yaml';
-import { readFile, stat } from 'node:fs/promises';
+import { stat } from 'node:fs/promises';
 import type AssetMeta from '../AssetMeta.js';
 import { getMetaPath } from './NamingConvention.js';
 
@@ -26,12 +26,10 @@ export async function load(paths: {
 	readonly itemPath: string;
 	readonly metaPath: string;
 }): Promise<AssetMeta> {
-	const [raw, blobStats] = await Promise.all([
-		readFile(paths.metaPath, 'utf-8'),
+	const [parsed, blobStats] = await Promise.all([
+		readYaml(paths.metaPath),
 		stat(paths.blobPath),
 	]);
-
-	const parsed = yaml.load(raw);
 
 	if (!isRawMeta(parsed)) {
 		throw new Error(`Invalid asset metadata: ${paths.metaPath}`);

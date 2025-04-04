@@ -1,6 +1,5 @@
+import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
 import type { WorkflowFixtures } from '../lib/WorkflowTestContext.js';
@@ -15,7 +14,7 @@ export default async function pulledContentTypes({
 		const original = resolve(originalFixturePath, 'content-types');
 
 		const load = async (name: string) =>
-			yaml.load(await readFile(resolve(pulled, `${name}.yaml`), 'utf8'));
+			readYaml(resolve(pulled, `${name}.yaml`));
 
 		const [event, homePage] = await Promise.all([
 			load('event'),

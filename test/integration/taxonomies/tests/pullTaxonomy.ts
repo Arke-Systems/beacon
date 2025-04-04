@@ -1,8 +1,7 @@
 import type Client from '#cli/cs/api/Client.js';
+import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import pull from '#cli/schema/pull.js';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
 import type { TestFixtures } from '../../lib/TestContext.js';
@@ -40,8 +39,7 @@ export default async function pullTaxonomy({
 			'new_taxonomy.yaml',
 		);
 
-		const raw = await readFile(expectedPath, 'utf8');
-		const parsed = yaml.load(raw);
+		const parsed = await readYaml(expectedPath);
 
 		expect(parsed).toEqual({
 			taxonomy: {
