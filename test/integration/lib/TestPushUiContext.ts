@@ -27,6 +27,7 @@ export default class TestPushUiContext extends TestUiContext {
 					baseUrl: new URL(baseUrl),
 					branch: 'main',
 					managementToken,
+					timeout: 30000,
 				},
 				configFile: '',
 				schema: {

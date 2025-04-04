@@ -6,9 +6,11 @@ const deletionStrategy = new Option(
 	'How to handle deletions in the target stack',
 );
 
+export const defaultValue = 'warn';
+
 deletionStrategy
 	.choices(['delete', 'ignore', 'warn'])
-	.default('warn')
+	.default(defaultValue)
 	.makeOptionMandatory();
 
 export interface DeletionStrategyOption {

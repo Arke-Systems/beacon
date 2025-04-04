@@ -16,6 +16,7 @@ import { resolve } from 'node:path';
 const pull = new Command('pull');
 
 pull
+	.addOption(Options.apiTimeout)
 	.addOption(Options.apiKey)
 	.addOption(Options.baseUrl)
 	.addOption(Options.branch)
@@ -27,6 +28,7 @@ pull
 	.description('Serialize data and schema from a stack into the file system.');
 
 type CommandOptions = Options.ApiKeyOption &
+	Options.ApiTimeoutOption &
 	Options.BaseUrlOption &
 	Options.BranchOption &
 	Options.ExtensionOption &
@@ -68,6 +70,7 @@ async function mapOptions(options: CommandOptions) {
 			baseUrl: options.baseUrl,
 			branch: options.branch,
 			managementToken: options.managementToken,
+			timeout: options.apiTimeout,
 		},
 		schema: {
 			deletionStrategy: 'delete',

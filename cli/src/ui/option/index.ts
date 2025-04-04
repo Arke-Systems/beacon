@@ -1,5 +1,7 @@
 export { default as apiKey } from './apiKey.js';
 export type { ApiKeyOption } from './apiKey.js';
+export { default as apiTimeout } from './apiTimeout.js';
+export type { ApiTimeoutOption } from './apiTimeout.js';
 export { default as baseUrl } from './baseUrl.js';
 export type { BaseUrlOption } from './baseUrl.js';
 export { default as branch } from './branch.js';

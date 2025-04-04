@@ -25,6 +25,7 @@ function transformClientConfig(configData: Config) {
 		baseUrl: rawBaseUrl ? new URL(rawBaseUrl) : undefined,
 		branch: x.branch,
 		managementToken: x['management-token'],
+		timeout: x.timeout,
 	};
 }
 

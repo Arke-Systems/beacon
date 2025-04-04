@@ -7,8 +7,10 @@ const schemaPath = new Option(
 	'Output Contentstack schema files to the provided folder.',
 );
 
+export const defaultValue = './cs/schema';
+
 schemaPath
-	.default('./cs/schema')
+	.default(defaultValue)
 	.argParser((path) => resolve(path))
 	.makeOptionMandatory();
 

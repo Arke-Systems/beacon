@@ -6,6 +6,7 @@ export default interface Options {
 		readonly baseUrl: URL;
 		readonly branch: string;
 		readonly managementToken: string;
+		readonly timeout: number;
 	};
 	readonly configFile: PathLike;
 	readonly schema: {

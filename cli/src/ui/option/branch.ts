@@ -3,7 +3,7 @@ import type Options from '../Options.js';
 
 const branch = new Option('--branch [name]', 'Contentstack Branch');
 
-const defaultValue = 'main';
+export const defaultValue = 'main';
 
 branch
 	.env('Contentstack_Branch')
