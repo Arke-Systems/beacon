@@ -37,7 +37,6 @@ __metadata:
     minimatch: "npm:^10.0.1"
     openapi-fetch: "npm:^0.13.5"
     openapi-typescript: "npm:^7.6.1"
-    prettier: "npm:^3.5.3"
     sanitize-filename: "npm:^1.6.3"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.2"
