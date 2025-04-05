@@ -29,7 +29,7 @@ export default class VerboseProgressBar implements ProgressBar {
 
 		const counter = formatCounter(this.ui, {
 			total: this.total,
-			value: this.#current + 1,
+			value: this.#current,
 		}).value;
 
 		const elapsed = formatElapsed(payload.elapsedMs);
