@@ -50,8 +50,8 @@ async function* taxonomiesWithTerms(
 
 		const exported = await exportTaxonomy(client, taxonomy.uid);
 		yield fromCs(taxonomy, exported.terms);
-		reporter.finish('Loaded');
 		bar.increment();
+		reporter.finish('Loaded');
 	}
 }
 
