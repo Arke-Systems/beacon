@@ -40,7 +40,7 @@ export default async function readPaginatedItems<TItem extends Item>(
 	}
 
 	const ui = getUi();
-	using bar = ui.createProgressBar(pluralNoun, total);
+	using bar = ui.createProgressBar(capitalize(pluralNoun), total);
 	using reporter = new ProgressReporter(bar, 'Loading', pluralNoun);
 	bar.increment(processedThisBatch);
 
@@ -60,6 +60,10 @@ export default async function readPaginatedItems<TItem extends Item>(
 
 	reporter.finish('Loaded');
 	return acc.result;
+}
+
+function capitalize(s: string) {
+	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 async function readBatch<TItem extends Item>(
