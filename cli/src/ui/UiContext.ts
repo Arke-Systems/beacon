@@ -17,6 +17,7 @@ export class ConsoleUiContext implements UiContext, Disposable {
 	readonly info: Console['info'];
 	readonly warn: Console['warn'];
 
+	maxElapsedLength: number = '999 ms'.length;
 	#barContainer: MultiBar | undefined;
 	#maxNameLength = -Infinity;
 	#maxTotalLength = '999'.length;
