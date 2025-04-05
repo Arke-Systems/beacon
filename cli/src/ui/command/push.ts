@@ -1,5 +1,8 @@
+import resolveConfig from '#cli/cfg/resolveConfig.js';
 import { createClient } from '#cli/cs/api/Client.js';
+import { Store } from '#cli/schema/lib/SchemaUi.js';
 import pushJob from '#cli/schema/push.js';
+import SchemaOperationError from '#cli/schema/SchemaOperationError.js';
 import createStylus from '#cli/ui/createStylus.js';
 import HandledError from '#cli/ui/HandledError.js';
 import humanizePath from '#cli/ui/humanizePath.js';
@@ -9,13 +12,11 @@ import * as Options from '#cli/ui/option/index.js';
 import { ConsoleUiContext } from '#cli/ui/UiContext.js';
 import { Command } from 'commander';
 import { resolve } from 'node:path';
-import resolveConfig from '../../cfg/resolveConfig.js';
-import { Store } from '../../schema/lib/SchemaUi.js';
-import SchemaOperationError from '../../schema/SchemaOperationError.js';
 
 const push = new Command('push');
 
 push
+	.addOption(Options.apiTimeout)
 	.addOption(Options.apiKey)
 	.addOption(Options.baseUrl)
 	.addOption(Options.branch)
@@ -28,6 +29,7 @@ push
 	.description('Deploy serialized data and schema into a stack.');
 
 type CommandOptions = Options.ApiKeyOption &
+	Options.ApiTimeoutOption &
 	Options.BaseUrlOption &
 	Options.BranchOption &
 	Options.DeletionStrategyOption &
@@ -70,6 +72,7 @@ async function mapOptions(options: CommandOptions) {
 			baseUrl: options.baseUrl,
 			branch: options.branch,
 			managementToken: options.managementToken,
+			timeout: options.apiTimeout,
 		},
 		schema: {
 			deletionStrategy: options.deletionStrategy,

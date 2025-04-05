@@ -12,6 +12,7 @@ import { Store } from '../../schema/lib/SchemaUi.js';
 const clear = new Command('clear');
 
 clear
+	.addOption(Options.apiTimeout)
 	.addOption(Options.apiKey)
 	.addOption(Options.baseUrl)
 	.addOption(Options.branch)
@@ -20,6 +21,7 @@ clear
 	.description('Empty all data from a stack.');
 
 type CommandOptions = Options.ApiKeyOption &
+	Options.ApiTimeoutOption &
 	Options.BaseUrlOption &
 	Options.BranchOption &
 	Options.ManagementTokenOption &
@@ -52,6 +54,7 @@ async function mapOptions(options: CommandOptions) {
 			baseUrl: options.baseUrl,
 			branch: options.branch,
 			managementToken: options.managementToken,
+			timeout: options.apiTimeout,
 		},
 		schema: {
 			deletionStrategy: 'delete',

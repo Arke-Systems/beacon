@@ -1,11 +1,9 @@
 import ApiTimeoutError from './ApiTimeoutError.js';
 
-const stallTimeout = 10000; // arbitrary.
-
 export default class RequestWithTimeout extends Request implements Disposable {
 	readonly #timer: NodeJS.Timeout;
 
-	public constructor(request: Request) {
+	public constructor(request: Request, timeout: number) {
 		const controller = new AbortController();
 
 		super(request, {
@@ -14,7 +12,7 @@ export default class RequestWithTimeout extends Request implements Disposable {
 
 		this.#timer = setTimeout(
 			() => controller.abort(new ApiTimeoutError()),
-			stallTimeout,
+			timeout,
 		);
 	}
 

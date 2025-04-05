@@ -17,7 +17,7 @@ export function createClient(ui: UiContext) {
 }
 
 function createBaseClient(ui: UiContext) {
-	const stallCatcher = new TimeoutAndRetryBehavior();
+	const stallCatcher = new TimeoutAndRetryBehavior(ui.options.client.timeout);
 
 	stallCatcher.on('stall-encountered', (request, attempts, maxAttempts) => {
 		const y = createStylus('yellowBright');

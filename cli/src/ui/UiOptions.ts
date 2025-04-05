@@ -1,6 +1,10 @@
 import type Options from './Options.js';
 import { DefaultTaxonomyStrategies } from './Options.js';
 import type { PartialOptions } from './PartialOptions.js';
+import { defaultValue as defaultTimeout } from './option/apiTimeout.js';
+import { defaultValue as defaultBranch } from './option/branch.js';
+import { defaultValue as defaultStrategy } from './option/deletionStrategy.js';
+import { defaultValue as defaultSchemaPath } from './option/schemaPath.js';
 
 export default class UiOptions implements Options {
 	public readonly client: Options['client'];
@@ -33,8 +37,9 @@ function client(...others: PartialOptions['client'][]): Options['client'] {
 	return {
 		apiKey: other?.apiKey ?? '',
 		baseUrl: other?.baseUrl ?? new URL('http://localhost'),
-		branch: other?.branch ?? 'main',
+		branch: other?.branch ?? defaultBranch,
 		managementToken: other?.managementToken ?? '',
+		timeout: other?.timeout ?? defaultTimeout,
 	};
 }
 
@@ -43,10 +48,10 @@ function schema(...others: PartialOptions['schema'][]): Options['schema'] {
 
 	return {
 		assets: assets(...others.map((o) => o?.assets)),
-		deletionStrategy: other?.deletionStrategy ?? 'warn',
+		deletionStrategy: other?.deletionStrategy ?? defaultStrategy,
 		extension: maps(...others.map((o) => o?.extension)),
 		jsonRtePlugin: maps(...others.map((o) => o?.jsonRtePlugin)),
-		schemaPath: other?.schemaPath ?? '',
+		schemaPath: other?.schemaPath ?? defaultSchemaPath,
 		taxonomies: other?.taxonomies ?? DefaultTaxonomyStrategies,
 	};
 }
