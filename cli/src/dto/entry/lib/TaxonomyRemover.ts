@@ -31,7 +31,7 @@ export default class TaxonomyRemover {
 			return value;
 		}
 
-		return (value as unknown[]).filter((x, idx) => {
+		const result = (value as unknown[]).filter((x, idx) => {
 			if (!isTaxonomyValue(x)) {
 				const y = createStylus('yellowBright');
 				const msg1 = y`Entry ${this.#refPath} contains an unexpected taxonomy`;
@@ -43,5 +43,15 @@ export default class TaxonomyRemover {
 			const strategy = taxonomyStrategy(x.taxonomy_uid);
 			return strategy === 'taxonomy and terms';
 		});
+
+		// 2025-04-06: Observed an otherwise identical entry in two different stacks
+		// with no taxonomies, in which one stack returned `taxonomies: []` and the
+		// other stack returned no `taxonomies` field at all.
+		//
+		// We need to consider these two entries to be equal. I am solving for this
+		// by stripping away any empty taxonomy arrays while reading from CS.
+		if (result.length) {
+			return result;
+		}
 	}
 }
