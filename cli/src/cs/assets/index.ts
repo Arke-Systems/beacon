@@ -1,5 +1,5 @@
 import type Client from '../api/Client.js';
-import readPaginatedItems from '../api/readPaginatedItems.js';
+import readPaginatedItems from '../api/paginate/readPaginatedItems.js';
 import typecheckArray from '../typecheckArray.js';
 import { itemKey } from '../Types.js';
 import type { RawAssetItem } from './Types.js';
