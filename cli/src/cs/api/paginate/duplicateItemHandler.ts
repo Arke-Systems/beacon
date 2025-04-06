@@ -15,13 +15,13 @@ export default function duplicateItemHandler(
 	}
 
 	const msgs = ['Encountered a duplicate item while indexing '];
-	msgs.push(styleText('bold', pluralNoun));
+	msgs.push(styleText('yellowBright', pluralNoun));
 	msgs.push(' by key: ');
 
 	if (key === '') {
 		msgs.push(styleText('dim', '[empty string]'));
 	} else {
-		msgs.push(styleText('bold', key));
+		msgs.push(styleText('yellow', key));
 	}
 
 	msgs.push('.');
