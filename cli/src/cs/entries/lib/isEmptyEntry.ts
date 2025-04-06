@@ -13,7 +13,7 @@ import type { Entry } from '../Types.js';
 // I do not know how these entries come into being and I have not been able to
 // replicate the issue. This code is an attempt to filter them out.
 export default function isEmptyEntry(
-	contentType: ContentType,
+	contentType: Pick<ContentType, 'title'>,
 	x: Entry,
 ): boolean {
 	if (x.title) {

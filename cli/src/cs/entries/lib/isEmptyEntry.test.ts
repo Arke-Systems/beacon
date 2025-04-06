@@ -1,3 +1,4 @@
+import type { ContentType } from '#cli/cs/content-types/Types.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import TestLogContext from '#test/integration/lib/TestLogContext.js';
 import TestPushUiContext from '#test/integration/lib/TestPushUiContext.js';
@@ -62,8 +63,15 @@ describe(isEmptyEntry.name, () => {
 
 	theories.forEach(({ description, entry, expected }) => {
 		it(description, () => {
+			// Arrange
+			const contentType: ContentType = {
+				title: 'some-title',
+				uid: 'contentTypeUid',
+				schema: [],
+			};
+
 			// Act
-			const result = Store.run(ui, () => isEmptyEntry('contentTypeUid', entry));
+			const result = Store.run(ui, () => isEmptyEntry(contentType, entry));
 
 			// Assert
 			expect(result).toBe(expected);
