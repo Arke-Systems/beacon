@@ -6,8 +6,9 @@ import type EntryCollection from '#cli/schema/entries/EntryCollection.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
 import createStylus from '#cli/ui/createStylus.js';
 import isRecord from '#cli/util/isRecord.js';
+import type Replacer from './Replacer.js';
 
-export default class ReferenceReplacer {
+export default class ReferenceReplacer implements Replacer {
 	readonly #refPath: ReferencePath;
 	readonly #entries: EntryCollection;
 
@@ -23,7 +24,7 @@ export default class ReferenceReplacer {
 	}
 
 	#replaceReferences(value: unknown) {
-		if (value === null) {
+		if (value === null || value === undefined) {
 			return;
 		}
 

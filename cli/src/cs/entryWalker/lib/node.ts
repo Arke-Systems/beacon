@@ -8,14 +8,17 @@ export default function node(
 	schema: SchemaFields,
 	container: Record<string, unknown>,
 ) {
-	const entries = Object.entries(container);
-	if (entries.length === 0) {
+	const kvp = Object.entries(container);
+	if (kvp.length === 0) {
 		return container;
 	}
 
 	const properties = new Map<string, unknown>();
+	const seen = new Set<string>();
 
-	for (const [fieldUid, value] of entries) {
+	for (const [fieldUid, value] of kvp) {
+		seen.add(fieldUid);
+
 		if (fieldUid === '_metadata') {
 			properties.set(fieldUid, value);
 			continue;
@@ -35,6 +38,17 @@ export default function node(
 
 		if (processed !== undefined) {
 			properties.set(fieldUid, processed);
+		}
+	}
+
+	for (const field of schema) {
+		if (seen.has(field.uid)) {
+			continue;
+		}
+
+		const processed = this.field(field, undefined);
+		if (processed !== undefined) {
+			properties.set(field.uid, processed);
 		}
 	}
 

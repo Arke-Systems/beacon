@@ -6,8 +6,9 @@ import resolveItemPath from '#cli/schema/assets/lib/resolveItemPath.js';
 import type Ctx from '#cli/schema/ctx/Ctx.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
 import createStylus from '#cli/ui/createStylus.js';
+import type Replacer from './Replacer.js';
 
-export default class AssetReplacer {
+export default class AssetReplacer implements Replacer {
 	readonly #assetsByUid: ReadonlyMap<string, RawAssetItem>;
 	readonly #refPath: ReferencePath;
 
