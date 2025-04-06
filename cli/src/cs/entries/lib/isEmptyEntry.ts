@@ -1,3 +1,4 @@
+import type { ContentType } from '#cli/cs/content-types/Types.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
 import { styleText } from 'node:util';
@@ -12,7 +13,7 @@ import type { Entry } from '../Types.js';
 // I do not know how these entries come into being and I have not been able to
 // replicate the issue. This code is an attempt to filter them out.
 export default function isEmptyEntry(
-	contentTypeUid: string,
+	contentType: ContentType,
 	x: Entry,
 ): boolean {
 	if (x.title) {
@@ -35,7 +36,7 @@ export default function isEmptyEntry(
 	if (!hasRealData(reduced)) {
 		getUi().warn(
 			'Empty',
-			styleText('yellowBright', contentTypeUid),
+			styleText('yellowBright', contentType.title),
 			'entry detected and filtered out:',
 			`[${styleText('yellowBright', x.uid)}]`,
 			x.title

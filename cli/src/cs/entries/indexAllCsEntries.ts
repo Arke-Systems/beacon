@@ -29,7 +29,7 @@ export default async function indexAllCsEntries(
 		for (const contentType of sorted) {
 			using reporter = new ProgressReporter(bar, 'indexing', contentType.title);
 
-			const entries = await index(client, contentType.uid);
+			const entries = await index(client, contentType);
 			allEntries.set(contentType, new Set([...entries.values()]));
 			bar.increment();
 			reporter.finish('indexed');

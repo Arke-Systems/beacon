@@ -1,8 +1,8 @@
-import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
 import type { WorkflowFixtures } from '../lib/WorkflowTestContext.js';
+import loadEntry from '../lib/loadEntry.js';
 
 export default async function pulledEntries({
 	currentFixturePath,
@@ -14,12 +14,6 @@ export default async function pulledEntries({
 		const pulled = resolve(currentFixturePath, 'entries');
 		const original = resolve(originalFixturePath, 'entries');
 
-		const load = async (dir: string, contentType: string, name: string) => {
-			const resolved = resolve(dir, contentType, `${name}.yaml`);
-			const parsed = await readYaml(resolved);
-			return parsed as Record<string, unknown>;
-		};
-
 		const [
 			pulledFeast,
 			pulledWorkshop,
@@ -28,12 +22,12 @@ export default async function pulledEntries({
 			originalWorkshop,
 			originalHomePage,
 		] = await Promise.all([
-			load(pulled, 'event', 'Autumn Feast and Social'),
-			load(pulled, 'event', 'Community Gardening Workshop'),
-			load(pulled, 'home_page', 'Mice Community Hub'),
-			load(original, 'event', 'Autumn Feast and Social'),
-			load(original, 'event', 'Community Gardening Workshop'),
-			load(original, 'home_page', 'Mice Community Hub'),
+			loadEntry(currentFixturePath, 'event', 'Autumn Feast and Social'),
+			loadEntry(currentFixturePath, 'event', 'Community Gardening Workshop'),
+			loadEntry(currentFixturePath, 'home_page', 'Mice Community Hub'),
+			loadEntry(originalFixturePath, 'event', 'Autumn Feast and Social'),
+			loadEntry(originalFixturePath, 'event', 'Community Gardening Workshop'),
+			loadEntry(originalFixturePath, 'home_page', 'Mice Community Hub'),
 		]);
 
 		// Assert

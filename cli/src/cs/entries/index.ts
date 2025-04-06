@@ -1,15 +1,16 @@
 import type Client from '../api/Client.js';
 import readPaginatedItems from '../api/paginate/readPaginatedItems.js';
+import type { ContentType } from '../content-types/Types.js';
 import typecheckArray from '../typecheckArray.js';
 import isEmptyEntry from './lib/isEmptyEntry.js';
 import { isEntry, key } from './Types.js';
 
-export default async function index(client: Client, contentTypeUid: string) {
+export default async function index(client: Client, contentType: ContentType) {
 	return readPaginatedItems(
-		`${contentTypeUid} entries`,
+		`${contentType.title} entries`,
 		key,
-		fetchFn.bind(null, contentTypeUid, client),
-		mapFn.bind(null, contentTypeUid),
+		fetchFn.bind(null, contentType.uid, client),
+		mapFn.bind(null, contentType),
 	);
 }
 
@@ -27,15 +28,15 @@ async function fetchFn(contentTypeUid: string, client: Client, skip: number) {
 	});
 }
 
-function mapFn(contentTypeUid: string, o: Record<string, unknown>) {
+function mapFn(contentType: ContentType, o: Record<string, unknown>) {
 	const { count, entries: rawItems } = o;
 
-	if (!typecheckArray(isEntry, `${contentTypeUid} entries`, rawItems)) {
+	if (!typecheckArray(isEntry, `${contentType.title} entries`, rawItems)) {
 		throw new Error('Invalid response from Contentstack');
 	}
 
 	return {
-		items: rawItems.filter((x) => !isEmptyEntry(contentTypeUid, x)),
+		items: rawItems.filter((x) => !isEmptyEntry(contentType, x)),
 		processedItems: rawItems.length,
 		...(typeof count === 'number' ? { count } : {}),
 	};

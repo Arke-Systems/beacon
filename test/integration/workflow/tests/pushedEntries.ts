@@ -2,12 +2,12 @@ import type { RawAssetItem } from '#cli/cs/assets/Types.js';
 import { isRawAsset } from '#cli/cs/assets/Types.js';
 import index from '#cli/cs/entries/index.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
-import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
-import { resolve } from 'node:path';
 import { inspect } from 'node:util';
 import { expect } from 'vitest';
+import loadContentType from '../lib/loadContentType.js';
+import loadEntry from '../lib/loadEntry.js';
 import type { WorkflowFixtures } from '../lib/WorkflowTestContext.js';
 
 export default async function pushedEntries({
@@ -17,26 +17,14 @@ export default async function pushedEntries({
 	ui,
 }: WorkflowFixtures) {
 	return Store.run(ui, async () => {
-		const original = resolve(originalFixturePath, 'entries');
+		const contentTypes = await loadContentTypes(originalFixturePath);
+		const originals = await loadEntries(originalFixturePath);
 
-		const load = async (dir: string, contentType: string, name: string) => {
-			const resolved = resolve(dir, contentType, `${name}.yaml`);
-			const parsed = await readYaml(resolved);
-			return parsed as Record<string, unknown>;
-		};
-
-		const [originalFeast, originalWorkshop, originalHomePage] =
-			await Promise.all([
-				load(original, 'event', 'Autumn Feast and Social'),
-				load(original, 'event', 'Community Gardening Workshop'),
-				load(original, 'home_page', 'Mice Community Hub'),
-			]);
-
-		const homePageEntries = await index(client, 'home_page');
+		const homePageEntries = await index(client, contentTypes.homePage);
 		expect(homePageEntries.size).toBe(1);
 		const homePage = [...homePageEntries.values()][0]!;
 
-		const eventEntries = await index(client, 'event');
+		const eventEntries = await index(client, contentTypes.event);
 		const events = [...eventEntries.values()];
 		const feast = events.find(byTitle('Autumn Feast and Social'));
 		const workshop = events.find(byTitle('Community Gardening Workshop'));
@@ -61,7 +49,7 @@ export default async function pushedEntries({
 		};
 
 		expect(feast).toEqual({
-			...originalFeast,
+			...originals.feast,
 			...basicEntry,
 			main_image: attachedAsset(assets.get('sala')!),
 			related_events: [{ _content_type_uid: 'event', uid: workshop!.uid }],
@@ -96,7 +84,7 @@ export default async function pushedEntries({
 		});
 
 		expect(workshop).toEqual({
-			...originalWorkshop,
+			...originals.workshop,
 			...basicEntry,
 			main_image: attachedAsset(assets.get('bellmaker')!),
 			related_events: [{ _content_type_uid: 'event', uid: feast!.uid }],
@@ -105,7 +93,7 @@ export default async function pushedEntries({
 		const main = blocksHaveRandomMetadata(homePage.main);
 
 		expect(homePage).toEqual({
-			...originalHomePage,
+			...originals.homePage,
 			...basicEntry,
 			featured_events: [
 				{ _content_type_uid: 'event', uid: workshop!.uid },
@@ -177,4 +165,23 @@ function blocksHaveRandomMetadata(blocks: unknown) {
 			[key]: { ...value, _metadata: expect.any(Object) },
 		};
 	});
+}
+
+async function loadContentTypes(fixturePath: string) {
+	const [homePage, event] = await Promise.all([
+		loadContentType(fixturePath, 'home_page'),
+		loadContentType(fixturePath, 'event'),
+	]);
+
+	return { homePage, event };
+}
+
+async function loadEntries(fixturePath: string) {
+	const [feast, homePage, workshop] = await Promise.all([
+		loadEntry(fixturePath, 'event', 'Autumn Feast and Social'),
+		loadEntry(fixturePath, 'home_page', 'Mice Community Hub'),
+		loadEntry(fixturePath, 'event', 'Community Gardening Workshop'),
+	]);
+
+	return { feast, homePage, workshop };
 }
