@@ -12,46 +12,53 @@ export default function transform(configData: Config): PartialOptions {
 	};
 }
 
-function transformClientConfig(configData: Config) {
-	const x = configData.client;
-	if (!x) {
+function transformClientConfig({ client }: Config) {
+	if (!client) {
 		return;
 	}
 
-	const rawBaseUrl = x['base-url'];
+	const {
+		'api-key': apiKey,
+		'base-url': baseUrl,
+		branch,
+		'management-token': managementToken,
+		timeout,
+	} = client;
 
 	return {
-		apiKey: x['api-key'],
-		baseUrl: rawBaseUrl ? new URL(rawBaseUrl) : undefined,
-		branch: x.branch,
-		managementToken: x['management-token'],
-		timeout: x.timeout,
+		...(apiKey ? { apiKey } : {}),
+		...(baseUrl ? { baseUrl: new URL(baseUrl) } : {}),
+		...(branch ? { branch } : {}),
+		...(managementToken ? { managementToken } : {}),
+		...(typeof timeout === 'number' ? { timeout } : {}),
 	};
 }
 
-function transformSchemaConfig(configData: Config): PartialOptions['schema'] {
-	const x = configData.schema;
-	if (!x) {
+function transformSchemaConfig({ schema }: Config): PartialOptions['schema'] {
+	if (!schema) {
 		return;
 	}
 
-	const { assets, taxonomies } = x;
+	const {
+		assets,
+		'deletion-strategy': strategy,
+		extension,
+		'json-rte-plugin': jsonRtePlugin,
+		'schema-path': schemaPath,
+		taxonomies,
+	} = schema;
 
 	return {
 		...(assets ? { assets: { isIncluded: compileFilters(assets) } } : {}),
-		deletionStrategy: x['deletion-strategy'],
-		extension: transformMap(x.extension),
-		jsonRtePlugin: transformMap(x['json-rte-plugin']),
-		schemaPath: x['schema-path'],
-		taxonomies: taxonomies ? new Map(Object.entries(taxonomies)) : undefined,
+		...(strategy ? { deletionStrategy: strategy } : {}),
+		...(extension ? { extension: transformMap(extension) } : {}),
+		...(jsonRtePlugin ? { jsonRtePlugin: transformMap(jsonRtePlugin) } : {}),
+		...(schemaPath ? { schemaPath } : {}),
+		...(taxonomies ? { taxonomies: new Map(Object.entries(taxonomies)) } : {}),
 	};
 }
 
-function transformMap(mapping: Record<string, string> | undefined) {
-	if (!mapping) {
-		return;
-	}
-
+function transformMap(mapping: Record<string, string>) {
 	return {
 		byName: new Map(Object.entries(mapping)),
 		byUid: new Map(Object.entries(mapping).map(([name, uid]) => [uid, name])),

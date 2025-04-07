@@ -40,8 +40,11 @@ export default function remove(
 				results.errored.set(term.uid, ex);
 				// Do we include descendants here as well? They didn't really error.
 			} finally {
+				bar.increment();
 				reporter.finish('deleted');
 			}
+		} else {
+			bar.increment();
 		}
 
 		if (strategy === 'warn') {
@@ -52,7 +55,6 @@ export default function remove(
 			results.unmodified.add(term.uid);
 		}
 
-		bar.increment();
 		return results;
 	};
 }

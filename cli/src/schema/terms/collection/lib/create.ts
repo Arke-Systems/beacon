@@ -24,8 +24,8 @@ export default function create(
 		} catch (ex: unknown) {
 			results.errored.set(term.uid, ex);
 		} finally {
-			reporter.finish('created');
 			bar.increment();
+			reporter.finish('created');
 		}
 
 		return results;

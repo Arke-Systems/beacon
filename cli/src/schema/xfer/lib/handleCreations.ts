@@ -12,13 +12,13 @@ export default async function handleCreations<TItem>(
 
 		try {
 			await ctx.create(item);
-			reporter.finish('created');
 			created.add(key);
 		} catch (ex: unknown) {
 			collectError(key, ex);
+		} finally {
+			ctx.progress.increment();
+			reporter.finish('created');
 		}
-
-		ctx.progress.increment();
 	}
 
 	return created;

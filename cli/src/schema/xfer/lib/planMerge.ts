@@ -13,17 +13,17 @@ export default function planMerge<TItem>(
 		.filter(([key]) => !source.has(key))
 		.reduce((acc, [key, item]) => acc.set(key, item), new Map<string, TItem>());
 
-	for (const [uid, item] of source) {
-		const existing = destination.get(uid);
+	for (const [key, item] of source) {
+		const existing = destination.get(key);
 
 		if (existing) {
 			if (equality(item, existing)) {
-				toSkip.add(uid);
+				toSkip.add(key);
 			} else {
-				toUpdate.set(uid, item);
+				toUpdate.set(key, item);
 			}
 		} else {
-			toCreate.set(uid, item);
+			toCreate.set(key, item);
 		}
 	}
 
