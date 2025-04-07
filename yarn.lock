@@ -23,7 +23,6 @@ __metadata:
     "@arke-systems/cs-rate-limit-middleware": "npm:^1.0.4"
     "@types/asciichart": "npm:^1.5.8"
     "@types/cli-progress": "npm:^3.11.6"
-    "@types/js-yaml": "npm:^4"
     "@types/node": "npm:^22.14.0"
     ajv: "npm:^8.17.1"
     ajv-formats: "npm:^3.0.1"
@@ -31,7 +30,6 @@ __metadata:
     cli-progress: "npm:^3.12.0"
     commander: "npm:^13.1.0"
     http-status-codes: "npm:^2.3.0"
-    js-yaml: "npm:^4.1.0"
     json-schema-to-typescript: "npm:^15.0.4"
     mime: "npm:^4.0.7"
     minimatch: "npm:^10.0.1"
@@ -50,9 +48,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@arke-systems/beacon-test@workspace:test"
   dependencies:
-    "@types/js-yaml": "npm:^4"
     http-status-codes: "npm:^2.3.0"
-    js-yaml: "npm:^4.1.0"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:3.1.1"
     yaml: "npm:^2.7.1"
@@ -682,13 +678,6 @@ __metadata:
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
   checksum: 10c0/cdfd751f6f9065442cd40957c07fd80361c962869aa853c1c2fd03e101af8b9389d8ff4955a43a6fcfa223dd387a089937f95be0f3eec21ca527039fd2d9859a
-  languageName: node
-  linkType: hard
-
-"@types/js-yaml@npm:^4":
-  version: 4.0.9
-  resolution: "@types/js-yaml@npm:4.0.9"
-  checksum: 10c0/24de857aa8d61526bbfbbaa383aa538283ad17363fcd5bb5148e2c7f604547db36646440e739d78241ed008702a8920665d1add5618687b6743858fae00da211
   languageName: node
   linkType: hard
 
