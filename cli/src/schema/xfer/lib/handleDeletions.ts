@@ -25,13 +25,13 @@ export default async function handleDeletions<TItem>(
 
 		try {
 			await ctx.remove(item);
-			reporter.finish('deleted');
 			deleted.add(key);
 		} catch (ex: unknown) {
 			collectError(key, ex);
+		} finally {
+			ctx.progress.increment();
+			reporter.finish('deleted');
 		}
-
-		ctx.progress.increment();
 	}
 
 	return { deleted };

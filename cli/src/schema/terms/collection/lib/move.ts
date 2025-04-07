@@ -41,8 +41,8 @@ export default function move(
 		} catch (ex: unknown) {
 			results.errored.set(term.uid, ex);
 		} finally {
-			reporter.finish('moved');
 			bar.increment();
+			reporter.finish('moved');
 		}
 
 		return results;
