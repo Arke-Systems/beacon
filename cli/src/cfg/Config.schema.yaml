@@ -11,19 +11,24 @@ properties:
         type: string
         minLength: 1
 
-      management-token:
+      base-url:
         type: string
-        minLength: 1
+        minLength: 8
+        format: uri
 
       branch:
         type: string
         minLength: 1
         default: main
 
-      base-url:
+      management-token:
         type: string
-        minLength: 8
-        format: uri
+        minLength: 1
+
+      timeout:
+        type: integer
+        minimum: 1
+        default: 10000
 
   schema:
     type: object

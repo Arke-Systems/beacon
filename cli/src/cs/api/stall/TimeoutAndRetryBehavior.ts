@@ -10,6 +10,10 @@ interface EventMap {
 }
 
 export default class TimeoutAndRetryBehavior extends EventEmitter<EventMap> {
+	public constructor(private readonly _timeout: number) {
+		super();
+	}
+
 	public async fetch(...args: Parameters<typeof fetch>) {
 		const [original] = args;
 
@@ -20,7 +24,7 @@ export default class TimeoutAndRetryBehavior extends EventEmitter<EventMap> {
 		let attempts = 0;
 
 		do {
-			using antiStallRequest = new RequestWithTimeout(original);
+			using antiStallRequest = new RequestWithTimeout(original, this._timeout);
 
 			try {
 				return await fetch(antiStallRequest);
