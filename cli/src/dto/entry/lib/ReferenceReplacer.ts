@@ -36,7 +36,9 @@ export default class ReferenceReplacer implements Replacer {
 			return value;
 		}
 
-		return value.map(this.#replaceReference.bind(this));
+		return value
+			.map(this.#replaceReference.bind(this))
+			.filter((x) => x !== null);
 	}
 
 	#replaceReference(value: unknown, idx: number) {
@@ -54,9 +56,10 @@ export default class ReferenceReplacer implements Replacer {
 		if (!referencedEntry) {
 			const y = createStylus('yellowBright');
 			const msg1 = y`Entry ${this.#refPath} references ${referencedPath},`;
-			const msg2 = 'which does not exist.';
-			getUi().warn(msg1, msg2);
-			return value;
+			const msg2 = 'which does not exist. The invalid reference will be';
+			const msg3 = 'removed.';
+			getUi().warn(msg1, msg2, msg3);
+			return null;
 		}
 
 		const { title } = referencedEntry;
