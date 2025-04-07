@@ -65,9 +65,9 @@ describe(isEmptyEntry.name, () => {
 		it(description, () => {
 			// Arrange
 			const contentType: ContentType = {
+				schema: [],
 				title: 'some-title',
 				uid: 'contentTypeUid',
-				schema: [],
 			};
 
 			// Act

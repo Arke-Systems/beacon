@@ -173,7 +173,7 @@ async function loadContentTypes(fixturePath: string) {
 		loadContentType(fixturePath, 'event'),
 	]);
 
-	return { homePage, event };
+	return { event, homePage };
 }
 
 async function loadEntries(fixturePath: string) {
