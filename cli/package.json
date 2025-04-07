@@ -13,9 +13,9 @@
     "commander": "^13.1.0",
     "http-status-codes": "^2.3.0",
     "js-yaml": "^4.1.0",
-    "mime": "^4.0.6",
+    "mime": "^4.0.7",
     "minimatch": "^10.0.1",
-    "openapi-fetch": "^0.13.4",
+    "openapi-fetch": "^0.13.5",
     "prettier": "^3.5.3",
     "sanitize-filename": "^1.6.3",
     "tslib": "^2.8.1"
@@ -25,7 +25,7 @@
     "@types/asciichart": "^1.5.8",
     "@types/cli-progress": "^3.11.6",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.13.9",
+    "@types/node": "^22.14.0",
     "json-schema-to-typescript": "^15.0.4",
     "openapi-typescript": "^7.6.1",
     "typescript": "^5.8.2"
