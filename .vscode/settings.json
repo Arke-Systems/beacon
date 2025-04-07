@@ -65,7 +65,8 @@
 	},
 	"files.readonlyInclude": {
 		"**/node_modules/**": true,
-		"cli/src/cs/api/cma-openapi-3.d.ts": true
+		"cli/src/cs/api/cma-openapi-3.d.ts": true,
+		"test/snapshots/*.yaml": true
 	},
 	"javascript.preferences.importModuleSpecifier": "project-relative",
 	"javascript.preferences.importModuleSpecifierEnding": "js",
