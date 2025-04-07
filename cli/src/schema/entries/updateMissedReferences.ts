@@ -37,11 +37,11 @@ export default async function updateMissedReferences(
 			const transformed = transformEntry(minimalCtx, contentType, entry);
 			await importEntry(ctx.cs.client, contentTypeUid, transformed, true);
 			results.updated.add(refPath);
-			reporter.finish('updated');
 		} catch (ex: unknown) {
 			results.errored.set(refPath, ex);
 		} finally {
 			bar.increment();
+			reporter.finish('updated');
 		}
 	}
 

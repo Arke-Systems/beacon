@@ -28,8 +28,8 @@ export default function update(
 		} catch (ex: unknown) {
 			results.errored.set(term.uid, ex);
 		} finally {
-			reporter.finish('updated');
 			bar.increment();
+			reporter.finish('updated');
 		}
 
 		return results;

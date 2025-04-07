@@ -7,8 +7,9 @@ import getUi from '#cli/schema/lib/SchemaUi.js';
 import createStylus from '#cli/ui/createStylus.js';
 import isRecord from '#cli/util/isRecord.js';
 import { inspect } from 'node:util';
+import type Replacer from './Replacer.js';
 
-export default class JsonRteReplacer {
+export default class JsonRteReplacer implements Replacer {
 	readonly #assetsByUid: ReadonlyMap<string, RawAssetItem>;
 	readonly #refPath: ReferencePath;
 

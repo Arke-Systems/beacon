@@ -30,7 +30,7 @@ export default function buildCreator(
 			if (isDuplicateKeyError(ex)) {
 				const uid = await getUidByTitle(
 					ctx.cs.client,
-					contentType.uid,
+					contentType,
 					transformed.title,
 				);
 
@@ -72,10 +72,10 @@ function isDuplicateKeyError(ex: unknown) {
 
 async function getUidByTitle(
 	client: Client,
-	contentTypeUid: ContentType['uid'],
+	contentType: ContentType,
 	title: string,
 ) {
-	const entries = await indexEntries(client, contentTypeUid);
+	const entries = await indexEntries(client, contentType);
 	return entries.get(title)?.uid;
 }
 

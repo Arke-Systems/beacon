@@ -12,13 +12,13 @@ export default async function handleUpdates<TItem>(
 
 		try {
 			await ctx.update(item);
-			reporter.finish('updated');
 			updated.add(key);
 		} catch (ex: unknown) {
 			collectError(key, ex);
+		} finally {
+			ctx.progress.increment();
+			reporter.finish('updated');
 		}
-
-		ctx.progress.increment();
 	}
 
 	return updated;

@@ -40,8 +40,8 @@ async function deleteAll<T>(
 		for (const item of items.values()) {
 			using reporter = new ProgressReporter(bar, 'deleting', humanize(item));
 			await deleteItem(item);
-			reporter.finish('deleted');
 			bar.increment();
+			reporter.finish('deleted');
 		}
 	}
 }

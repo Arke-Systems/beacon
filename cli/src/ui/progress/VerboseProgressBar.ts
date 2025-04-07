@@ -10,10 +10,6 @@ import type StyledText from './StyledText.js';
 export default class VerboseProgressBar implements ProgressBar {
 	#current = 0;
 
-	// Justification "999 ms".length
-	// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-	#maxElapsedLength = 6;
-
 	public constructor(
 		private readonly ui: ConsoleUiContext,
 		private readonly name: string,
@@ -29,19 +25,19 @@ export default class VerboseProgressBar implements ProgressBar {
 
 		const counter = formatCounter(this.ui, {
 			total: this.total,
-			value: this.#current + 1,
+			value: this.#current,
 		}).value;
 
 		const elapsed = formatElapsed(payload.elapsedMs);
 
-		this.#maxElapsedLength = Math.max(
-			this.#maxElapsedLength,
+		this.ui.maxElapsedLength = Math.max(
+			this.ui.maxElapsedLength,
 			elapsed.visibleLength,
 		);
 
 		const paddedElapsed =
 			elapsed.value.length > 0
-				? padStart(elapsed, this.#maxElapsedLength).value
+				? padStart(elapsed, this.ui.maxElapsedLength).value
 				: '';
 
 		this.ui.info(

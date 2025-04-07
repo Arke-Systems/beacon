@@ -3,9 +3,10 @@ import type { SchemaField } from '#cli/cs/Types.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
 import createStylus from '#cli/ui/createStylus.js';
 import taxonomyStrategy from '../../taxonomy/taxonomyStrategy.js';
+import type Replacer from './Replacer.js';
 import { isTaxonomyValue } from './TaxonomyValue.js';
 
-export default class TaxonomyRemover {
+export default class TaxonomyRemover implements Replacer {
 	readonly #refPath: ReferencePath;
 
 	public constructor(refPath: ReferencePath) {
@@ -19,7 +20,7 @@ export default class TaxonomyRemover {
 	}
 
 	#removeTaxonomies(value: unknown) {
-		if (value === null) {
+		if (value === null || value === undefined) {
 			return;
 		}
 
