@@ -1,10 +1,11 @@
 import exportTaxonomy from '#cli/cs/taxonomies/export.js';
+import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import push from '#cli/schema/push.js';
-import yaml from 'js-yaml';
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
+import { stringify } from 'yaml';
 import type { TestFixtures } from '../../lib/TestContext.js';
 
 export default async function pushTerms({
@@ -44,7 +45,7 @@ export default async function pushTerms({
 
 async function updateSerializationToIncludeTerms(fixturePath: string) {
 	const path = resolve(fixturePath, 'taxonomies', 'new_taxonomy.yaml');
-	const existing = yaml.load(await readFile(path, 'utf8'));
+	const existing = await readYaml(path);
 
 	const term = (name: string, ...children: unknown[]) => ({
 		name,
@@ -54,7 +55,7 @@ async function updateSerializationToIncludeTerms(fixturePath: string) {
 
 	await writeFile(
 		path,
-		yaml.dump({
+		stringify({
 			...(existing as Record<string, unknown>),
 			terms: [
 				term('Term 1', term('Term 1.1'), term('Term 1.2'), term('Term 1.3')),

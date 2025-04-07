@@ -1,0 +1,10 @@
+// The text strings in this JSON file contain literals that appear to be
+// plain whitespace, but are actually Unicode characters with a misleading
+// appearance.
+//
+// The associated test is aimed at ensuring that we can correctly round-trip
+// these characters through the YAML parser and serializer.
+{
+	"text-1": " Receipts: ",
+	"text-2": " "
+}

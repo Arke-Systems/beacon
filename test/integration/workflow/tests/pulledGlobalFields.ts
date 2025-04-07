@@ -1,6 +1,5 @@
+import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
 import type { WorkflowFixtures } from '../lib/WorkflowTestContext.js';
@@ -15,10 +14,8 @@ export default async function pulledGlobalFields({
 		const pulled = resolve(currentFixturePath, 'global-fields');
 		const original = resolve(originalFixturePath, 'global-fields');
 
-		const load = async (name: string) => {
-			const raw = await readFile(resolve(pulled, `${name}.yaml`), 'utf8');
-			return yaml.load(raw) as Record<string, unknown>;
-		};
+		const load = async (name: string) =>
+			readYaml(resolve(pulled, `${name}.yaml`));
 
 		const [contact, seo] = await Promise.all([load('contact'), load('seo')]);
 

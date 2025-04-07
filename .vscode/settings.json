@@ -9,22 +9,6 @@
 	},
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
-	"eslint.useFlatConfig": true,
-	"files.associations": {
-		".env.example": "properties"
-	},
-	"files.readonlyInclude": {
-		"**/node_modules/**": true,
-		"cli/src/cs/api/cma-openapi-3.d.ts": true
-	},
-	"javascript.preferences.importModuleSpecifier": "project-relative",
-	"javascript.preferences.importModuleSpecifierEnding": "js",
-	"npm.packageManager": "yarn",
-	"typescript.preferences.importModuleSpecifier": "project-relative",
-	"typescript.preferences.importModuleSpecifierEnding": "js",
-	"typescript.preferences.preferTypeOnlyAutoImports": true,
-	"typescript.tsc.autoDetect": "off",
-	"typescript.tsdk": "node_modules/typescript/lib",
 	"eslint.rules.customizations": [
 		{
 			"rule": "@typescript-eslint/consistent-type-imports",
@@ -74,5 +58,26 @@
 			"rule": "sort-keys",
 			"severity": "off"
 		}
-	]
+	],
+	"eslint.useFlatConfig": true,
+	"files.associations": {
+		".env.example": "properties"
+	},
+	"files.readonlyInclude": {
+		"**/node_modules/**": true,
+		"cli/src/cs/api/cma-openapi-3.d.ts": true,
+		"test/snapshots/*.yaml": true
+	},
+	"javascript.preferences.importModuleSpecifier": "project-relative",
+	"javascript.preferences.importModuleSpecifierEnding": "js",
+	"npm.packageManager": "yarn",
+	"search.exclude": {
+		"**/node_modules": true,
+		"yarn.lock": true
+	},
+	"typescript.preferences.importModuleSpecifier": "project-relative",
+	"typescript.preferences.importModuleSpecifierEnding": "js",
+	"typescript.preferences.preferTypeOnlyAutoImports": true,
+	"typescript.tsc.autoDetect": "off",
+	"typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,11 +1,10 @@
 import type { Schema } from '#cli/cs/Types.js';
 import { isSchema } from '#cli/cs/Types.js';
+import readYaml from '#cli/fs/readYaml.js';
 import writeYaml from '#cli/fs/writeYaml.js';
 import schemaDirectory from '#cli/schema/global-fields/schemaDirectory.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import push from '#cli/schema/push.js';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
 import type { WorkflowFixtures } from '../lib/WorkflowTestContext.js';
@@ -36,8 +35,7 @@ export default async function mutateGlobalField({
 async function loadSeo() {
 	const globalFields = schemaDirectory();
 	const seoPath = resolve(globalFields, 'seo.yaml');
-	const rawSeo = await readFile(seoPath, 'utf-8');
-	const seo = yaml.load(rawSeo);
+	const seo = await readYaml(seoPath);
 
 	if (!isSchema(seo)) {
 		throw new Error('SEO schema is not valid');

@@ -4,8 +4,8 @@ import importContentType from '#cli/cs/content-types/import.js';
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import type { Schema } from '#cli/cs/Types.js';
 import transform from '#cli/dto/schema/toCs.js';
-import yaml from 'js-yaml';
 import { randomUUID } from 'node:crypto';
+import { parse } from 'yaml';
 import readFixture from '../../fixtures/readFixture.js';
 
 export default async function createContentType(
@@ -16,7 +16,7 @@ export default async function createContentType(
 	const uid = title.toLowerCase().replaceAll('-', '_');
 
 	const fixture: Schema = {
-		...(yaml.load(fixtureYaml) as ContentType),
+		...(parse(fixtureYaml) as ContentType),
 		title,
 		uid,
 	};

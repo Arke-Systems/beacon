@@ -1,7 +1,6 @@
+import readYaml from '#cli/fs/readYaml.js';
 import tryReadDir from '#cli/fs/tryReadDir.js';
 import isRecord from '#cli/util/isRecord.js';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
 import { extname, resolve } from 'node:path';
 import { styleText } from 'node:util';
 import getUi from '../lib/SchemaUi.js';
@@ -24,8 +23,7 @@ export default async function indexFromFilesystem<
 		}
 
 		const fullPath = resolve(schemaPath, file.name);
-		const raw = await readFile(fullPath, 'utf-8');
-		const parsed = yaml.load(raw);
+		const parsed = await readYaml(fullPath);
 
 		if (!isRecord(parsed) || !typeGuard(parsed)) {
 			ui.warn(

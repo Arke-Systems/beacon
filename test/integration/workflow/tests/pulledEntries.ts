@@ -1,6 +1,5 @@
+import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { expect } from 'vitest';
 import type { WorkflowFixtures } from '../lib/WorkflowTestContext.js';
@@ -17,7 +16,7 @@ export default async function pulledEntries({
 
 		const load = async (dir: string, contentType: string, name: string) => {
 			const resolved = resolve(dir, contentType, `${name}.yaml`);
-			const parsed = await yaml.load(await readFile(resolved, 'utf8'));
+			const parsed = await readYaml(resolved);
 			return parsed as Record<string, unknown>;
 		};
 

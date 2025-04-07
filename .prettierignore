@@ -1,0 +1,4 @@
+# Some test snapshots are sensitive to whitespace and should not be
+# handled by prettier
+test/snapshots/leading-unicode.yaml
+test/snapshots/normalize-exported-schema.yaml

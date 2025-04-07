@@ -37,7 +37,7 @@ export default class FsTaxonomyCollection implements TaxonomyCollection {
 
 	async #write(normalized: NormalizedTaxonomy) {
 		const path = this.#getPath(normalized.taxonomy.uid);
-		return writeYaml(path, normalized, { sortKeys: false });
+		return writeYaml(path, normalized, { sortMapEntries: false });
 	}
 
 	#getPath(uid: string) {

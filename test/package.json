@@ -1,12 +1,9 @@
 {
   "dependencies": {
     "http-status-codes": "^2.3.0",
-    "js-yaml": "^4.1.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "3.1.1"
-  },
-  "devDependencies": {
-    "@types/js-yaml": "^4.0.9"
+    "vitest": "3.1.1",
+    "yaml": "^2.7.1"
   },
   "imports": {
     "#cli/*": "../cli/src/*",

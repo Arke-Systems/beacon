@@ -2,10 +2,9 @@ import type { RawAssetItem } from '#cli/cs/assets/Types.js';
 import { isRawAsset } from '#cli/cs/assets/Types.js';
 import index from '#cli/cs/entries/index.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
+import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
-import yaml from 'js-yaml';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { inspect } from 'node:util';
 import { expect } from 'vitest';
@@ -22,7 +21,7 @@ export default async function pushedEntries({
 
 		const load = async (dir: string, contentType: string, name: string) => {
 			const resolved = resolve(dir, contentType, `${name}.yaml`);
-			const parsed = await yaml.load(await readFile(resolved, 'utf8'));
+			const parsed = await readYaml(resolved);
 			return parsed as Record<string, unknown>;
 		};
 

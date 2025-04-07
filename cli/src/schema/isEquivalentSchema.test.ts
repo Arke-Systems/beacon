@@ -1,7 +1,7 @@
 import type { Schema } from '#cli/cs/Types.js';
 import readFixture from '#test/fixtures/readFixture';
-import yaml from 'js-yaml';
 import { expect, test } from 'vitest';
+import { parse } from 'yaml';
 import isEquivalentSchema from './isEquivalentSchema.js';
 
 test('Equal schemas are equal', () => {
@@ -16,8 +16,8 @@ test('Equal schemas are equal', () => {
 			readFixture(`${fixtureName}-export.yaml`),
 		]);
 
-		const read = yaml.load(x) as Schema;
-		const exportFixture = yaml.load(y) as Schema;
+		const read = parse(x) as Schema;
+		const exportFixture = parse(y) as Schema;
 
 		expect(isEquivalentSchema(read, exportFixture)).toBe(true);
 	}),
