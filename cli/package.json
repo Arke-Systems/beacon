@@ -26,7 +26,7 @@
     "@types/node": "^22.14.0",
     "json-schema-to-typescript": "^15.0.4",
     "openapi-typescript": "^7.6.1",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": "22.X"
@@ -50,5 +50,5 @@
     "prepack": "node ./build/prepack.js"
   },
   "type": "module",
-  "version": "1.9.5"
+  "version": "1.10.0"
 }

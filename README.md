@@ -75,6 +75,7 @@ Deserializes the contents from the file system into the stack.
 | Option                       | Description                                     | Required? |
 | ---------------------------- | ----------------------------------------------- | --------- |
 | `--api-key <value>`          | API key for the stack.                          | ✅        |
+| `--api-timeout <value>`      | Timeout for API requests in milliseconds.       | ❌        |
 | `--base-url <value>`         | URL for the Contentstack Management API.        | ✅        |
 | `--branch <value>`           | Stack branch to operate on. Defaults to `main`. | ✅        |
 | `--management-token <value>` | Token for authentication with the stack.        | ✅        |
@@ -243,6 +244,7 @@ schema:
     management-token: cs-example
     branch: main
     base-url: https://api.contentstack.io/
+    timeout: 10000
 
   schema:
     properties:
