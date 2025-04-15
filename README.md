@@ -12,20 +12,27 @@ Beacon enables full-stack synchronization by allowing users to:
 
 - Serialize (export) a stack's entire contents, including entries, assets,
   content types, global fields, and taxonomies, into the file system.
-
 - Store the serialized data under version control for tracking and
   CI/CD deployment.
-
 - Deserialize (import) the stored data into a target stack, restoring
   its state.
-
 - Create and maintain local backups of stack contents.
-
 - Clear a stack by removing all its contents.
 
 Beacon is particularly useful for teams working with multiple Contentstack
 environments, ensuring content model consistency across development, staging,
 and production.
+
+## Pre-requisites
+
+Before using Beacon, ensure you have the following information to connect to your stack:
+
+1. **Stack API Key** – Required to identify your Contentstack stack.
+[How to get your API key](https://www.contentstack.com/docs/developers/apis/content-management-api#how-to-get-stack-api-key)
+2. **Contentstack Management API Base URL** – Used for making API calls to your stack.
+[See instructions here](https://www.contentstack.com/docs/developers/apis/content-management-api#base-url).
+3. **Management Token** – Used to authenticate API requests to the stack.
+[How to generate a Management Token](https://www.contentstack.com/docs/developers/create-tokens/generate-a-management-token).
 
 ## Installation
 
@@ -74,11 +81,11 @@ Deserializes the contents from the file system into the stack.
 
 | Option                       | Description                                     | Required? |
 | ---------------------------- | ----------------------------------------------- | --------- |
-| `--api-key <value>`          | API key for the stack.                          | ✅        |
-| `--api-timeout <value>`      | Timeout for API requests in milliseconds.       | ❌        |
-| `--base-url <value>`         | URL for the Contentstack Management API.        | ✅        |
-| `--branch <value>`           | Stack branch to operate on. Defaults to `main`. | ✅        |
-| `--management-token <value>` | Token for authentication with the stack.        | ✅        |
+| `--api-key `          | API key for the stack.                          | ✅        |
+| `--api-timeout `      | Timeout for API requests in milliseconds.       | ❌        |
+| `--base-url `         | URL for the Contentstack Management API.        | ✅        |
+| `--branch `           | Stack branch to operate on. Defaults to `main`. | ✅        |
+| `--management-token ` | Token for authentication with the stack.        | ✅        |
 | `--verbose`                  | Enables verbose logging.                        | ❌        |
 | `--help`                     | Displays help information.                      | ❌        |
 
@@ -86,7 +93,7 @@ Deserializes the contents from the file system into the stack.
 
 | Option                         | Description                                                   | Default       |
 | ------------------------------ | ------------------------------------------------------------- | ------------- |
-| `--schema-path <path>`         | Path to store serialized data.                                | `./cs/schema` |
+| `--schema-path `         | Path to store serialized data.                                | `./cs/schema` |
 | `--extension [name:uid]`       | Maps third-party plugin UIDs to stable names for portability. | N/A           |
 | `--json-rte-plugin [name:uid]` | Similar to `--extension` but for JSON RTE plugins.            | N/A           |
 
@@ -94,7 +101,7 @@ Deserializes the contents from the file system into the stack.
 
 | Option                                     | Description                 | Default |
 | ------------------------------------------ | --------------------------- | ------- |
-| `--deletion-strategy <delete,ignore,warn>` | Controls deletion behavior. | `warn`  |
+| `--deletion-strategy ` | Controls deletion behavior. | `warn`  |
 
 ## Handling Third-Party Plugins
 
@@ -121,15 +128,12 @@ To obtain the correct UID values for third-party plugins:
 
    - In the Contentstack admin UI, create a new content type that includes the
      third-party plugin.
-
    - If the plugin provides a JSON RTE plugin, ensure it is explicitly selected
      as active for the field.
-
 2. **Export the Content Type:**
 
    - Use the Contentstack admin UI to export the content type as JSON. The
      exported JSON will contain minimized data, making it challenging to read.
-
 3. **Locate the UID Values:**
 
    - Within the exported JSON, find the block of JSON that corresponds to the
@@ -148,10 +152,8 @@ To obtain the correct UID values for third-party plugins:
        "unique": false
      }
      ```
-
    - The `extension_uid` value (`blt6b7c082b-example` in this example) is the
      UID for the custom field.
-
 4. **Identify the JSON RTE Plugin UID:**
 
    - Similarly, locate the JSON RTE plugin's UID within the exported JSON. It
@@ -170,10 +172,8 @@ To obtain the correct UID values for third-party plugins:
        "unique": false
      },
      ```
-
    - The `plugins` array contains the JSON RTE plugin UID (`bltd0dac425-example`
      in this example).
-
 5. **Use the UID Values in Beacon:**
 
    - Map these UIDs to stable names using `--extension` and `--json-rte-plugin`
@@ -184,7 +184,6 @@ To obtain the correct UID values for third-party plugins:
        --extension bynder:blt6b7c082b-uid-in-source-stack \
        --json-rte-plugin bynder:bltd0dac425-uid-in-source-stack
      ```
-
    - When pushing data to another stack, use the same mapping:
 
      ```sh
@@ -192,7 +191,6 @@ To obtain the correct UID values for third-party plugins:
        --extension bynder:blt6b7c082b-uid-in-target-stack \
        --json-rte-plugin bynder:bltd0dac425-uid-in-target-stack
      ```
-
    - Note: the word `bynder` in the above examples is user-defined and
      arbitrary. It is used to identify the third-party plugin, and it will be
      serialized in the data instead of the stack-specific UID values. You can
@@ -391,6 +389,7 @@ To invoke this action, create and publish a [new release][2] in GitHub.
 
 Beacon is licensed under the MIT License.
 
-[1]: https://yarnpkg.com/ 'Yarn package manager'
-[2]: https://github.com/Arke-Systems/beacon/releases/new 'Create a new release'
-[3]: https://yarnpkg.com/configuration/yarnrc#injectEnvironmentFiles 'Yarn Inject Environment Files'
+[1]: https://yarnpkg.com/
+[2]: https://github.com/Arke-Systems/beacon/releases/new
+[3]: https://yarnpkg.com/configuration/yarnrc#injectEnvironmentFiles
+
