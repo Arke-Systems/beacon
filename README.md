@@ -29,13 +29,10 @@ Before using Beacon, ensure you have the following information to connect to you
 
 1. **Stack API Key** – Required to identify your Contentstack stack.
    * [Learn how to get your API key](https://www.contentstack.com/docs/developers/apis/content-management-api#how-to-get-stack-api-key).
-
 2. **Contentstack Management API Base URL** – Used for making API calls to your stack.
    * [See here how to get your API Base URL](https://www.contentstack.com/docs/developers/apis/content-management-api#base-url).
-
 3. **Management Token** – Used to authenticate API requests to the stack.
    * [Discover how to generate a Management Token](https://www.contentstack.com/docs/developers/create-tokens/generate-a-management-token).
-
 
 ## Installation
 
