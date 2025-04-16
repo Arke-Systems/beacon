@@ -238,37 +238,36 @@ Example:
 ```yaml
 # yaml-language-server: $schema=node_modules/@arke-systems/beacon-cli/dist/cfg/Config.schema.yaml
 
+client:
+  api-key: bltcfcf264c-example
+  management-token: cs-example
+  branch: main
+  base-url: https://api.contentstack.io/
+  timeout: 10000
+
 schema:
-  client:
-    api-key: bltcfcf264c-example
-    management-token: cs-example
-    branch: main
-    base-url: https://api.contentstack.io/
-    timeout: 10000
+  properties:
+    deletion-strategy: delete # delete | ignore | warn
+    schema-path: ./cs/schema
 
-  schema:
-    properties:
-      deletion-strategy: delete # delete | ignore | warn
-      schema-path: ./cs/schema
+    extension:
+      Bynder: blt6b7c082b-example
 
-      extension:
-        Bynder: blt6b7c082b-example
+    json-rte-plugin:
+      Bynder: bltdd6396f0-example
 
-      json-rte-plugin:
-        Bynder: bltdd6396f0-example
+    # Include or exclude assets using glob patterns.
+    assets:
+      include: ['**']
+      exclude: []
 
-      # Include or exclude assets using glob patterns.
-      assets:
-        include: ['**']
-        exclude: []
+    # Determine whether to serialize taxonomy terms or just the
+    # taxonomy structure.
+    taxonomies:
+      page_type: taxonomy and terms
+      '*': only taxonomy
 
-      # Determine whether to serialize taxonomy terms or just the
-      # taxonomy structure.
-      taxonomies:
-        page_type: taxonomy and terms
-        '*': only taxonomy
-
-  verbose: false
+verbose: false
 ```
 
 ## Examples
