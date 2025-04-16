@@ -8,6 +8,8 @@ export { default as branch } from './branch.js';
 export type { BranchOption } from './branch.js';
 export { default as deletionStrategy } from './deletionStrategy.js';
 export type { DeletionStrategyOption } from './deletionStrategy.js';
+export { default as environment } from './environment.js';
+export type { EnvironmentOption } from './environment.js';
 export { default as extension } from './extension.js';
 export type { ExtensionOption } from './extension.js';
 export { default as jsonRtePlugin } from './jsonRtePlugin.js';

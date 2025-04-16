@@ -16,6 +16,7 @@ clear
 	.addOption(Options.apiKey)
 	.addOption(Options.baseUrl)
 	.addOption(Options.branch)
+	.addOption(Options.environment)
 	.addOption(Options.managementToken)
 	.addOption(Options.verbose)
 	.description('Empty all data from a stack.');
@@ -24,6 +25,7 @@ type CommandOptions = Options.ApiKeyOption &
 	Options.ApiTimeoutOption &
 	Options.BaseUrlOption &
 	Options.BranchOption &
+	Options.EnvironmentOption &
 	Options.ManagementTokenOption &
 	Options.VerboseOption;
 

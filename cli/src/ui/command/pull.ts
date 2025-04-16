@@ -20,6 +20,7 @@ pull
 	.addOption(Options.apiKey)
 	.addOption(Options.baseUrl)
 	.addOption(Options.branch)
+	.addOption(Options.environment)
 	.addOption(Options.extension)
 	.addOption(Options.jsonRtePlugin)
 	.addOption(Options.managementToken)
@@ -31,6 +32,7 @@ type CommandOptions = Options.ApiKeyOption &
 	Options.ApiTimeoutOption &
 	Options.BaseUrlOption &
 	Options.BranchOption &
+	Options.EnvironmentOption &
 	Options.ExtensionOption &
 	Options.JsonRtePluginOption &
 	Options.ManagementTokenOption &
