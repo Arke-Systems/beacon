@@ -7,10 +7,7 @@ import loadConfig from './loadConfig.js';
 describe(loadConfig.name, () => {
 	it('can load a valid configuration file', async () => {
 		// Arrange
-		const configPath = new URL(
-			'fixtures/config/valid-config.yaml',
-			TestProjectUrl,
-		);
+		const configPath = resolveConfigUrl('valid-config');
 
 		// Act
 		const result = await loadConfig(configPath);
@@ -59,10 +56,7 @@ describe(loadConfig.name, () => {
 
 	it('throws a ConfigMissingError error for missing files', async () => {
 		// Arrange
-		const configPath = new URL(
-			'fixtures/config/missing-config.yaml',
-			TestProjectUrl,
-		);
+		const configPath = resolveConfigUrl('missing-config');
 
 		// Act
 		const attempt = async () => await loadConfig(configPath);
@@ -73,10 +67,7 @@ describe(loadConfig.name, () => {
 
 	it('throws a ConfigurationError for invalid files', async () => {
 		// Arrange
-		const configPath = new URL(
-			'fixtures/config/invalid-config.yaml',
-			TestProjectUrl,
-		);
+		const configPath = resolveConfigUrl('invalid-config');
 
 		// Act
 		const attempt = async () => await loadConfig(configPath);
@@ -84,4 +75,44 @@ describe(loadConfig.name, () => {
 		// Assert
 		await expect(attempt).rejects.toThrowError(ConfigurationError);
 	});
+
+	it('can load a configuration with environments', async () => {
+		// Arrange
+		const configPath = resolveConfigUrl('config-with-environments');
+
+		// Act
+		const result = await loadConfig(configPath);
+
+		// Assert
+		expect(result.environments).toEqual({
+			dev: {
+				client: {
+					apiKey: 'dev-key',
+					baseUrl: new URL('https://dev.example.com'),
+					branch: 'dev-branch',
+					managementToken: 'dev-token',
+				},
+				schema: {
+					deletionStrategy: 'warn',
+					schemaPath: 'dev-path',
+				},
+			},
+			prod: {
+				client: {
+					apiKey: 'prod-key',
+					baseUrl: new URL('https://prod.example.com'),
+					branch: 'prod-branch',
+					managementToken: 'prod-token',
+				},
+				schema: {
+					deletionStrategy: 'delete',
+					schemaPath: 'prod-path',
+				},
+			},
+		});
+	});
 });
+
+function resolveConfigUrl(name: string) {
+	return new URL(`fixtures/config/${name}.yaml`, TestProjectUrl);
+}

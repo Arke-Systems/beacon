@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../../cli/src/cfg/Config.schema.yaml
+
+client:
+  api-key: default-key
+  base-url: https://default.com
+  branch: default-branch
+  management-token: default-token
+
+schema:
+  schema-path: default-path
+  deletion-strategy: warn
+
+environments:
+  dev:
+    client:
+      api-key: dev-key
+      base-url: https://dev.example.com
+      branch: dev-branch
+      management-token: dev-token
+    schema:
+      schema-path: dev-path
+      deletion-strategy: warn
+  prod:
+    client:
+      api-key: prod-key
+      base-url: https://prod.example.com
+      branch: prod-branch
+      management-token: prod-token
+    schema:
+      schema-path: prod-path
+      deletion-strategy: delete

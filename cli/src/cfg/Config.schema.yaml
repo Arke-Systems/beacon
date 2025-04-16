@@ -3,7 +3,7 @@
 type: object
 additionalProperties: false
 properties:
-  client:
+  client: &client
     type: object
     additionalProperties: false
     properties:
@@ -30,7 +30,7 @@ properties:
         minimum: 1
         default: 10000
 
-  schema:
+  schema: &schema
     type: object
     additionalProperties: false
     properties:
@@ -87,3 +87,14 @@ properties:
   verbose:
     type: boolean
     default: false
+
+  environments:
+    type: object
+    minProperties: 1
+    additionalProperties:
+      type: object
+      minProperties: 1
+      additionalProperties: false
+      properties:
+        client: *client
+        schema: *schema
