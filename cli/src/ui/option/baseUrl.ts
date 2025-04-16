@@ -14,7 +14,6 @@ baseUrl.choices([
 
 baseUrl
 	.env('Contentstack_Management_API')
-	.makeOptionMandatory()
 	.argParser(
 		(val: string) => new URL(noEmptyStringsFor('Management API')(val)),
 	);

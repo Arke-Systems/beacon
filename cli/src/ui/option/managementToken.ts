@@ -9,7 +9,6 @@ const managementToken = new Option(
 
 managementToken
 	.env('Contentstack_Management_Token')
-	.makeOptionMandatory()
 	.argParser(noEmptyStringsFor('Management token'));
 
 export interface ManagementTokenOption {
