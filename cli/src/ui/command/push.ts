@@ -12,6 +12,7 @@ import * as Options from '#cli/ui/option/index.js';
 import { ConsoleUiContext } from '#cli/ui/UiContext.js';
 import { Command } from 'commander';
 import { resolve } from 'node:path';
+import logOptions from '../logOptions.js';
 import type { CommonOptions } from '../option/commonOptions.js';
 import { addCommonOptions } from '../option/commonOptions.js';
 
@@ -31,16 +32,11 @@ type CommandOptions = CommonOptions &
 	Options.JsonRtePluginOption &
 	Options.SchemaPathOption;
 
-push.action(async (options: CommandOptions) =>
+push.action(async (cliOptions: CommandOptions) =>
 	HandledError.ExitIfThrown(async () => {
-		using ui = new ConsoleUiContext(await mapOptions(options));
-		const b = createStylus('bold');
-		const y = createStylus('yellowBright');
-
-		const msg1 = 'Transfering schema from ';
-		const msg2 = y`${humanizePath(resolve(options.schemaPath))} into `;
-		const msg3 = y`${options.apiKey} (${options.branch})...`;
-		ui.info(b`\n${msg1 + msg2 + msg3}\n`);
+		const options = await mapOptions(cliOptions);
+		using ui = new ConsoleUiContext(options);
+		ui.info(logStart(cliOptions, options));
 
 		const { histogram, results } = await Store.run(ui, async () => {
 			await using client = createClient(ui);
@@ -75,4 +71,29 @@ async function mapOptions(options: CommandOptions) {
 		},
 		verbose: options.verbose,
 	});
+}
+
+function logStart(
+	cliOptions: CommandOptions,
+	options: Awaited<ReturnType<typeof mapOptions>>,
+) {
+	const y = createStylus('yellowBright');
+
+	const parts = [
+		'\nSerializing schema from ',
+		y`${humanizePath(resolve(options.schema.schemaPath))} into`,
+	];
+
+	if (cliOptions.environment) {
+		parts.push(y` ${cliOptions.environment} (${options.client.apiKey})`);
+	} else {
+		parts.push(y` ${options.client.apiKey}`);
+	}
+
+	parts.push(
+		y` on the ${options.client.branch} branch:\n`,
+		logOptions(options),
+	);
+
+	return parts.join('');
 }
