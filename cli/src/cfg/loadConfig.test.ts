@@ -10,7 +10,7 @@ describe(loadConfig.name, () => {
 		const configPath = resolveConfigUrl('valid-config');
 
 		// Act
-		const result = await loadConfig(configPath);
+		const result = await loadConfig(configPath, undefined);
 
 		// Assert
 		expect(result).toEqual({
@@ -59,7 +59,7 @@ describe(loadConfig.name, () => {
 		const configPath = resolveConfigUrl('missing-config');
 
 		// Act
-		const attempt = async () => await loadConfig(configPath);
+		const attempt = async () => await loadConfig(configPath, undefined);
 
 		// Assert
 		await expect(attempt).rejects.toThrowError(ConfigMissingError);
@@ -70,7 +70,7 @@ describe(loadConfig.name, () => {
 		const configPath = resolveConfigUrl('invalid-config');
 
 		// Act
-		const attempt = async () => await loadConfig(configPath);
+		const attempt = async () => await loadConfig(configPath, undefined);
 
 		// Assert
 		await expect(attempt).rejects.toThrowError(ConfigurationError);
@@ -81,33 +81,19 @@ describe(loadConfig.name, () => {
 		const configPath = resolveConfigUrl('config-with-environments');
 
 		// Act
-		const result = await loadConfig(configPath);
+		const result = await loadConfig(configPath, 'dev');
 
 		// Assert
-		expect(result.environments).toEqual({
-			dev: {
-				client: {
-					apiKey: 'dev-key',
-					baseUrl: new URL('https://dev.example.com'),
-					branch: 'dev-branch',
-					managementToken: 'dev-token',
-				},
-				schema: {
-					deletionStrategy: 'warn',
-					schemaPath: 'dev-path',
-				},
+		expect(result).toEqual({
+			client: {
+				apiKey: 'default-key',
+				baseUrl: new URL('https://default.com'),
+				branch: 'dev-branch',
+				managementToken: 'dev-token',
 			},
-			prod: {
-				client: {
-					apiKey: 'prod-key',
-					baseUrl: new URL('https://prod.example.com'),
-					branch: 'prod-branch',
-					managementToken: 'prod-token',
-				},
-				schema: {
-					deletionStrategy: 'delete',
-					schemaPath: 'prod-path',
-				},
+			schema: {
+				deletionStrategy: 'warn',
+				schemaPath: 'dev-path',
 			},
 		});
 	});
