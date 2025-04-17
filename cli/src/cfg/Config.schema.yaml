@@ -60,6 +60,7 @@ properties:
       assets:
         type: object
         additionalProperties: false
+        description: Include or exclude assets using glob patterns.
         default:
           include: ['**']
           exclude: []
@@ -78,6 +79,11 @@ properties:
       taxonomies:
         type: object
         minProperties: 1
+
+        description: |
+          Determine whether to serialize taxonomy terms or just the
+          taxonomy structure.
+
         additionalProperties:
           type: string
           enum: ['only taxonomy', 'taxonomy and terms']
@@ -91,6 +97,22 @@ properties:
   environments:
     type: object
     minProperties: 1
+
+    description: |
+      An optional list of named environments. Environment names are arbitrary.
+
+      Named environments may be targetted using the `--environment` option.
+
+      If specified, an environment's settings will be merged with the base
+      settings:
+
+        - `schema.extension`, `schema.json-rte-plugin`, and `schema.taxonomies`
+          are merged.
+
+        - `schema.assets.include` and `schema.assets.exclude` are concatenated.
+
+        - All other values will prefer the named environment.
+
     additionalProperties:
       type: object
       minProperties: 1

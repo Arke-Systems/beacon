@@ -78,7 +78,9 @@ Deserializes the contents from the file system into the stack.
 | `--api-timeout <value>`      | Timeout for API requests in milliseconds.       | ❌        |
 | `--base-url <value>`         | URL for the Contentstack Management API.        | ✅        |
 | `--branch <value>`           | Stack branch to operate on. Defaults to `main`. | ✅        |
+| `--config-file <value>`      | Path to the YAML configuration file.            | ❌        |
 | `--management-token <value>` | Token for authentication with the stack.        | ✅        |
+| `--environment <value>`      | Named configuration environment.                | ❌        |
 | `--verbose`                  | Enables verbose logging.                        | ❌        |
 | `--help`                     | Displays help information.                      | ❌        |
 
@@ -247,7 +249,7 @@ client:
 
 schema:
   properties:
-    deletion-strategy: delete # delete | ignore | warn
+    deletion-strategy: warn # delete | ignore | warn
     schema-path: ./cs/schema
 
     extension:
@@ -267,8 +269,55 @@ schema:
       page_type: taxonomy and terms
       '*': only taxonomy
 
+environments:
+  dev:
+    client: { api-key: bltcfcf264c-dev-example }
+    schema:
+      deletion-strategy: delete
+      extension: { Bynder: blt6b7c082b-dev-example }
+      json-rte-plugin: { Bynder: bltdd6396f0-dev-example }
+
+  production:
+    client: { api-key: bltcfcf264c-prod-example }
+    schema:
+      deletion-strategy: ignore
+      extension: { Bynder: blt6b7c082b-prod-example }
+      json-rte-plugin: { Bynder: bltdd6396f0-prod-example }
+
 verbose: false
 ```
+
+### Named Environments
+
+The configuration file may contain an optional `environments` section. This
+section allows defining multiple named environments, each with its own
+configuration. This is useful for managing different environments (e.g.,
+development, staging, production) with different settings.
+
+The `environments` section is a map of environment names to configuration
+values. Each environment can override the base configuration values
+defined in the `client` and `schema` sections.
+
+When a named environment is specified using the `--environment` option,
+the settings for that environment will be merged with the base
+configuration. During this merge, the following rules apply:
+
+- `schema.extension`, `schema.json-rte-plugin`, and `schema.taxonomies`
+  are merged, with values from the named environment being used _in addition_
+  to values from the base configuration.
+
+- `schema.assets.include` and `schema.assets.exclude` are concatenated,
+  with values from the named environment being _added_ to the base
+  configuration.
+
+- All other values will prefer the named environment.
+
+### Management Tokens
+
+Although the configuration file supports including the management token,
+it is **highly recommended** to omit this value from the configuration file
+for security reasons. Instead, use the `--management-token` command line
+option or set the `Contentstack_Management_Token` environment variable.
 
 ## Examples
 
