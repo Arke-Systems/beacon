@@ -63,6 +63,7 @@ async function mapOptions(options: CommandOptions) {
 			timeout: options.apiTimeout,
 		},
 		configFile: options.configFile,
+		namedEnvironment: options.environment,
 		schema: {
 			deletionStrategy: options.deletionStrategy,
 			extension: options.extension,

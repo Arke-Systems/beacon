@@ -45,6 +45,7 @@ async function mapOptions(options: CommonOptions) {
 			timeout: options.apiTimeout,
 		},
 		configFile: options.configFile,
+		namedEnvironment: options.environment,
 		schema: {
 			deletionStrategy: 'delete',
 		},
