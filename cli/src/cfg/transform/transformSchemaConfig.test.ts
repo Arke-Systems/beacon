@@ -36,7 +36,7 @@ describe(transformSchemaConfig.name, () => {
 
 		const result = transformSchemaConfig(baseSchema, envSchema);
 
-		expect(result).toEqual({});
+		expect(result).toBeUndefined();
 	});
 
 	it('should prioritize envSchema over baseSchema for overlapping keys', () => {

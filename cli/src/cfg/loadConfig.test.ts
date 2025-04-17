@@ -20,7 +20,6 @@ describe(loadConfig.name, () => {
 				branch: 'branch name',
 				managementToken: 'management token',
 			},
-			configFile: configPath,
 			schema: {
 				deletionStrategy: 'delete',
 				extension: {
