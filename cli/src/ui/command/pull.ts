@@ -61,6 +61,7 @@ async function mapOptions(options: CommandOptions) {
 			timeout: options.apiTimeout,
 		},
 		configFile: options.configFile,
+		namedEnvironment: options.environment,
 		schema: {
 			deletionStrategy: 'delete',
 			extension: options.extension,
@@ -76,7 +77,7 @@ function logStart(
 	options: Awaited<ReturnType<typeof mapOptions>>,
 ) {
 	const y = createStylus('yellowBright');
-	const parts = ['\nSerializing schema from '];
+	const parts = ['\nSerializing schema from'];
 
 	if (cliOptions.environment) {
 		parts.push(y` ${cliOptions.environment} (${options.client.apiKey})`);
