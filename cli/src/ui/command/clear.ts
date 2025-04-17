@@ -1,35 +1,21 @@
+import resolveConfig from '#cli/cfg/resolveConfig.js';
 import { createClient } from '#cli/cs/api/Client.js';
 import clearJob from '#cli/schema/clear.js';
+import { Store } from '#cli/schema/lib/SchemaUi.js';
 import createStylus from '#cli/ui/createStylus.js';
 import HandledError from '#cli/ui/HandledError.js';
 import logApiPerformance from '#cli/ui/logApiPerformance.js';
-import * as Options from '#cli/ui/option/index.js';
 import { ConsoleUiContext } from '#cli/ui/UiContext.js';
 import { Command } from 'commander';
-import resolveConfig from '../../cfg/resolveConfig.js';
-import { Store } from '../../schema/lib/SchemaUi.js';
+import type { CommonOptions } from '../option/commonOptions.js';
+import { addCommonOptions } from '../option/commonOptions.js';
 
 const clear = new Command('clear');
 
-clear
-	.addOption(Options.apiTimeout)
-	.addOption(Options.apiKey)
-	.addOption(Options.baseUrl)
-	.addOption(Options.branch)
-	.addOption(Options.environment)
-	.addOption(Options.managementToken)
-	.addOption(Options.verbose)
-	.description('Empty all data from a stack.');
+addCommonOptions(clear);
+clear.description('Empty all data from a stack.');
 
-type CommandOptions = Options.ApiKeyOption &
-	Options.ApiTimeoutOption &
-	Options.BaseUrlOption &
-	Options.BranchOption &
-	Options.EnvironmentOption &
-	Options.ManagementTokenOption &
-	Options.VerboseOption;
-
-clear.action(async (options: CommandOptions) =>
+clear.action(async (options: CommonOptions) =>
 	HandledError.ExitIfThrown(async () => {
 		using ui = new ConsoleUiContext(await mapOptions(options));
 
@@ -49,7 +35,7 @@ clear.action(async (options: CommandOptions) =>
 
 export default clear;
 
-async function mapOptions(options: CommandOptions) {
+async function mapOptions(options: CommonOptions) {
 	return resolveConfig({
 		client: {
 			apiKey: options.apiKey,
@@ -58,6 +44,7 @@ async function mapOptions(options: CommandOptions) {
 			managementToken: options.managementToken,
 			timeout: options.apiTimeout,
 		},
+		configFile: options.configFile,
 		schema: {
 			deletionStrategy: 'delete',
 		},

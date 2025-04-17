@@ -6,6 +6,8 @@ export { default as baseUrl } from './baseUrl.js';
 export type { BaseUrlOption } from './baseUrl.js';
 export { default as branch } from './branch.js';
 export type { BranchOption } from './branch.js';
+export { default as configFile } from './configFile.js';
+export type { ConfigFileOption } from './configFile.js';
 export { default as deletionStrategy } from './deletionStrategy.js';
 export type { DeletionStrategyOption } from './deletionStrategy.js';
 export { default as environment } from './environment.js';

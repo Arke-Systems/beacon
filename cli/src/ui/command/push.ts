@@ -12,34 +12,24 @@ import * as Options from '#cli/ui/option/index.js';
 import { ConsoleUiContext } from '#cli/ui/UiContext.js';
 import { Command } from 'commander';
 import { resolve } from 'node:path';
+import type { CommonOptions } from '../option/commonOptions.js';
+import { addCommonOptions } from '../option/commonOptions.js';
 
 const push = new Command('push');
+addCommonOptions(push);
 
 push
-	.addOption(Options.apiTimeout)
-	.addOption(Options.apiKey)
-	.addOption(Options.baseUrl)
-	.addOption(Options.branch)
 	.addOption(Options.deletionStrategy)
-	.addOption(Options.environment)
 	.addOption(Options.extension)
 	.addOption(Options.jsonRtePlugin)
-	.addOption(Options.managementToken)
 	.addOption(Options.schemaPath)
-	.addOption(Options.verbose)
 	.description('Deploy serialized data and schema into a stack.');
 
-type CommandOptions = Options.ApiKeyOption &
-	Options.ApiTimeoutOption &
-	Options.BaseUrlOption &
-	Options.BranchOption &
+type CommandOptions = CommonOptions &
 	Options.DeletionStrategyOption &
-	Options.EnvironmentOption &
 	Options.ExtensionOption &
 	Options.JsonRtePluginOption &
-	Options.ManagementTokenOption &
-	Options.SchemaPathOption &
-	Options.VerboseOption;
+	Options.SchemaPathOption;
 
 push.action(async (options: CommandOptions) =>
 	HandledError.ExitIfThrown(async () => {
@@ -76,6 +66,7 @@ async function mapOptions(options: CommandOptions) {
 			managementToken: options.managementToken,
 			timeout: options.apiTimeout,
 		},
+		configFile: options.configFile,
 		schema: {
 			deletionStrategy: options.deletionStrategy,
 			extension: options.extension,
