@@ -66,17 +66,8 @@ function collapseAssets(
 	baseAssets: NonNullable<Config['schema']>['assets'],
 	envAssets: NonNullable<Config['schema']>['assets'],
 ) {
-	const include = collapseList(
-		baseAssets?.include,
-		envAssets?.include,
-		'include',
-	);
-
-	const exclude = collapseList(
-		baseAssets?.exclude,
-		envAssets?.exclude,
-		'exclude',
-	);
+	const include = collapseList(baseAssets?.include, envAssets?.include);
+	const exclude = collapseList(baseAssets?.exclude, envAssets?.exclude);
 
 	const assets = {
 		...(include ? { include } : {}),
@@ -89,7 +80,6 @@ function collapseAssets(
 function collapseList(
 	baseList: readonly string[] | undefined,
 	envList: readonly string[] | undefined,
-	propName: keyof NonNullable<NonNullable<Config['schema']>['assets']>,
 ) {
 	const result = [...(baseList ?? []), ...(envList ?? [])];
 	return result.length ? result : undefined;

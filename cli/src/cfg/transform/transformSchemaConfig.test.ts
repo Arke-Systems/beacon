@@ -5,15 +5,15 @@ import transformSchemaConfig from './transformSchemaConfig';
 describe(transformSchemaConfig.name, () => {
 	it('should merge baseSchema and envSchema correctly', () => {
 		const baseSchema: Config['schema'] = {
+			assets: { exclude: ['asset2'], include: ['asset1'] },
 			extension: { ext1: 'value1' },
 			taxonomies: { tax1: 'only taxonomy' },
-			assets: { include: ['asset1'], exclude: ['asset2'] },
 		};
 
 		const envSchema: Config['schema'] = {
+			assets: { exclude: ['asset4'], include: ['asset3'] },
 			extension: { ext2: 'value2' },
 			taxonomies: { tax2: 'taxonomy and terms' },
-			assets: { include: ['asset3'], exclude: ['asset4'] },
 		};
 
 		const result = transformSchemaConfig(baseSchema, envSchema);
