@@ -8,7 +8,6 @@ import { defaultValue as defaultSchemaPath } from './option/schemaPath.js';
 
 export default class UiOptions implements Options {
 	public readonly client: Options['client'];
-	public readonly configFile: Options['configFile'];
 	public readonly schema: Options['schema'];
 	public readonly verbose: Options['verbose'];
 
@@ -17,7 +16,6 @@ export default class UiOptions implements Options {
 		this.schema = schema(...others.map((o) => o.schema));
 
 		const top = topLevel(...others);
-		this.configFile = top.configFile;
 		this.verbose = top.verbose;
 	}
 }
@@ -26,7 +24,6 @@ function topLevel(...others: PartialOptions[]) {
 	const other = Object.assign({}, ...others) as PartialOptions;
 
 	return {
-		configFile: other.configFile ?? '',
 		verbose: other.verbose ?? false,
 	};
 }

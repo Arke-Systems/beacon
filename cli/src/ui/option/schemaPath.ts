@@ -11,8 +11,7 @@ export const defaultValue = './cs/schema';
 
 schemaPath
 	.default(defaultValue)
-	.argParser((path) => resolve(path))
-	.makeOptionMandatory();
+	.argParser((path) => resolve(path ? path : defaultValue));
 
 export interface SchemaPathOption {
 	readonly schemaPath: Options['schema']['schemaPath'];

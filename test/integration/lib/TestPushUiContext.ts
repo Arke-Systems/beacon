@@ -29,7 +29,6 @@ export default class TestPushUiContext extends TestUiContext {
 					managementToken,
 					timeout: 30000,
 				},
-				configFile: '',
 				schema: {
 					assets: { isIncluded: () => true },
 					deletionStrategy: 'delete',

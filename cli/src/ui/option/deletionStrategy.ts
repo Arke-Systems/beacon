@@ -11,7 +11,7 @@ export const defaultValue = 'warn';
 deletionStrategy
 	.choices(['delete', 'ignore', 'warn'])
 	.default(defaultValue)
-	.makeOptionMandatory();
+	.argParser((value) => (value ? value : defaultValue));
 
 export interface DeletionStrategyOption {
 	readonly deletionStrategy: Options['schema']['deletionStrategy'];

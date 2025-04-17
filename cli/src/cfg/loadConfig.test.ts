@@ -7,13 +7,10 @@ import loadConfig from './loadConfig.js';
 describe(loadConfig.name, () => {
 	it('can load a valid configuration file', async () => {
 		// Arrange
-		const configPath = new URL(
-			'fixtures/config/valid-config.yaml',
-			TestProjectUrl,
-		);
+		const configPath = resolveConfigUrl('valid-config');
 
 		// Act
-		const result = await loadConfig(configPath);
+		const result = await loadConfig(configPath, undefined);
 
 		// Assert
 		expect(result).toEqual({
@@ -23,7 +20,6 @@ describe(loadConfig.name, () => {
 				branch: 'branch name',
 				managementToken: 'management token',
 			},
-			configFile: configPath,
 			schema: {
 				deletionStrategy: 'delete',
 				extension: {
@@ -59,13 +55,10 @@ describe(loadConfig.name, () => {
 
 	it('throws a ConfigMissingError error for missing files', async () => {
 		// Arrange
-		const configPath = new URL(
-			'fixtures/config/missing-config.yaml',
-			TestProjectUrl,
-		);
+		const configPath = resolveConfigUrl('missing-config');
 
 		// Act
-		const attempt = async () => await loadConfig(configPath);
+		const attempt = async () => await loadConfig(configPath, undefined);
 
 		// Assert
 		await expect(attempt).rejects.toThrowError(ConfigMissingError);
@@ -73,15 +66,38 @@ describe(loadConfig.name, () => {
 
 	it('throws a ConfigurationError for invalid files', async () => {
 		// Arrange
-		const configPath = new URL(
-			'fixtures/config/invalid-config.yaml',
-			TestProjectUrl,
-		);
+		const configPath = resolveConfigUrl('invalid-config');
 
 		// Act
-		const attempt = async () => await loadConfig(configPath);
+		const attempt = async () => await loadConfig(configPath, undefined);
 
 		// Assert
 		await expect(attempt).rejects.toThrowError(ConfigurationError);
 	});
+
+	it('can load a configuration with environments', async () => {
+		// Arrange
+		const configPath = resolveConfigUrl('config-with-environments');
+
+		// Act
+		const result = await loadConfig(configPath, 'dev');
+
+		// Assert
+		expect(result).toEqual({
+			client: {
+				apiKey: 'default-key',
+				baseUrl: new URL('https://default.com'),
+				branch: 'dev-branch',
+				managementToken: 'dev-token',
+			},
+			schema: {
+				deletionStrategy: 'warn',
+				schemaPath: 'dev-path',
+			},
+		});
+	});
 });
+
+function resolveConfigUrl(name: string) {
+	return new URL(`fixtures/config/${name}.yaml`, TestProjectUrl);
+}

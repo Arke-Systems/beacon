@@ -1,6 +1,6 @@
 import type { MinimatchOptions } from 'minimatch';
 import { filter } from 'minimatch';
-import type { Config } from './Config.schema.yaml';
+import type { Config } from '../Config.schema.yaml';
 
 type SchemaConfig = NonNullable<Config['schema']>;
 type Filters = NonNullable<SchemaConfig['assets']>;

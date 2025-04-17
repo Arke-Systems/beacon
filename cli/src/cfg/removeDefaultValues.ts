@@ -1,4 +1,5 @@
 import type { PartialOptions } from '../ui/PartialOptions.js';
+import type { CliOptions } from './CliOptions.js';
 import { defaultValues } from './defaultValues.js';
 
 // The "fromCommandEnvironment" parameter is provided by commander.js after
@@ -23,11 +24,12 @@ import { defaultValues } from './defaultValues.js';
 // Therefore, we must remove the default values from the fromCommandEnvironment
 // parameter before using it.
 export default function removeDefaultValues(
-	fromCommandEnvironment: PartialOptions,
-): PartialOptions {
+	fromCommandEnvironment: CliOptions,
+): Partial<CliOptions> {
 	const {
 		client: rawClient,
 		schema: rawSchema,
+		configFile,
 		...rest
 	} = fromCommandEnvironment;
 
@@ -38,6 +40,9 @@ export default function removeDefaultValues(
 		...rest,
 		...(client ? { client } : {}),
 		...(schema ? { schema } : {}),
+		...(configFile && configFile !== defaultValues.configFile
+			? { configFile }
+			: {}),
 	};
 }
 
