@@ -92,7 +92,13 @@ describe(isEmptyEntry.name, () => {
 		it(description, () => {
 			// Arrange
 			const contentType: ContentType = {
-				schema: [],
+				schema: [
+					{
+						uid: 'description',
+						data_type: 'json',
+						field_metadata: { allow_json_rte: true },
+					},
+				],
 				title: 'some-title',
 				uid: 'contentTypeUid',
 			};

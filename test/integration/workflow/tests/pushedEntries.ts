@@ -2,6 +2,7 @@ import type { RawAssetItem } from '#cli/cs/assets/Types.js';
 import { isRawAsset } from '#cli/cs/assets/Types.js';
 import index from '#cli/cs/entries/index.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
+import type { Schema } from '#cli/cs/Types.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
 import { inspect } from 'node:util';
@@ -17,14 +18,25 @@ export default async function pushedEntries({
 	ui,
 }: WorkflowFixtures) {
 	return Store.run(ui, async () => {
+		const globalFieldsByUid: ReadonlyMap<Schema['uid'], Schema> = new Map();
 		const contentTypes = await loadContentTypes(originalFixturePath);
 		const originals = await loadEntries(originalFixturePath);
 
-		const homePageEntries = await index(client, contentTypes.homePage);
+		const homePageEntries = await index(
+			client,
+			globalFieldsByUid,
+			contentTypes.homePage,
+		);
+
 		expect(homePageEntries.size).toBe(1);
 		const homePage = [...homePageEntries.values()][0]!;
 
-		const eventEntries = await index(client, contentTypes.event);
+		const eventEntries = await index(
+			client,
+			globalFieldsByUid,
+			contentTypes.event,
+		);
+
 		const events = [...eventEntries.values()];
 		const feast = events.find(byTitle('Autumn Feast and Social'));
 		const workshop = events.find(byTitle('Community Gardening Workshop'));
