@@ -1,4 +1,5 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
+import type { Schema } from '#cli/cs/Types.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import TestLogContext from '#test/integration/lib/TestLogContext.js';
 import TestPushUiContext from '#test/integration/lib/TestPushUiContext.js';
@@ -10,6 +11,8 @@ const logs = new TestLogContext();
 const ui = new TestPushUiContext('', logs);
 
 describe(isEmptyEntry.name, () => {
+	const globalFields: ReadonlyMap<Schema['uid'], Schema> = new Map();
+
 	interface Theory {
 		readonly description: string;
 		readonly entry: Entry;
@@ -95,7 +98,9 @@ describe(isEmptyEntry.name, () => {
 			};
 
 			// Act
-			const result = Store.run(ui, () => isEmptyEntry(contentType, entry));
+			const result = Store.run(ui, () =>
+				isEmptyEntry(globalFields, contentType, entry),
+			);
 
 			// Assert
 			expect(result).toBe(expected);

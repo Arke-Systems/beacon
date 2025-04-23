@@ -1,4 +1,6 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
+import type { Schema, SchemaFields } from '#cli/cs/Types.js';
+import isJsonRteField from '#cli/dto/entry/lib/isJsonRteField.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
 import { styleText } from 'node:util';
@@ -13,7 +15,8 @@ import type { Entry } from '../Types.js';
 // I do not know how these entries come into being and I have not been able to
 // replicate the issue. This code is an attempt to filter them out.
 export default function isEmptyEntry(
-	contentType: Pick<ContentType, 'title'>,
+	globalFieldsByUid: ReadonlyMap<Schema['uid'], Schema>,
+	contentType: ContentType,
 	x: Entry,
 ): boolean {
 	if (x.title) {

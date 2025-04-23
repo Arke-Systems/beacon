@@ -1,3 +1,4 @@
+import type { Schema } from '#cli/cs/Types.js';
 import type Client from '#cli/cs/api/Client.js';
 import ContentstackError from '#cli/cs/api/ContentstackError.js';
 import type { ContentType } from '#cli/cs/content-types/Types.js';
@@ -30,6 +31,7 @@ export default function buildCreator(
 			if (isDuplicateKeyError(ex)) {
 				const uid = await getUidByTitle(
 					ctx.cs.client,
+					ctx.cs.globalFields,
 					contentType,
 					transformed.title,
 				);
@@ -72,10 +74,11 @@ function isDuplicateKeyError(ex: unknown) {
 
 async function getUidByTitle(
 	client: Client,
+	globalFieldsByUid: ReadonlyMap<Schema['uid'], Schema>,
 	contentType: ContentType,
 	title: string,
 ) {
-	const entries = await indexEntries(client, contentType);
+	const entries = await indexEntries(client, globalFieldsByUid, contentType);
 	return entries.get(title)?.uid;
 }
 
