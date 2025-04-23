@@ -49,18 +49,18 @@ describe(isEmptyEntry.name, () => {
 			entry: {
 				...mockEntry(),
 				description: {
-					type: 'doc',
+					_version: 1,
 					attrs: {},
-					uid: '07cc2e39fcc94427ae255b8e5f32fce2',
 					children: [
 						{
-							type: 'p',
 							attrs: {},
-							uid: '87e76bf2af8d49d2b69a0b63cf83f96a',
 							children: [{ text: '' }],
+							type: 'p',
+							uid: '87e76bf2af8d49d2b69a0b63cf83f96a',
 						},
 					],
-					_version: 1,
+					type: 'doc',
+					uid: '07cc2e39fcc94427ae255b8e5f32fce2',
 				},
 			},
 			expected: true,
@@ -70,18 +70,18 @@ describe(isEmptyEntry.name, () => {
 			entry: {
 				...mockEntry(),
 				description: {
-					type: 'doc',
+					_version: 1,
 					attrs: {},
-					uid: '07cc2e39fcc94427ae255b8e5f32fce2',
 					children: [
 						{
-							type: 'p',
 							attrs: {},
-							uid: '87e76bf2af8d49d2b69a0b63cf83f96a',
 							children: [{ text: 'some text goes here' }],
+							type: 'p',
+							uid: '87e76bf2af8d49d2b69a0b63cf83f96a',
 						},
 					],
-					_version: 1,
+					type: 'doc',
+					uid: '07cc2e39fcc94427ae255b8e5f32fce2',
 				},
 			},
 			expected: false,
@@ -94,9 +94,9 @@ describe(isEmptyEntry.name, () => {
 			const contentType: ContentType = {
 				schema: [
 					{
-						uid: 'description',
 						data_type: 'json',
 						field_metadata: { allow_json_rte: true },
+						uid: 'description',
 					},
 				],
 				title: 'some-title',

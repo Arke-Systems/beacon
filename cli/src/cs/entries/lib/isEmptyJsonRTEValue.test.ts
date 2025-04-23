@@ -7,52 +7,52 @@ describe(isEmptyJsonRTEValue.name, () => {
 
 		new Theory(true, 'is empty with one empty child', [
 			{
-				type: 'p',
 				attrs: {},
-				uid: 'unique-id',
 				children: [{ text: '' }],
+				type: 'p',
+				uid: 'unique-id',
 			},
 		]),
 
 		new Theory(false, 'has multiple children', [
 			{
-				type: 'p',
 				attrs: {},
-				uid: 'unique-id',
 				children: [{ text: '' }],
+				type: 'p',
+				uid: 'unique-id',
 			},
 			{
-				type: 'p',
 				attrs: {},
-				uid: 'unique-id',
 				children: [{ text: '' }],
+				type: 'p',
+				uid: 'unique-id',
 			},
 		]),
 
 		new Theory(false, 'has multiple descendants', [
 			{
-				type: 'p',
 				attrs: {},
-				uid: 'unique-id',
 				children: [{ text: '' }, { text: 'extra' }],
+				type: 'p',
+				uid: 'unique-id',
 			},
 		]),
 
 		new Theory(false, 'has non-empty text in child', [
 			{
-				type: 'p',
 				attrs: {},
-				uid: 'unique-id',
 				children: [{ text: 'not empty' }],
+				type: 'p',
+				uid: 'unique-id',
 			},
 		]),
 
 		new Theory(false, 'has non-paragraph type', [
 			{
-				type: 'div',
 				attrs: {},
-				uid: 'unique-id',
 				children: [{ text: '' }],
+				type: 'div',
+				uid: 'unique-id',
 			},
 		]),
 	];
@@ -61,11 +61,11 @@ describe(isEmptyJsonRTEValue.name, () => {
 		it(`returns ${theory.expected} when the value ${theory.name}.`, () => {
 			// Arrange
 			const value = {
-				type: 'doc',
-				attrs: {},
-				uid: '07cc2e39fcc94427ae255b8e5f32fce2',
-				children: theory.content,
 				_version: 1,
+				attrs: {},
+				children: theory.content,
+				type: 'doc',
+				uid: '07cc2e39fcc94427ae255b8e5f32fce2',
 			};
 
 			const result = isEmptyJsonRTEValue(value);

@@ -4,7 +4,7 @@ import indexAssets from '#cli/cs/assets/index.js';
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import indexAllCsEntries from '#cli/cs/entries/indexAllCsEntries.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
-import indexGlobalFields from '#cli/cs/global-fields/index.js';
+import type indexGlobalFields from '#cli/cs/global-fields/index.js';
 import type { Schema } from '#cli/cs/Types.js';
 import transformEntry from '#cli/dto/entry/fromCs.js';
 import fromCs from '#cli/dto/schema/fromCs.js';
