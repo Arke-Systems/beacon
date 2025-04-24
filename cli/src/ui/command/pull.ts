@@ -12,41 +12,29 @@ import * as Options from '#cli/ui/option/index.js';
 import { ConsoleUiContext } from '#cli/ui/UiContext.js';
 import { Command } from 'commander';
 import { resolve } from 'node:path';
+import logOptions from '../logOptions.js';
+import type { CommonOptions } from '../option/commonOptions.js';
+import { addCommonOptions } from '../option/commonOptions.js';
 
 const pull = new Command('pull');
+addCommonOptions(pull);
 
 pull
-	.addOption(Options.apiTimeout)
-	.addOption(Options.apiKey)
-	.addOption(Options.baseUrl)
-	.addOption(Options.branch)
 	.addOption(Options.extension)
 	.addOption(Options.jsonRtePlugin)
-	.addOption(Options.managementToken)
 	.addOption(Options.schemaPath)
-	.addOption(Options.verbose)
 	.description('Serialize data and schema from a stack into the file system.');
 
-type CommandOptions = Options.ApiKeyOption &
-	Options.ApiTimeoutOption &
-	Options.BaseUrlOption &
-	Options.BranchOption &
+type CommandOptions = CommonOptions &
 	Options.ExtensionOption &
 	Options.JsonRtePluginOption &
-	Options.ManagementTokenOption &
-	Options.SchemaPathOption &
-	Options.VerboseOption;
+	Options.SchemaPathOption;
 
-pull.action(async (options: CommandOptions) =>
+pull.action(async (cliOptions: CommandOptions) =>
 	HandledError.ExitIfThrown(async () => {
-		using ui = new ConsoleUiContext(await mapOptions(options));
-		const b = createStylus('bold');
-		const y = createStylus('yellowBright');
-
-		const msg1 = y`Serializing schema from ${options.apiKey}`;
-		const msg2 = y` (${options.branch}) into`;
-		const msg3 = y` ${humanizePath(resolve(options.schemaPath))}...`;
-		ui.info(b`\n${msg1 + msg2 + msg3}\n`);
+		const options = await mapOptions(cliOptions);
+		using ui = new ConsoleUiContext(options);
+		ui.info(logStart(cliOptions, options));
 
 		const { histogram, results } = await Store.run(ui, async () => {
 			await using client = createClient(ui);
@@ -72,6 +60,8 @@ async function mapOptions(options: CommandOptions) {
 			managementToken: options.managementToken,
 			timeout: options.apiTimeout,
 		},
+		configFile: options.configFile,
+		namedEnvironment: options.environment,
 		schema: {
 			deletionStrategy: 'delete',
 			extension: options.extension,
@@ -80,4 +70,26 @@ async function mapOptions(options: CommandOptions) {
 		},
 		verbose: options.verbose,
 	});
+}
+
+function logStart(
+	cliOptions: CommandOptions,
+	options: Awaited<ReturnType<typeof mapOptions>>,
+) {
+	const y = createStylus('yellowBright');
+	const parts = ['\nSerializing schema from'];
+
+	if (cliOptions.environment) {
+		parts.push(y` ${cliOptions.environment} (${options.client.apiKey})`);
+	} else {
+		parts.push(y` ${options.client.apiKey}`);
+	}
+
+	parts.push(
+		y` on the ${options.client.branch} branch into `,
+		y`${humanizePath(resolve(options.schema.schemaPath))}:\n`,
+		logOptions(options),
+	);
+
+	return parts.join('');
 }

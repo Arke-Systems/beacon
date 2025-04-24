@@ -5,10 +5,11 @@ import type { PartialOptions } from '../ui/PartialOptions.js';
 import ConfigMissingError from './ConfigMissingError.js';
 import ConfigurationError from './ConfigurationError.js';
 import createSchemaValidationFn from './createSchemaValidationFn.js';
-import transform from './transform.js';
+import transform from './transform/transform.js';
 
 export default async function loadConfig(
 	configFile: PathLike,
+	namedEnvironment: string | undefined,
 ): Promise<PartialOptions> {
 	let raw: string;
 
@@ -39,5 +40,5 @@ export default async function loadConfig(
 		throw new ConfigurationError(configFile, validate.errors);
 	}
 
-	return { ...transform(cfg), configFile };
+	return transform(cfg, namedEnvironment);
 }

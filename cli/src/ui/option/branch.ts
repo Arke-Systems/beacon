@@ -8,8 +8,7 @@ export const defaultValue = 'main';
 branch
 	.env('Contentstack_Branch')
 	.default(defaultValue)
-	.argParser((value) => (value ? value : defaultValue))
-	.makeOptionMandatory();
+	.argParser((value) => (value ? value : defaultValue));
 
 export interface BranchOption {
 	readonly branch: Options['client']['branch'];

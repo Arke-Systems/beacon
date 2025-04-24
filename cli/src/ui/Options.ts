@@ -1,5 +1,3 @@
-import type { PathLike } from 'node:fs';
-
 export default interface Options {
 	readonly client: {
 		readonly apiKey: string;
@@ -8,7 +6,6 @@ export default interface Options {
 		readonly managementToken: string;
 		readonly timeout: number;
 	};
-	readonly configFile: PathLike;
 	readonly schema: {
 		readonly assets: {
 			readonly isIncluded: (path: string) => boolean;
