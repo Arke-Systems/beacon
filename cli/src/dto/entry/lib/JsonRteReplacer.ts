@@ -7,6 +7,7 @@ import getUi from '#cli/schema/lib/SchemaUi.js';
 import createStylus from '#cli/ui/createStylus.js';
 import isRecord from '#cli/util/isRecord.js';
 import { inspect } from 'node:util';
+import isJsonRteField from './isJsonRteField.js';
 import type Replacer from './Replacer.js';
 
 export default class JsonRteReplacer implements Replacer {
@@ -83,21 +84,4 @@ export default class JsonRteReplacer implements Replacer {
 		delete attrs['asset-uid'];
 		attrs.$beacon = { jsonRteAsset: itemPath };
 	}
-}
-
-function isJsonRteField(schema: SchemaField) {
-	if (schema.data_type !== 'json') {
-		return false;
-	}
-
-	if ('extension_uid' in schema) {
-		return false;
-	}
-
-	const metadata = schema.field_metadata;
-	if (!isRecord(metadata)) {
-		return false;
-	}
-
-	return Boolean(metadata.allow_json_rte);
 }

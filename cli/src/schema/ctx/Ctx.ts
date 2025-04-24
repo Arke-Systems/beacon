@@ -4,7 +4,7 @@ import indexAssets from '#cli/cs/assets/index.js';
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import indexAllCsEntries from '#cli/cs/entries/indexAllCsEntries.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
-import indexGlobalFields from '#cli/cs/global-fields/index.js';
+import type indexGlobalFields from '#cli/cs/global-fields/index.js';
 import type { Schema } from '#cli/cs/Types.js';
 import transformEntry from '#cli/dto/entry/fromCs.js';
 import fromCs from '#cli/dto/schema/fromCs.js';
@@ -44,7 +44,7 @@ export default class Ctx {
 		csTaxonomies: Awaited<ReturnType<typeof indexCsTaxonomies>>,
 		csAssets: Awaited<ReturnType<typeof indexAssets>>,
 		csGlobalFields: Awaited<ReturnType<typeof indexGlobalFields>>,
-		csEntries: Awaited<ReturnType<typeof indexAllCsEntries>>,
+		csEntries: ReadonlyMap<ContentType, ReadonlySet<Entry>>,
 		fsTaxonomies: Awaited<ReturnType<typeof indexFsTaxonomies>>,
 		fsEntries: Awaited<ReturnType<typeof indexAllFsEntries>>,
 		fsAssets: FsAssets,
@@ -78,15 +78,13 @@ export default class Ctx {
 		const [
 			csTaxonomies,
 			csAssets,
-			csGlobalFields,
-			csEntries,
+			[csGlobalFields, csEntries],
 			fsTaxonomies,
 			fsEntries,
 			fsAssets,
 		] = await Promise.all([
 			indexCsTaxonomies(client),
 			indexAssets(client),
-			indexGlobalFields(client),
 			indexAllCsEntries(client),
 			indexFsTaxonomies(),
 			indexAllFsEntries(),

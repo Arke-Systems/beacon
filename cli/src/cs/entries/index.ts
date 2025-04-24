@@ -2,15 +2,20 @@ import type Client from '../api/Client.js';
 import readPaginatedItems from '../api/paginate/readPaginatedItems.js';
 import type { ContentType } from '../content-types/Types.js';
 import typecheckArray from '../typecheckArray.js';
+import type { Schema } from '../Types.js';
 import isEmptyEntry from './lib/isEmptyEntry.js';
 import { isEntry, key } from './Types.js';
 
-export default async function index(client: Client, contentType: ContentType) {
+export default async function index(
+	client: Client,
+	globalFieldsByUid: ReadonlyMap<Schema['uid'], Schema>,
+	contentType: ContentType,
+) {
 	return readPaginatedItems(
 		`${contentType.title} entries`,
 		key,
 		fetchFn.bind(null, contentType.uid, client),
-		mapFn.bind(null, contentType),
+		mapFn.bind(null, globalFieldsByUid, contentType),
 	);
 }
 
@@ -28,7 +33,11 @@ async function fetchFn(contentTypeUid: string, client: Client, skip: number) {
 	});
 }
 
-function mapFn(contentType: ContentType, o: Record<string, unknown>) {
+function mapFn(
+	globalFieldsByUid: ReadonlyMap<Schema['uid'], Schema>,
+	contentType: ContentType,
+	o: Record<string, unknown>,
+) {
 	const { count, entries: rawItems } = o;
 
 	if (!typecheckArray(isEntry, `${contentType.title} entries`, rawItems)) {
@@ -36,7 +45,9 @@ function mapFn(contentType: ContentType, o: Record<string, unknown>) {
 	}
 
 	return {
-		items: rawItems.filter((x) => !isEmptyEntry(contentType, x)),
+		items: rawItems.filter(
+			(x) => !isEmptyEntry(globalFieldsByUid, contentType, x),
+		),
 		processedItems: rawItems.length,
 		...(typeof count === 'number' ? { count } : {}),
 	};

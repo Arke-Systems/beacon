@@ -1,24 +1,34 @@
 import indexContentTypes from '#cli/cs/content-types/index.js';
+import indexGlobalFields from '#cli/cs/global-fields/index.js';
 import ProgressReporter from '#cli/ui/progress/ProgressReporter.js';
 import getUi from '../../schema/lib/SchemaUi.js';
 import type Client from '../api/Client.js';
 import type { ContentType } from '../content-types/Types.js';
+import type { Schema } from '../Types.js';
 import index from './index.js';
 import type { Entry } from './Types.js';
 
 export default async function indexAllCsEntries(
 	client: Client,
-): Promise<ReadonlyMap<ContentType, ReadonlySet<Entry>>> {
+): Promise<
+	[
+		ReadonlyMap<Schema['uid'], Schema>,
+		ReadonlyMap<ContentType, ReadonlySet<Entry>>,
+	]
+> {
 	const allEntries = new Map<ContentType, ReadonlySet<Entry>>();
 
-	const contentTypes = [...(await indexContentTypes(client)).values()];
+	const [globalFields, rawContentTypes] = await Promise.all([
+		indexGlobalFields(client),
+		indexContentTypes(client),
+	]);
 
-	const sorted = [...contentTypes].sort((a, b) =>
+	const sorted = [...rawContentTypes.values()].sort((a, b) =>
 		a.title.localeCompare(b.title),
 	);
 
 	if (sorted.length === 0) {
-		return allEntries;
+		return [globalFields, allEntries];
 	}
 
 	const ui = getUi();
@@ -29,12 +39,12 @@ export default async function indexAllCsEntries(
 		for (const contentType of sorted) {
 			using reporter = new ProgressReporter(bar, 'indexing', contentType.title);
 
-			const entries = await index(client, contentType);
+			const entries = await index(client, globalFields, contentType);
 			allEntries.set(contentType, new Set([...entries.values()]));
 			bar.increment();
 			reporter.finish('indexed');
 		}
 	}
 
-	return allEntries;
+	return [globalFields, allEntries];
 }
