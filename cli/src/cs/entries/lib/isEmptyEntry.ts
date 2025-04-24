@@ -1,8 +1,10 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
+import type { Schema } from '#cli/cs/Types.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
 import { styleText } from 'node:util';
 import type { Entry } from '../Types.js';
+import removeEmptyJsonRTEs from './removeEmptyJsonRTEs.js';
 
 // We are encountering some instances with partially-formed entries. These have
 // no data in any field, including the title field, which comes across as an
@@ -13,27 +15,18 @@ import type { Entry } from '../Types.js';
 // I do not know how these entries come into being and I have not been able to
 // replicate the issue. This code is an attempt to filter them out.
 export default function isEmptyEntry(
-	contentType: Pick<ContentType, 'title'>,
+	globalFieldsByUid: ReadonlyMap<Schema['uid'], Schema>,
+	contentType: ContentType,
 	x: Entry,
 ): boolean {
 	if (x.title) {
 		return false;
 	}
 
-	const props = new Map(Object.entries(x));
-	props.delete('_in_progress');
-	props.delete('_version');
-	props.delete('ACL');
-	props.delete('created_at');
-	props.delete('created_by');
-	props.delete('locale');
-	props.delete('uid');
-	props.delete('updated_at');
-	props.delete('updated_by');
+	const simplified = removeEmptyJsonRTEs(globalFieldsByUid, contentType, x);
+	const withoutMeta = ignoreTopLevelMetadata(simplified);
 
-	const reduced = Object.fromEntries(props);
-
-	if (!hasRealData(reduced)) {
+	if (!hasRealData(withoutMeta)) {
 		getUi().warn(
 			'Empty',
 			styleText('yellowBright', contentType.title),
@@ -48,6 +41,20 @@ export default function isEmptyEntry(
 	}
 
 	return false;
+}
+
+function ignoreTopLevelMetadata(x: Entry) {
+	const props = new Map(Object.entries(x));
+	props.delete('_in_progress');
+	props.delete('_version');
+	props.delete('ACL');
+	props.delete('created_at');
+	props.delete('created_by');
+	props.delete('locale');
+	props.delete('uid');
+	props.delete('updated_at');
+	props.delete('updated_by');
+	return Object.fromEntries(props);
 }
 
 function hasRealData(obj: Readonly<Record<string, unknown>>) {
