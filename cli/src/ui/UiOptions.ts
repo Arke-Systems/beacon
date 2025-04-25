@@ -21,7 +21,7 @@ export default class UiOptions implements Options {
 }
 
 function topLevel(...others: PartialOptions[]) {
-	const other = Object.assign({}, ...others) as PartialOptions;
+	const other = mergeExceptUndefined(...others);
 
 	return {
 		verbose: other.verbose ?? false,
@@ -29,43 +29,56 @@ function topLevel(...others: PartialOptions[]) {
 }
 
 function client(...others: PartialOptions['client'][]): Options['client'] {
-	const other = Object.assign({}, ...others) as PartialOptions['client'];
+	const other = mergeExceptUndefined(...others);
 
 	return {
-		apiKey: other?.apiKey ?? '',
-		baseUrl: other?.baseUrl ?? new URL('http://localhost'),
-		branch: other?.branch ?? defaultBranch,
-		managementToken: other?.managementToken ?? '',
-		timeout: other?.timeout ?? defaultTimeout,
+		apiKey: other.apiKey ?? '',
+		baseUrl: other.baseUrl ?? new URL('http://localhost'),
+		branch: other.branch ?? defaultBranch,
+		managementToken: other.managementToken ?? '',
+		timeout: other.timeout ?? defaultTimeout,
 	};
 }
 
 function schema(...others: PartialOptions['schema'][]): Options['schema'] {
-	const other = Object.assign({}, ...others) as PartialOptions['schema'];
+	const other = mergeExceptUndefined(...others);
 
 	return {
 		assets: assets(...others.map((o) => o?.assets)),
-		deletionStrategy: other?.deletionStrategy ?? defaultStrategy,
+		deletionStrategy: other.deletionStrategy ?? defaultStrategy,
 		extension: maps(...others.map((o) => o?.extension)),
 		jsonRtePlugin: maps(...others.map((o) => o?.jsonRtePlugin)),
-		schemaPath: other?.schemaPath ?? defaultSchemaPath,
-		taxonomies: other?.taxonomies ?? DefaultTaxonomyStrategies,
+		schemaPath: other.schemaPath ?? defaultSchemaPath,
+		taxonomies: other.taxonomies ?? DefaultTaxonomyStrategies,
 	};
 }
 
 type AssetOptions = NonNullable<PartialOptions['schema']>['assets'];
 function assets(...others: AssetOptions[]): Options['schema']['assets'] {
-	const other = Object.assign({}, ...others) as AssetOptions;
-
-	return { isIncluded: other?.isIncluded ?? (() => true) };
+	const other = mergeExceptUndefined(...others);
+	return { isIncluded: other.isIncluded ?? (() => true) };
 }
 
 type MappedOptions = NonNullable<PartialOptions['schema']>['extension'];
 function maps(...others: MappedOptions[]): Options['schema']['extension'] {
-	const other = Object.assign({}, ...others) as MappedOptions;
+	const other = mergeExceptUndefined(...others);
 
 	return {
-		byName: other?.byName ?? new Map<string, string>(),
-		byUid: other?.byUid ?? new Map<string, string>(),
+		byName: other.byName ?? new Map<string, string>(),
+		byUid: other.byUid ?? new Map<string, string>(),
 	};
+}
+
+function mergeExceptUndefined<T extends Record<string, unknown>>(
+	...others: (T | undefined)[]
+): T {
+	const valueIsDefined = ([, value]: [unknown, unknown]) => value !== undefined;
+
+	const definedEntries = (x: Record<string, unknown>) =>
+		Object.entries(x).filter(valueIsDefined);
+
+	return Object.assign(
+		{},
+		...others.map((x) => (x ? Object.fromEntries(definedEntries(x)) : {})),
+	) as T;
 }
