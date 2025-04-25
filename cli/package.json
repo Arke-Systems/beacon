@@ -23,7 +23,7 @@
   "devDependencies": {
     "@types/asciichart": "^1.5.8",
     "@types/cli-progress": "^3.11.6",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.2",
     "json-schema-to-typescript": "^15.0.4",
     "openapi-typescript": "^7.6.1",
     "typescript": "^5.8.3"
@@ -50,5 +50,5 @@
     "prepack": "node ./build/prepack.js"
   },
   "type": "module",
-  "version": "1.11.0"
+  "version": "1.11.1"
 }
