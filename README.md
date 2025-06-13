@@ -248,26 +248,25 @@ client:
   timeout: 10000
 
 schema:
-  properties:
-    deletion-strategy: warn # delete | ignore | warn
-    schema-path: ./cs/schema
+  deletion-strategy: warn # delete | ignore | warn
+  schema-path: ./cs/schema
 
-    extension:
-      Bynder: blt6b7c082b-example
+  extension:
+    Bynder: blt6b7c082b-example
 
-    json-rte-plugin:
-      Bynder: bltdd6396f0-example
+  json-rte-plugin:
+    Bynder: bltdd6396f0-example
 
-    # Include or exclude assets using glob patterns.
-    assets:
-      include: ['**']
-      exclude: []
+  # Include or exclude assets using glob patterns.
+  assets:
+    include: ['**']
+    exclude: []
 
-    # Determine whether to serialize taxonomy terms or just the
-    # taxonomy structure.
-    taxonomies:
-      page_type: taxonomy and terms
-      '*': only taxonomy
+  # Determine whether to serialize taxonomy terms or just the
+  # taxonomy structure.
+  taxonomies:
+    page_type: taxonomy and terms
+    '*': only taxonomy
 
 environments:
   dev:
