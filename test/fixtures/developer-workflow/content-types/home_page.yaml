@@ -1,4 +1,13 @@
 description: ''
+field_rules:
+  - actions:
+      - action: show
+        target_field: featured_events
+    conditions:
+      - operand_field: show_featured_events
+        operator: equals
+        value: true
+    match_type: all
 options:
   is_page: false
   singleton: true
@@ -168,6 +177,16 @@ schema:
         uid: thumbnail
         unique: false
     uid: links
+    unique: false
+  - data_type: boolean
+    display_name: Show Featured Events
+    field_metadata:
+      default_value: true
+      description: ''
+    mandatory: false
+    multiple: false
+    non_localizable: false
+    uid: show_featured_events
     unique: false
   - data_type: reference
     display_name: Featured Events
