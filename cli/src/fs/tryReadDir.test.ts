@@ -8,7 +8,7 @@ it('returns an empty array if the directory does not exist', async () => {
 	const testPath = resolve(randomUUID(), 'does', 'not', 'exist');
 
 	// Act
-	const result = await tryReadDir(testPath, { withFileTypes: true });
+	const result = await tryReadDir(testPath);
 
 	// Assert
 	expect(result).toEqual([]);
