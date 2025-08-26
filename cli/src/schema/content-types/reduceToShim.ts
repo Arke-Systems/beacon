@@ -4,6 +4,7 @@ import isRecord from '#cli/util/isRecord.js';
 
 export default function reduceToShim({
 	schema: originalSchema,
+	field_rules,
 	...rest
 }: ContentType): ContentType {
 	if (!Array.isArray(originalSchema)) {
