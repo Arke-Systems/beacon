@@ -120,7 +120,6 @@ into a different stack.
 To obtain the correct UID values for third-party plugins:
 
 1. **Create a Test Content Type:**
-
    - In the Contentstack admin UI, create a new content type that includes the
      third-party plugin.
 
@@ -128,12 +127,10 @@ To obtain the correct UID values for third-party plugins:
      as active for the field.
 
 2. **Export the Content Type:**
-
    - Use the Contentstack admin UI to export the content type as JSON. The
      exported JSON will contain minimized data, making it challenging to read.
 
 3. **Locate the UID Values:**
-
    - Within the exported JSON, find the block of JSON that corresponds to the
      custom field. It will look something like this:
 
@@ -155,7 +152,6 @@ To obtain the correct UID values for third-party plugins:
      UID for the custom field.
 
 4. **Identify the JSON RTE Plugin UID:**
-
    - Similarly, locate the JSON RTE plugin's UID within the exported JSON. It
      will be nested under the JSON RTE field’s configuration:
 
@@ -177,7 +173,6 @@ To obtain the correct UID values for third-party plugins:
      in this example).
 
 5. **Use the UID Values in Beacon:**
-
    - Map these UIDs to stable names using `--extension` and `--json-rte-plugin`
      options:
 

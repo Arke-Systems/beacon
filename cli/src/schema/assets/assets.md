@@ -97,7 +97,6 @@ parent folder in the file system.
 
 - This introduces a possible ambiguity because it is possible for a blob to be
   named such that it conflicts with a different blob's sidecar.
-
   - I've considered separating the two into different directories but I reject
     that because it makes PR reviews harder.
 
@@ -106,14 +105,12 @@ parent folder in the file system.
     does not support it.
 
   - I've considered a naming scheme that avoids the problem:
-
     - I could use the Contentstack UID in the name. I reject this because the
       UID is not human-readable, and because it changes on a per-developer
       basis. It would only ever make sense for the dev who first serializes the
       asset, then it is useless to everyone else.
 
     - I could apply a prefix to both the blob and the sidecar file names:
-
       - A simple prefix (like `asset-` or `metadata-`) would suffice, but I
         reject that because it means the files no longer sort together.
 
