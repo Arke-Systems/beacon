@@ -83,5 +83,6 @@ main:
         - $beacon:
             asset: events/Bellmaker.webp
       title: Day at the Market
+show_featured_events: true
 tags: []
 title: Mice Community Hub
