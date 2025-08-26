@@ -18,11 +18,6 @@ export default function reduceToShim({
 		schema.push(findFieldByUid(originalSchema, 'url'));
 	}
 
-	const tax = schema.find((x) => isRecord(x) && x.data_type === 'taxonomy');
-	if (tax) {
-		schema.push(tax);
-	}
-
 	return { ...rest, schema };
 }
 
