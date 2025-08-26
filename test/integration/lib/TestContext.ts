@@ -53,8 +53,12 @@ export default class TestContext implements AsyncDisposable {
 		return this.#clonedUi ?? this.#originalUi;
 	}
 
-	public test(name: string, testFn: TestFunction<TestFixtures>) {
-		this._test(name, testFn);
+	public test(
+		name: string,
+		testFn: TestFunction<TestFixtures>,
+		timeout?: number,
+	) {
+		this._test(name, testFn, timeout);
 	}
 
 	public async createFixtureClone() {

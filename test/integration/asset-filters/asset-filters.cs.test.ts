@@ -94,6 +94,7 @@ describe(
 						const expectedResults = expected(theory);
 						expect(assetResults).toEqual(expectedResults);
 					}),
+				longTest,
 			);
 		});
 	},

@@ -4,10 +4,8 @@ The pull command is used to serialize the state of a remote stack into the local
 filesystem.
 
 1. Pull data from the remote stack.
-
    - There are several different kinds of data: assets, taxonomies, content
      types, global fields, and entries.
-
      - Content Types and Global Fields are the most straightforward. They are
        flat data structures. We can pull them all at once and write them to the
        file system.
@@ -17,7 +15,6 @@ filesystem.
        or references.
 
      - Assets in Contentstack are either Folders or Files.
-
        - We do not attempt to synchronize empty folders, or to store metadata
          about folders.
 

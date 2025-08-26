@@ -13,7 +13,7 @@ export default async function indexFromFilesystem<
 	typeGuard: (a: Record<string, unknown>) => a is TItem,
 	key: (a: TItem) => string,
 ): Promise<ReadonlyMap<string, TItem & { [Filename]: string }>> {
-	const files = await tryReadDir(schemaPath, { withFileTypes: true });
+	const files = await tryReadDir(schemaPath);
 	const result = new Map<string, TItem & { [Filename]: string }>();
 	const ui = getUi();
 

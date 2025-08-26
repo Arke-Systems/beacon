@@ -27,11 +27,7 @@ export default class Assets {
 		const assetsPath = schemaDirectory();
 		const assetsByPath = new Map<string, AssetMeta>();
 		const foldersByPath = new Map<string, FolderMeta>();
-
-		const entries = await tryReadDir(assetsPath, {
-			recursive: true,
-			withFileTypes: true,
-		});
+		const entries = await tryReadDir(assetsPath, true);
 
 		for (const paths of assetPaths(assetsPath, entries)) {
 			const meta = await load(paths);

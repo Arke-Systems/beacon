@@ -10,7 +10,7 @@ export default async function clean(
 ): Promise<TransferResults> {
 	const baseDirectory = resolve(baseSchemaPath, 'entries');
 	const results = new MutableTransferResults();
-	const children = await tryReadDir(baseDirectory, { withFileTypes: true });
+	const children = await tryReadDir(baseDirectory);
 
 	for (const child of children) {
 		if (!child.isDirectory()) {

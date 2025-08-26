@@ -101,7 +101,6 @@ The solution is:
    already been imported.
 
    Therefore, the first-pass replacement algorithm is:
-
    - Given the a content type and title, attempt to locate a matching entry
      among the entries that have already been imported.
 
@@ -110,7 +109,6 @@ The solution is:
    - Otherwise, use a placeholder value and record the entry for a second pass.
 
    And the second-pass replacement algorithm is:
-
    - Given the a content type and title, locate the matching entry among
      imported entries.
 
