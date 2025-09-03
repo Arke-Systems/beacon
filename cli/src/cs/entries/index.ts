@@ -1,3 +1,4 @@
+import equality from '#cli/schema/entries/equality.js';
 import type Client from '../api/Client.js';
 import readPaginatedItems from '../api/paginate/readPaginatedItems.js';
 import type { ContentType } from '../content-types/Types.js';
@@ -16,6 +17,7 @@ export default async function index(
 		key,
 		fetchFn.bind(null, contentType.uid, client),
 		mapFn.bind(null, globalFieldsByUid, contentType),
+		equality,
 	);
 }
 

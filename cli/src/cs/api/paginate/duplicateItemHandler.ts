@@ -1,12 +1,14 @@
+import type { Item } from '#cli/cs/Types.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
 import HandledError from '#cli/ui/HandledError.js';
-import { inspect, isDeepStrictEqual, styleText } from 'node:util';
+import { inspect, styleText } from 'node:util';
 
-export default function duplicateItemHandler(
+export default function duplicateItemHandler<TItem extends Item>(
 	pluralNoun: string,
-	acc: ReadonlyMap<string, unknown>,
+	acc: ReadonlyMap<string, TItem>,
+	equality: (a: TItem, b: TItem) => boolean,
 	key: string,
-	item: unknown,
+	item: TItem,
 ) {
 	const existing = acc.get(key);
 
@@ -26,7 +28,7 @@ export default function duplicateItemHandler(
 
 	msgs.push('.');
 
-	if (isDeepStrictEqual(existing, item)) {
+	if (equality(existing, item)) {
 		getUi().warn(msgs.join(''));
 		return;
 	}

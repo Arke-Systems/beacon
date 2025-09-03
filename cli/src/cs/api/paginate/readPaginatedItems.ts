@@ -1,5 +1,6 @@
+import getUi from '#cli/schema/lib/SchemaUi.js';
 import ProgressReporter from '#cli/ui/progress/ProgressReporter.js';
-import getUi from '../../../schema/lib/SchemaUi.js';
+import { isDeepStrictEqual } from 'node:util';
 import type { Item } from '../../Types.js';
 import type ApiResponse from './ApiResponse.js';
 import type Batch from './Batch.js';
@@ -11,6 +12,7 @@ export default async function readPaginatedItems<TItem extends Item>(
 	keyFn: (item: TItem) => string,
 	fetchFn: (skip: number) => Promise<ApiResponse>,
 	mapFn: (data: Record<string, unknown>) => Batch<TItem>,
+	equality: (a: TItem, b: TItem) => boolean = isDeepStrictEqual,
 ): Promise<ReadonlyMap<string, TItem>> {
 	const batchFn = async (skip = 0) =>
 		readBatch(pluralNoun, fetchFn, mapFn, skip);
@@ -18,7 +20,7 @@ export default async function readPaginatedItems<TItem extends Item>(
 	let batch = await batchFn();
 	const total = batch.count ?? 0;
 
-	const acc = createAccumulator<TItem>(pluralNoun, keyFn);
+	const acc = createAccumulator<TItem>(pluralNoun, keyFn, equality);
 	acc.add(batch.items);
 	let processedThisBatch = calculateProcessedItemCount(batch);
 	let processedInTotal = processedThisBatch;

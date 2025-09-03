@@ -4,9 +4,12 @@ import duplicateItemHandler from './duplicateItemHandler.js';
 export default function createAccumulator<TItem extends Item>(
 	pluralNoun: string,
 	keyFn: (item: TItem) => string,
+	equality: (a: TItem, b: TItem) => boolean,
 ) {
 	const acc = new Map<string, TItem>();
-	const handleDuplicateItems = duplicateItemHandler.bind(null, pluralNoun, acc);
+
+	const handleDuplicateItems = (key: string, item: TItem) =>
+		duplicateItemHandler(pluralNoun, acc, equality, key, item);
 
 	return {
 		add(items: readonly TItem[]) {
