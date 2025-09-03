@@ -34,7 +34,7 @@
     "test": "yarn workspace @arke-systems/beacon-test vitest"
   },
   "type": "module",
-  "version": "1.11.2",
+  "version": "1.11.3",
   "workspaces": [
     "cli",
     "test"
