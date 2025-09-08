@@ -2,6 +2,7 @@ import type { SchemaField, SchemaFields } from '#cli/cs/Types.js';
 import replaceBlocks from './replaceBlocks.js';
 import replaceField from './replaceField.js';
 import replaceGroup from './replaceGroup.js';
+import replaceReference from './replaceReference.js';
 
 export default function* traverse(
 	schemaFields: SchemaFields,
@@ -13,6 +14,9 @@ export default function* traverse(
 				continue;
 			case 'group':
 				yield replaceGroup(field);
+				continue;
+			case 'reference':
+				yield replaceReference(field);
 				continue;
 			default:
 				yield replaceField(field);
