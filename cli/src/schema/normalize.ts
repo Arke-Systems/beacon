@@ -46,5 +46,24 @@ function normalizeSchema(schema: unknown): unknown {
 	return {
 		...rest,
 		...(nestedSchema ? { schema: normalizeSchema(nestedSchema) } : {}),
+		...normalizeReferenceTo(rest),
 	};
+}
+
+function normalizeReferenceTo(schema: Record<string, unknown>) {
+	if (schema.data_type !== 'reference') {
+		return {};
+	}
+
+	const { reference_to } = schema;
+
+	if (!reference_to) {
+		return {};
+	}
+
+	if (!Array.isArray(reference_to)) {
+		return { reference_to };
+	}
+
+	return { reference_to: [...new Set(reference_to)].sort() };
 }
