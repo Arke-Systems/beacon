@@ -57,6 +57,10 @@ function normalizeReferenceTo(schema: Record<string, unknown>) {
 
 	const { reference_to } = schema;
 
+	if (!reference_to) {
+		return {};
+	}
+
 	if (!Array.isArray(reference_to)) {
 		return { reference_to: [] };
 	}
