@@ -62,7 +62,7 @@ function normalizeReferenceTo(schema: Record<string, unknown>) {
 	}
 
 	if (!Array.isArray(reference_to)) {
-		return { reference_to: [] };
+		return { reference_to };
 	}
 
 	return { reference_to: [...new Set(reference_to)].sort() };
