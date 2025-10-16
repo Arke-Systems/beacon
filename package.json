@@ -3,17 +3,17 @@
   "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "description": "Development scripts for the Beacon project",
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@types/node": "^22.18.0",
-    "eslint": "^9.34.0",
+    "@eslint/js": "^9.37.0",
+    "@types/node": "^22.18.10",
+    "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
-    "globals": "^16.3.0",
+    "globals": "^16.4.0",
     "prettier": "^3.6.2",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.42.0"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.1"
   },
   "engines": {
-    "node": "22.X"
+    "node": ">=22.0.0"
   },
   "homepage": "https://github.com/Arke-Systems/beacon",
   "imports": {
@@ -22,7 +22,7 @@
   },
   "license": "MIT",
   "name": "@arke-systems/beacon",
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "yarn@4.10.3",
   "repository": "github:Arke-Systems/beacon",
   "scripts": {
     "build": "node ./build/build.js",
