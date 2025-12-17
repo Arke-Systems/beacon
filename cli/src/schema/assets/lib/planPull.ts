@@ -3,20 +3,19 @@ import { isDeepStrictEqual } from 'node:util';
 import getUi from '../../lib/SchemaUi.js';
 import type AssetMeta from '../AssetMeta.js';
 
-export default function planPull(
+interface MutablePlan {
+	toCreate: Map<string, AssetMeta>;
+	toRemove: Map<string, AssetMeta>;
+	toSkip: Set<string>;
+	toUpdate: Map<string, AssetMeta>;
+}
+
+function processCsAssets(
 	cs: ReadonlyMap<string, AssetMeta>,
 	fs: ReadonlyMap<string, AssetMeta>,
-): MergePlan<AssetMeta> {
-	const ui = getUi();
-	const { isIncluded } = ui.options.schema.assets;
-
-	const result = {
-		toCreate: new Map<string, AssetMeta>(),
-		toRemove: new Map<string, AssetMeta>(),
-		toSkip: new Set<string>(),
-		toUpdate: new Map<string, AssetMeta>(),
-	};
-
+	isIncluded: (path: string) => boolean,
+	result: MutablePlan,
+): Set<string> {
 	const seen = new Set<string>();
 
 	for (const [path, csMeta] of cs) {
@@ -31,7 +30,6 @@ export default function planPull(
 					result.toUpdate.set(path, csMeta);
 				}
 			} else {
-				// Asset exists in both CS and FS but is excluded - skip it
 				result.toSkip.add(path);
 			}
 		} else if (isIncluded(path)) {
@@ -41,18 +39,44 @@ export default function planPull(
 		}
 	}
 
+	return seen;
+}
+
+function processFsOnlyAssets(
+	fs: ReadonlyMap<string, AssetMeta>,
+	seen: Set<string>,
+	isIncluded: (path: string) => boolean,
+	result: MutablePlan,
+): void {
 	for (const [path, fsMeta] of fs) {
 		if (seen.has(path)) {
 			continue;
 		}
 
-		// Asset exists only in FS - only remove if included
 		if (isIncluded(path)) {
 			result.toRemove.set(path, fsMeta);
 		} else {
 			result.toSkip.add(path);
 		}
 	}
+}
+
+export default function planPull(
+	cs: ReadonlyMap<string, AssetMeta>,
+	fs: ReadonlyMap<string, AssetMeta>,
+): MergePlan<AssetMeta> {
+	const ui = getUi();
+	const { isIncluded } = ui.options.schema.assets;
+
+	const result = {
+		toCreate: new Map<string, AssetMeta>(),
+		toRemove: new Map<string, AssetMeta>(),
+		toSkip: new Set<string>(),
+		toUpdate: new Map<string, AssetMeta>(),
+	};
+
+	const seen = processCsAssets(cs, fs, isIncluded, result);
+	processFsOnlyAssets(fs, seen, isIncluded, result);
 
 	return result;
 }
