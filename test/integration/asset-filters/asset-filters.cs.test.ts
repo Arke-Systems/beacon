@@ -55,16 +55,16 @@ describe(
 			// cli/src/schema/assets/lib/planPull.test.ts
 			new Theory('pull', true, true, true, true, 'skip'),
 			new Theory('pull', true, true, true, false, 'update'),
-			new Theory('pull', true, true, false, true, 'delete'),
-			new Theory('pull', true, true, false, false, 'delete'),
-			new Theory('pull', true, false, true, true, 'create'),
-			new Theory('pull', true, false, true, false, 'create'),
-			new Theory('pull', true, false, false, true, 'skip'),
-			new Theory('pull', true, false, false, false, 'skip'),
-			new Theory('pull', false, true, true, true, 'delete'),
-			new Theory('pull', false, true, true, false, 'delete'),
-			new Theory('pull', false, true, false, true, 'delete'),
-			new Theory('pull', false, true, false, false, 'delete'),
+		new Theory('pull', true, true, false, true, 'skip'),
+		new Theory('pull', true, true, false, false, 'skip'),
+		new Theory('pull', true, false, true, true, 'create'),
+		new Theory('pull', true, false, true, false, 'create'),
+		new Theory('pull', true, false, false, true, 'skip'),
+		new Theory('pull', true, false, false, false, 'skip'),
+		new Theory('pull', false, true, true, true, 'delete'),
+		new Theory('pull', false, true, true, false, 'delete'),
+		new Theory('pull', false, true, false, true, 'skip'),
+		new Theory('pull', false, true, false, false, 'skip'),
 		];
 
 		theories.forEach((theory) => {

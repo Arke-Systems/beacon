@@ -31,7 +31,8 @@ export default function planPull(
 					result.toUpdate.set(path, csMeta);
 				}
 			} else {
-				result.toRemove.set(path, fsMeta);
+				// Asset exists in both CS and FS but is excluded - skip it
+				result.toSkip.add(path);
 			}
 		} else if (isIncluded(path)) {
 			result.toCreate.set(path, csMeta);
@@ -45,7 +46,12 @@ export default function planPull(
 			continue;
 		}
 
-		result.toRemove.set(path, fsMeta);
+		// Asset exists only in FS - only remove if included
+		if (isIncluded(path)) {
+			result.toRemove.set(path, fsMeta);
+		} else {
+			result.toSkip.add(path);
+		}
 	}
 
 	return result;

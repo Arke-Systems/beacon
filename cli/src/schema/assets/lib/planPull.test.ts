@@ -22,16 +22,16 @@ describe('Assets: planPull', () => {
 	const theories: readonly Theory[] = [
 		new Theory(true, true, true, true, 'skip'),
 		new Theory(true, true, true, false, 'update'),
-		new Theory(true, true, false, true, 'delete'),
-		new Theory(true, true, false, false, 'delete'),
+		new Theory(true, true, false, true, 'skip'),
+		new Theory(true, true, false, false, 'skip'),
 		new Theory(true, false, true, true, 'create'),
 		new Theory(true, false, true, false, 'create'),
 		new Theory(true, false, false, true, 'skip'),
 		new Theory(true, false, false, false, 'skip'),
 		new Theory(false, true, true, true, 'delete'),
 		new Theory(false, true, true, false, 'delete'),
-		new Theory(false, true, false, true, 'delete'),
-		new Theory(false, true, false, false, 'delete'),
+		new Theory(false, true, false, true, 'skip'),
+		new Theory(false, true, false, false, 'skip'),
 	];
 
 	theories.forEach((theory) => {

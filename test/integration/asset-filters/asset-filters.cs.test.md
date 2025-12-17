@@ -23,11 +23,11 @@ need to double-check that assumption.
 | ------- | ------- | -------- | --------- | --------- | --------- |
 | exists  | exists  | true     | true      | no action | no action |
 | exists  | exists  | true     | false     | update    | update    |
-| exists  | exists  | false    | _any_     | warning   | delete    |
+| exists  | exists  | false    | _any_     | warning   | no action |
 | exists  | missing | true     | false     | delete    | create    |
 | exists  | missing | false    | false     | no action | no action |
 | missing | exists  | true     | false     | create    | delete    |
-| missing | exists  | false    | false     | warning   | delete    |
+| missing | exists  | false    | false     | warning   | no action |
 
 ### States for Folders
 
@@ -95,7 +95,11 @@ flipped, but the resulting push/pull outcomes are not:
 | CS      | FS      | Included | On Push   | On Pull   |
 | ------- | ------- | -------- | --------- | --------- |
 | exists  | missing | false    | no action | no action |
-| missing | exists  | false    | warning   | delete    |
+| missing | exists  | false    | warning   | no action |
 
 Because of this, we must always distinguish CS and FS, not just source and
 destination.
+
+When an asset is excluded (not included), it is effectively unmanaged by Beacon.
+During pull operations, excluded assets in the file system are left alone rather
+than deleted, even if they don't exist in Contentstack.
