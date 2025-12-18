@@ -42,19 +42,6 @@ schema:
     non_localizable: false
     uid: header_image
     unique: false
-  - config: {}
-    data_type: json
-    display_name: Background Image
-    extension_uid:
-      $beacon:
-        extension: Bynder
-    field_metadata:
-      extension: true
-    mandatory: false
-    multiple: false
-    non_localizable: false
-    uid: background_image
-    unique: false
   - blocks:
       - schema:
           - data_type: text

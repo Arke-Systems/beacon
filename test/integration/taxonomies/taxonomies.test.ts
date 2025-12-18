@@ -22,7 +22,7 @@ describe(
 			new URL('.tmp/taxonomies', TestProjectUrl),
 		);
 
-		const ctx = new TestContext(fixturePath);
+		const ctx = new TestContext('.tmp/taxonomies');
 
 		beforeAll(async () => clear(ctx.client, ctx.ui), longTest);
 

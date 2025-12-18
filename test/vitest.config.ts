@@ -1,7 +1,8 @@
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
 	plugins: [
 		tsconfigPaths({
 			projects: [
@@ -12,6 +13,7 @@ export default defineConfig({
 		}),
 	],
 	test: {
+		env: loadEnv(mode, process.cwd(), ''),
 		expect: { requireAssertions: true },
 		// Some of the integration tests need to be run in isolation because of
 		// the ways they mutate data.
@@ -25,4 +27,4 @@ export default defineConfig({
 			'test/matchers/toBeErrorFreeTransferResults.ts',
 		],
 	},
-});
+}));
