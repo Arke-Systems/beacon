@@ -10,6 +10,17 @@ export default function planPull(
 	const ui = getUi();
 	const { isIncluded } = ui.options.schema.assets;
 
+	const { result, seen } = processCsAssets(cs, fs, isIncluded);
+	processFsAssets(fs, isIncluded, { result, seen });
+
+	return result;
+}
+
+function processCsAssets(
+	cs: ReadonlyMap<string, AssetMeta>,
+	fs: ReadonlyMap<string, AssetMeta>,
+	isIncluded: (path: string) => boolean,
+) {
 	const result = {
 		toCreate: new Map<string, AssetMeta>(),
 		toRemove: new Map<string, AssetMeta>(),
@@ -40,6 +51,14 @@ export default function planPull(
 		}
 	}
 
+	return { result, seen };
+}
+
+function processFsAssets(
+	fs: ReadonlyMap<string, AssetMeta>,
+	isIncluded: (path: string) => boolean,
+	{ result, seen }: ReturnType<typeof processCsAssets>,
+) {
 	for (const [path, fsMeta] of fs) {
 		if (seen.has(path)) {
 			continue;
@@ -51,6 +70,4 @@ export default function planPull(
 			result.toSkip.add(path);
 		}
 	}
-
-	return result;
 }
