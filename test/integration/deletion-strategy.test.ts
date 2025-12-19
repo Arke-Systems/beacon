@@ -71,7 +71,7 @@ describe(
 								errored: new Map(),
 								unmodified: new Set([
 									'075eb5fa-99b3-4991-bd4d-cc50d3f194f4.webp',
-									'/sub-folder/a6a9b989-674c-4fc5-98d5-a6efa51c8467.webp',
+									'sub-folder/a6a9b989-674c-4fc5-98d5-a6efa51c8467.webp',
 								]),
 								updated: new Set(),
 							},
