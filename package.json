@@ -22,7 +22,7 @@
   },
   "license": "MIT",
   "name": "@arke-systems/beacon",
-  "packageManager": "yarn@4.10.3",
+  "packageManager": "yarn@4.12.0",
   "repository": "github:Arke-Systems/beacon",
   "scripts": {
     "build": "node ./build/build.js",
