@@ -4,7 +4,7 @@ Some notes on how asset filters are supposed to work.
 
 ## Inclusion / Exclusion
 
-- An asset it included if any include filter matches it, unless it is excluded.
+- An asset is included if any include filter matches it, unless it is excluded.
 - An asset is excluded if no include filter matches it.
 - An asset is excluded if it matches any of the exclude filters.
 
@@ -35,13 +35,13 @@ need to double-check that assumption.
 | ------- | ------- | -------- | ----------------- | --------- | --------- |
 | exists  | exists  | true     | _any_             | no action | no action |
 | exists  | exists  | false    | true              | no action | no action |
-| exists  | exists  | false    | false             | warning   | delete    |
+| exists  | exists  | false    | false             | warning   | no action |
 | exists  | missing | true     | _any_             | delete    | create    |
 | exists  | missing | false    | true              | delete    | create    |
 | exists  | missing | false    | false             | no action | no action |
 | missing | exists  | true     | _any_             | create    | delete    |
-| missing | exists  | false    | true              | create    | delete    |
-| missing | exists  | false    | false             | warning   | delete    |
+| missing | exists  | false    | true              | create    | no action |
+| missing | exists  | false    | false             | warning   | no action |
 
 #### v2
 
@@ -68,8 +68,8 @@ need to double-check that assumption.
 | true  | false | false    | false    | false    | skip    | skip    |
 | false | true  | true     | false    | true     | create  | delete  |
 | false | true  | true     | false    | false    | create  | delete  |
-| false | true  | false    | false    | true     | create  | delete  |
-| false | true  | false    | false    | false    | warn    | delete  |
+| false | true  | false    | false    | true     | create  | skip    |
+| false | true  | false    | false    | false    | warn    | skip    |
 
 - If an item is directly included, then we do not need to care about the
   children.
@@ -77,6 +77,35 @@ need to double-check that assumption.
 - Because git won't commit an empty directory, I think `FS: 1, FS-Child: 0` is
   not likely to occur. But that is a git limitation, not a limitation of the
   file system. We should support it anyway.
+
+#### v3
+
+Feedback is that the current behavior of a `pull` deleting excluded assets
+is unexpected and not desired.
+
+These changes are made:
+
+1. If an excluded assets exists in the filesystem **and** the stack, a `pull`
+   should take no action. The previous behavior was to delete the file.
+
+2. If an excluded asset exists in the filesystem, but **not** in the stack, a
+   `pull` should take no action. The previous behavior was to delete the file.
+
+3. For files, this means an excluded asset will always have `no action`.
+
+4. If an excluded folder exists in the filesystem **and** in the stack, and
+   if the folder contains no included items, a `pull` should take no action.
+   The previous behavior was to delete the folder and all of its contents.
+
+5. If an excluded folder exists in the filesystem, but **not** in the stack,
+   and the folder contains items that should be included, a `pull` should delete
+   the contents that are covered by the inclusion filter, but take no action on
+   the folder itself, or any of the folder's other contents. The previous
+   behavior was to delete the folder and all of its contents.
+
+6. If an excluded folder exists in the filesystem, but **not** in the stack,
+   and the folder's contents are also excluded, a `pull` should take no action.
+   The previous behavior was to delete the folder and all of its contents.
 
 ### Observations
 
