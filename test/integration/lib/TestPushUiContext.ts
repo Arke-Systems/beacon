@@ -6,13 +6,15 @@ export default class TestPushUiContext extends TestUiContext {
 	public constructor(schemaPath: string, logContext: LogContext = console) {
 		const apiKey = process.env.Contentstack_Api_Key;
 		const baseUrl = process.env.Contentstack_Management_API;
-		const extension = process.env.Beacon_Extension ?? '';
-		const jsonRtePlugin = process.env.Beacon_Plugin ?? '';
+		const extension = process.env.Beacon_Extension;
+		const jsonRtePlugin = process.env.Beacon_Plugin;
 		const managementToken = process.env.Contentstack_Management_Token;
 
 		if (
 			typeof apiKey !== 'string' ||
 			typeof baseUrl !== 'string' ||
+			typeof extension !== 'string' ||
+			typeof jsonRtePlugin !== 'string' ||
 			typeof managementToken !== 'string'
 		) {
 			throw new Error('Missing environment variables for integration tests');

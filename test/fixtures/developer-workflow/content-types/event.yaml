@@ -71,7 +71,8 @@ schema:
     mandatory: false
     multiple: false
     non_localizable: false
-    plugins: []
+    plugins:
+      - $beacon: { jsonRtePlugin: Bynder }
     reference_to:
       - sys_assets
     uid: travel_info
