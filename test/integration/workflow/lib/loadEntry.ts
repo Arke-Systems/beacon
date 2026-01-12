@@ -19,8 +19,14 @@ export default async function loadEntry(
 		// If simple format doesn't exist, try finding locale-specific file
 		try {
 			const files = await readdir(entriesDir);
-			const pattern = new RegExp(`^${escapeRegex(name)}\\.[^.]+\\.yaml$`, 'u');
-			const localeFile = files.find((f) => pattern.test(f));
+			const localeFile = files.find((f) => {
+				const pattern = new RegExp(
+					`^${escapeRegex(name)}\\.(?<locale>[^.]+)\\.yaml$`,
+					'u',
+				);
+				const match = pattern.exec(f);
+				return match?.groups?.locale && isValidLocaleCode(match.groups.locale);
+			});
 
 			if (localeFile) {
 				return (await readYaml(resolve(entriesDir, localeFile))) as Item;
@@ -36,4 +42,9 @@ export default async function loadEntry(
 
 function escapeRegex(str: string): string {
 	return str.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+}
+
+function isValidLocaleCode(code: string): boolean {
+	// Locale codes should match common patterns like en-us, fr, de-DE, zh_CN
+	return /^[a-z]{2,3}(?:[_-][a-z]{2,4})?$/iu.test(code);
 }
