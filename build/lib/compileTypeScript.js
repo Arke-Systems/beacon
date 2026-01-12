@@ -12,7 +12,7 @@ export default function compileTypeScript(tsConfigUrl) {
 		stdio: 'inherit',
 	}).status;
 
-	if (buildResult !== 0) {
+	if (buildResult !== 0 && buildResult !== null) {
 		console.warn(styleText('redBright', 'Build failed'));
 		process.exit(buildResult);
 	}
