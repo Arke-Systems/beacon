@@ -141,7 +141,8 @@ async function updateAllLocales(
 	entryUid: string,
 	csLocaleSet: Set<string>,
 ) {
-	for (const localeVersion of fsLocaleVersions) {
+	// Import all locale versions in parallel for better performance
+	const importPromises = fsLocaleVersions.map(async (localeVersion) => {
 		const transformed = transformer.process(localeVersion.entry);
 
 		// Pass undefined for 'default' locale (single-locale backward compat)
@@ -151,12 +152,14 @@ async function updateAllLocales(
 			? csLocaleSet.has(localeVersion.locale)
 			: csLocaleSet.size > 0;
 
-		await importEntry(
+		return importEntry(
 			ctx.cs.client,
 			contentType.uid,
 			{ ...transformed, uid: entryUid },
 			overwrite,
 			locale,
 		);
-	}
+	});
+
+	await Promise.all(importPromises);
 }
