@@ -33,10 +33,10 @@ describe(loadEntryLocales.name, () => {
 		const { readdir } = await import('node:fs/promises');
 		const readYaml = (await import('#cli/fs/readYaml.js')).default;
 
-		vi.mocked(readdir).mockResolvedValue<string[]>([
+		vi.mocked(readdir).mockResolvedValue([
 			'test_entry.yaml',
 			'other_entry.yaml',
-		]);
+		] as string[]);
 
 		vi.mocked(readYaml).mockResolvedValue({
 			title: 'Test Entry',
@@ -61,12 +61,12 @@ describe(loadEntryLocales.name, () => {
 
 		const expectedLocaleCount = 3;
 
-		vi.mocked(readdir).mockResolvedValue<string[]>([
+		vi.mocked(readdir).mockResolvedValue([
 			'test_entry.en-us.yaml',
 			'test_entry.fr.yaml',
 			'test_entry.de.yaml',
 			'other_entry.yaml',
-		]);
+		] as string[]);
 
 		vi.mocked(readYaml).mockImplementation(async (path: PathLike) => {
 			const pathStr = String(path);
@@ -100,10 +100,10 @@ describe(loadEntryLocales.name, () => {
 
 		const expectedLocaleCount = 2;
 
-		vi.mocked(readdir).mockResolvedValue<string[]>([
+		vi.mocked(readdir).mockResolvedValue([
 			'Entry.With.Dots.en-us.yaml',
 			'Entry.With.Dots.fr-ca.yaml',
-		]);
+		] as string[]);
 
 		vi.mocked(readYaml).mockImplementation(async (path: PathLike) => {
 			const pathStr = String(path);
@@ -136,7 +136,7 @@ describe(loadEntryLocales.name, () => {
 		const { readdir } = await import('node:fs/promises');
 		const readYaml = (await import('#cli/fs/readYaml.js')).default;
 
-		vi.mocked(readdir).mockResolvedValue<string[]>(['test_entry.yaml']);
+		vi.mocked(readdir).mockResolvedValue(['test_entry.yaml'] as string[]);
 		vi.mocked(readYaml).mockResolvedValue({ title: 'Test Entry' });
 
 		const result = await loadEntryLocales(
