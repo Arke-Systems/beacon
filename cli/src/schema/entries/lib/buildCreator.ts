@@ -93,30 +93,46 @@ async function createFirstLocale(
 			locale,
 		);
 	} catch (ex) {
-		if (isDuplicateKeyError(ex)) {
-			const uid = await getUidByTitle(
-				ctx.cs.client,
-				ctx.cs.globalFields,
-				contentType,
-				transformed.title,
-			);
+		return await handleDuplicateKeyError(
+			ex,
+			ctx,
+			contentType,
+			transformed,
+			locale,
+		);
+	}
+}
 
-			if (!uid) {
-				logInvalidState(contentType.title, transformed.title);
-				throw new Error(`Failed to create entry ${transformed.title}`);
-			}
+async function handleDuplicateKeyError(
+	ex: unknown,
+	ctx: Ctx,
+	contentType: ContentType,
+	transformed: ReturnType<BeaconReplacer['process']>,
+	locale: string | undefined,
+): Promise<Entry> {
+	if (isDuplicateKeyError(ex)) {
+		const uid = await getUidByTitle(
+			ctx.cs.client,
+			ctx.cs.globalFields,
+			contentType,
+			transformed.title,
+		);
 
-			return await importEntry(
-				ctx.cs.client,
-				contentType.uid,
-				{ ...transformed, uid },
-				true,
-				locale,
-			);
+		if (!uid) {
+			logInvalidState(contentType.title, transformed.title);
+			throw new Error(`Failed to create entry ${transformed.title}`);
 		}
 
-		throw ex;
+		return await importEntry(
+			ctx.cs.client,
+			contentType.uid,
+			{ ...transformed, uid },
+			true,
+			locale,
+		);
 	}
+
+	throw ex;
 }
 
 async function importAdditionalLocales(

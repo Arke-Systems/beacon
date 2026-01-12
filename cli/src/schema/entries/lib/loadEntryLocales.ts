@@ -17,58 +17,84 @@ export default async function loadEntryLocales(
 
 	try {
 		const files = await readdir(directory);
-		const multiLocalePattern = new RegExp(
-			`^${baseFilename.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}\\.([^.]+)\\.yaml$`,
-			'u',
-		);
+		const multiLocalePattern = createMultiLocalePattern(baseFilename);
 		const singleLocaleFilename = `${baseFilename}.yaml`;
 
 		for (const file of files) {
-			// Try multi-locale pattern first
-			const match = file.match(multiLocalePattern);
-			if (match) {
-				const [, locale] = match;
-				if (!locale) {
-					continue;
-				}
+			const localeEntry = await tryLoadLocaleFile(
+				file,
+				directory,
+				entryTitle,
+				multiLocalePattern,
+				singleLocaleFilename,
+			);
 
-				const filePath = resolve(directory, file);
-				const data = (await readYaml(filePath)) as Record<string, unknown>;
-
-				// Add a synthetic uid for filesystem entries
-				const entry = {
-					...data,
-					uid: `file: ${entryTitle}`,
-				} as Entry;
-
-				results.push({ entry, locale });
-			} else if (file === singleLocaleFilename) {
-				// Handle simple format (no locale suffix) for backward compatibility
-				const filePath = resolve(directory, file);
-				const data = (await readYaml(filePath)) as Record<string, unknown>;
-
-				// Add a synthetic uid for filesystem entries
-				const entry = {
-					...data,
-					uid: `file: ${entryTitle}`,
-				} as Entry;
-
-				// Use 'default' as locale for single-locale files
-				results.push({ entry, locale: 'default' });
+			if (localeEntry) {
+				results.push(localeEntry);
 			}
 		}
 	} catch (error) {
-		if (
-			error &&
-			typeof error === 'object' &&
-			'code' in error &&
-			error.code === 'ENOENT'
-		) {
-			// Directory doesn't exist
+		if (isDirectoryNotFoundError(error)) {
 			return [];
 		}
 		throw error;
 	}
 
 	return results;
+}
+
+function createMultiLocalePattern(baseFilename: string): RegExp {
+	return new RegExp(
+		`^${baseFilename.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}\\.([^.]+)\\.yaml$`,
+		'u',
+	);
+}
+
+async function tryLoadLocaleFile(
+	file: string,
+	directory: string,
+	entryTitle: string,
+	multiLocalePattern: RegExp,
+	singleLocaleFilename: string,
+): Promise<EntryWithLocale | null> {
+	const match = file.match(multiLocalePattern);
+	if (match) {
+		const [, locale] = match;
+		if (!locale) {
+			return null;
+		}
+
+		const entry = await loadEntryFile(directory, file, entryTitle);
+		return { entry, locale };
+	}
+
+	if (file === singleLocaleFilename) {
+		const entry = await loadEntryFile(directory, file, entryTitle);
+		return { entry, locale: 'default' };
+	}
+
+	return null;
+}
+
+async function loadEntryFile(
+	directory: string,
+	file: string,
+	entryTitle: string,
+): Promise<Entry> {
+	const filePath = resolve(directory, file);
+	const data = (await readYaml(filePath)) as Record<string, unknown>;
+
+	return {
+		...data,
+		uid: `file: ${entryTitle}`,
+	} as Entry;
+}
+
+function isDirectoryNotFoundError(error: unknown): boolean {
+	return (
+		error !== null &&
+		typeof error === 'object' &&
+		'code' in error &&
+		error.code === 'ENOENT'
+	);
 }

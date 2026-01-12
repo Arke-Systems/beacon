@@ -76,8 +76,9 @@ async function groupEntriesByTitle(
 
 		if (multiLocaleMatch?.groups?.title && multiLocaleMatch.groups.locale) {
 			// Multi-locale file
-			entryTitle = multiLocaleMatch.groups.title;
-			locale = multiLocaleMatch.groups.locale;
+			const { title, locale: localeCode } = multiLocaleMatch.groups;
+			entryTitle = title;
+			locale = localeCode;
 		} else {
 			// Try single-locale pattern: title.yaml
 			const singleLocaleMatch = /^(?<title>.+)\.yaml$/u.exec(file);
