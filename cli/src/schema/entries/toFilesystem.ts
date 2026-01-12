@@ -4,6 +4,8 @@ import getEntryLocales from '#cli/cs/entries/getEntryLocales.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
 import transformEntry from '#cli/dto/entry/fromCs.js';
 import writeYaml from '#cli/fs/writeYaml.js';
+import getUi from '#cli/schema/lib/SchemaUi.js';
+import escapeRegex from '#cli/util/escapeRegex.js';
 import type ProgressBar from '#cli/ui/progress/ProgressBar.js';
 import { readdir, rm } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
@@ -60,6 +62,9 @@ function createWriteFn(
 			// fall back to single-locale behavior using entry's locale property
 			if (!entry.locale || typeof entry.locale !== 'string') {
 				// Skip entries without a valid locale
+				getUi().warn(
+					`Warning: Skipping entry "${entry.title}" (${entry.uid}) in ${contentType.uid} - no valid locale information available`,
+				);
 				return;
 			}
 			locales = [{ code: entry.locale }];
@@ -67,22 +72,28 @@ function createWriteFn(
 
 		if (locales.length === 0) {
 			// If no locales available, skip this entry
+			getUi().warn(
+				`Warning: Skipping entry "${entry.title}" (${entry.uid}) in ${contentType.uid} - no locales returned`,
+			);
 			return;
 		}
 
 		// If only one locale, save without locale suffix for backward compatibility
 		const useLocaleSuffix = locales.length > 1;
 
-		for (const locale of locales) {
-			await writeLocaleVersion(
+		// Write all locale versions in parallel for better performance
+		const writePromises = locales.map((locale) =>
+			writeLocaleVersion(
 				ctx,
 				contentType,
 				entry,
 				locale.code,
 				getBasePath,
 				useLocaleSuffix,
-			);
-		}
+			),
+		);
+
+		await Promise.all(writePromises);
 	};
 }
 
@@ -121,7 +132,7 @@ function createRemoveFn(
 		try {
 			const files = await readdir(directory);
 			const pattern = new RegExp(
-				`^${baseFilename.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}\\..*\\.yaml$`,
+				`^${escapeRegex(baseFilename)}\\..*\\.yaml$`,
 				'u',
 			);
 

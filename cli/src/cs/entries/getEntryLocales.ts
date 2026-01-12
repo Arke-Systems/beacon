@@ -30,6 +30,27 @@ function isLocalesResponse(o: unknown): o is LocalesResponse {
 	);
 }
 
+/**
+ * Retrieves all available locale versions of an entry from Contentstack.
+ *
+ * This function queries the Contentstack Management API to get a list of all locales
+ * in which the specified entry exists. This is used during pull operations to determine
+ * which locale versions need to be exported and saved to the filesystem.
+ *
+ * @param client - The Contentstack API client
+ * @param contentTypeUid - The UID of the content type (e.g., 'event', 'home_page')
+ * @param entryUid - The UID of the entry to get locales for
+ * @returns A readonly array of LocaleInfo objects, each containing the locale code, name, and UID
+ * @throws {ContentstackError} If the API returns an error
+ * @throws {Error} If the response cannot be parsed as a valid LocalesResponse
+ *
+ * @example
+ * const locales = await getEntryLocales(client, 'event', 'blt123456');
+ * // Returns: [
+ * //   { code: 'en-us', name: 'English - United States', uid: 'blt...' },
+ * //   { code: 'fr', name: 'French', uid: 'blt...' }
+ * // ]
+ */
 export default async function getEntryLocales(
 	client: Client,
 	contentTypeUid: ContentType['uid'],

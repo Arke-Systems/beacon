@@ -1,6 +1,7 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import type { Item } from '#cli/cs/Types.js';
 import readYaml from '#cli/fs/readYaml.js';
+import escapeRegex from '#cli/util/escapeRegex.js';
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -38,10 +39,6 @@ export default async function loadEntry(
 		// If neither exists, throw the original error
 		throw simpleError;
 	}
-}
-
-function escapeRegex(str: string): string {
-	return str.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
 }
 
 function isValidLocaleCode(code: string): boolean {

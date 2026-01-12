@@ -1,5 +1,6 @@
 import type { Entry } from '#cli/cs/entries/Types.js';
 import readYaml from '#cli/fs/readYaml.js';
+import escapeRegex from '#cli/util/escapeRegex.js';
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -69,10 +70,7 @@ export default async function loadEntryLocales(
 }
 
 function createMultiLocalePattern(baseFilename: string): RegExp {
-	return new RegExp(
-		`^${baseFilename.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}\\.([^.]+)\\.yaml$`,
-		'u',
-	);
+	return new RegExp(`^${escapeRegex(baseFilename)}\\.([^.]+)\\.yaml$`, 'u');
 }
 
 async function tryLoadLocaleFile(

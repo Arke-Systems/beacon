@@ -120,7 +120,14 @@ async function handleDuplicateKeyError(
 
 		if (!uid) {
 			logInvalidState(contentType.title, transformed.title);
-			throw new Error(`Failed to create entry ${transformed.title}`);
+			const newError = new Error(
+				`Failed to create entry ${transformed.title}: Contentstack reported a duplicate title but the entry was not found after re-indexing`,
+			);
+			// Preserve the original error as the cause
+			if (ex instanceof Error) {
+				newError.cause = ex;
+			}
+			throw newError;
 		}
 
 		return await importEntry(
