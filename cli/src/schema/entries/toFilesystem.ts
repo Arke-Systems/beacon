@@ -82,7 +82,7 @@ function createWriteFn(
 		const useLocaleSuffix = locales.length > 1;
 
 		// Write all locale versions in parallel for better performance
-		const writePromises = locales.map((locale) =>
+		const writePromises = locales.map(async (locale) =>
 			writeLocaleVersion(
 				ctx,
 				contentType,

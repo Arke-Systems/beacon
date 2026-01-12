@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Entry } from '#cli/cs/entries/Types.js';
+import type { Dirent } from 'node:fs';
 import loadEntryLocales from './loadEntryLocales.js';
 
 // Mock the file system modules
@@ -36,7 +36,7 @@ describe(loadEntryLocales.name, () => {
 		vi.mocked(readdir).mockResolvedValue([
 			'test_entry.yaml',
 			'other_entry.yaml',
-		] as any);
+		] as unknown as Dirent[]);
 
 		vi.mocked(readYaml).mockResolvedValue({
 			title: 'Test Entry',
@@ -57,24 +57,28 @@ describe(loadEntryLocales.name, () => {
 		const { readdir } = await import('node:fs/promises');
 		const readYaml = (await import('#cli/fs/readYaml.js')).default;
 
+		// Justification: Test has exactly 3 locale files
+
+		const expectedLocaleCount = 3;
+
 		vi.mocked(readdir).mockResolvedValue([
 			'test_entry.en-us.yaml',
 			'test_entry.fr.yaml',
 			'test_entry.de.yaml',
 			'other_entry.yaml',
-		] as any);
+		] as unknown as Dirent[]);
 
-		vi.mocked(readYaml).mockImplementation(async (path: any) => {
+		vi.mocked(readYaml).mockImplementation(async (path: string) => {
 			if (path.includes('en-us')) {
-				return { locale: 'en-us', title: 'Test Entry' };
+				return Promise.resolve({ locale: 'en-us', title: 'Test Entry' });
 			}
 			if (path.includes('fr')) {
-				return { locale: 'fr', title: 'Test Entry' };
+				return Promise.resolve({ locale: 'fr', title: 'Test Entry' });
 			}
 			if (path.includes('de')) {
-				return { locale: 'de', title: 'Test Entry' };
+				return Promise.resolve({ locale: 'de', title: 'Test Entry' });
 			}
-			return {};
+			return Promise.resolve({});
 		});
 
 		const result = await loadEntryLocales(
@@ -83,7 +87,7 @@ describe(loadEntryLocales.name, () => {
 			'test_entry',
 		);
 
-		expect(result).toHaveLength(3);
+		expect(result).toHaveLength(expectedLocaleCount);
 		expect(result.map((r) => r.locale)).toEqual(['en-us', 'fr', 'de']);
 	});
 
@@ -91,19 +95,29 @@ describe(loadEntryLocales.name, () => {
 		const { readdir } = await import('node:fs/promises');
 		const readYaml = (await import('#cli/fs/readYaml.js')).default;
 
+		// Justification: Test has exactly 2 locale files
+
+		const expectedLocaleCount = 2;
+
 		vi.mocked(readdir).mockResolvedValue([
 			'Entry.With.Dots.en-us.yaml',
 			'Entry.With.Dots.fr-ca.yaml',
-		] as any);
+		] as unknown as Dirent[]);
 
-		vi.mocked(readYaml).mockImplementation(async (path: any) => {
+		vi.mocked(readYaml).mockImplementation(async (path: string) => {
 			if (path.includes('en-us')) {
-				return { locale: 'en-us', title: 'Entry.With.Dots' };
+				return Promise.resolve({
+					locale: 'en-us',
+					title: 'Entry.With.Dots',
+				});
 			}
 			if (path.includes('fr-ca')) {
-				return { locale: 'fr-ca', title: 'Entry.With.Dots' };
+				return Promise.resolve({
+					locale: 'fr-ca',
+					title: 'Entry.With.Dots',
+				});
 			}
-			return {};
+			return Promise.resolve({});
 		});
 
 		const result = await loadEntryLocales(
@@ -112,7 +126,7 @@ describe(loadEntryLocales.name, () => {
 			'Entry.With.Dots',
 		);
 
-		expect(result).toHaveLength(2);
+		expect(result).toHaveLength(expectedLocaleCount);
 		expect(result.map((r) => r.locale)).toEqual(['en-us', 'fr-ca']);
 	});
 
@@ -120,7 +134,9 @@ describe(loadEntryLocales.name, () => {
 		const { readdir } = await import('node:fs/promises');
 		const readYaml = (await import('#cli/fs/readYaml.js')).default;
 
-		vi.mocked(readdir).mockResolvedValue(['test_entry.yaml'] as any);
+		vi.mocked(readdir).mockResolvedValue([
+			'test_entry.yaml',
+		] as unknown as Dirent[]);
 		vi.mocked(readYaml).mockResolvedValue({ title: 'Test Entry' });
 
 		const result = await loadEntryLocales(

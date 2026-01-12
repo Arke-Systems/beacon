@@ -16,13 +16,15 @@ export default async function loadEntry(
 	const simplePath = resolve(entriesDir, `${name}.yaml`);
 	try {
 		return (await readYaml(simplePath)) as Item;
-	} catch (simpleError) {
+	} catch (simpleError: unknown) {
 		// If simple format doesn't exist, try finding locale-specific file
 		try {
 			const files = await readdir(entriesDir);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call -- escapeRegex is properly typed as (string) => string
+			const escapedName: string = escapeRegex(name);
 			const localeFile = files.find((f) => {
 				const pattern = new RegExp(
-					`^${escapeRegex(name)}\\.(?<locale>[^.]+)\\.yaml$`,
+					`^${escapedName}\\.(?<locale>[^.]+)\\.yaml$`,
 					'u',
 				);
 				const match = pattern.exec(f);
@@ -37,7 +39,11 @@ export default async function loadEntry(
 		}
 
 		// If neither exists, throw the original error
-		throw simpleError;
+
+		if (simpleError instanceof Error) {
+			throw simpleError;
+		}
+		throw new Error('Failed to load entry', { cause: simpleError });
 	}
 }
 
