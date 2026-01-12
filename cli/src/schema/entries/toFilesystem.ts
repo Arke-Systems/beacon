@@ -110,7 +110,8 @@ function createRemoveFn(
 			);
 
 			for (const file of files) {
-				if (pattern.test(file)) {
+				// Remove both locale-suffixed files (entry.en-us.yaml) and base file (entry.yaml)
+				if (pattern.test(file) || file === `${baseFilename}.yaml`) {
 					await rm(resolve(directory, file), { force: true });
 				}
 			}

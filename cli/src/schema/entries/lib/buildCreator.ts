@@ -142,24 +142,27 @@ async function importAdditionalLocales(
 	fsLocaleVersions: Awaited<ReturnType<typeof loadLocaleVersions>>,
 	created: Entry,
 ) {
-	for (let i = 1; i < fsLocaleVersions.length; i++) {
-		const localeVersion = fsLocaleVersions[i];
+	// Import all additional locale versions in parallel for better performance
+	const importPromises = fsLocaleVersions
+		.slice(1)
+		.map(async (localeVersion) => {
+			if (localeVersion.locale === 'default') {
+				// Skip 'default' locale (already handled by first locale)
+				return;
+			}
 
-		if (!localeVersion || localeVersion.locale === 'default') {
-			// Skip undefined or 'default' locale (already handled by first locale)
-			continue;
-		}
+			const localeTransformed = transformer.process(localeVersion.entry);
 
-		const localeTransformed = transformer.process(localeVersion.entry);
+			return importEntry(
+				ctx.cs.client,
+				contentType.uid,
+				{ ...localeTransformed, uid: created.uid },
+				false,
+				localeVersion.locale,
+			);
+		});
 
-		await importEntry(
-			ctx.cs.client,
-			contentType.uid,
-			{ ...localeTransformed, uid: created.uid },
-			false,
-			localeVersion.locale,
-		);
-	}
+	await Promise.all(importPromises);
 }
 
 function isDuplicateKeyError(ex: unknown) {

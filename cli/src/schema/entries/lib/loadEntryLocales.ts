@@ -8,6 +8,31 @@ export interface EntryWithLocale {
 	readonly locale: string;
 }
 
+/**
+ * Loads all locale versions of an entry from the filesystem.
+ *
+ * This function supports both single-locale and multi-locale file patterns:
+ * - Single-locale: `baseFilename.yaml` (assigns locale='default' for backward compatibility)
+ * - Multi-locale: `baseFilename.{locale}.yaml` (e.g., `Entry Title.en-us.yaml`)
+ *
+ * @param directory - The directory containing entry files (e.g., 'schema/entries/event')
+ * @param entryTitle - The title of the entry (used to create synthetic uid for filesystem entries)
+ * @param baseFilename - The base filename without extension (e.g., 'Entry Title')
+ * @returns An array of entry objects with their locale codes. Returns empty array if directory doesn't exist.
+ *
+ * @example
+ * // For files: Entry.en-us.yaml, Entry.fr.yaml
+ * const locales = await loadEntryLocales('./entries/event', 'Entry', 'Entry');
+ * // Returns: [
+ * //   { entry: {...}, locale: 'en-us' },
+ * //   { entry: {...}, locale: 'fr' }
+ * // ]
+ *
+ * @example
+ * // For single file: Entry.yaml
+ * const locales = await loadEntryLocales('./entries/event', 'Entry', 'Entry');
+ * // Returns: [{ entry: {...}, locale: 'default' }]
+ */
 export default async function loadEntryLocales(
 	directory: string,
 	entryTitle: Entry['title'],

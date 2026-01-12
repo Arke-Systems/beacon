@@ -6,6 +6,7 @@ import type OmitIndex from '#cli/util/OmitIndex.js';
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import indexContentTypes from '../content-types/indexFromFilesystem.js';
+import getUi from '../lib/SchemaUi.js';
 import schemaDirectory from './schemaDirectory.js';
 
 export default async function indexAllFsEntries(): Promise<
@@ -34,13 +35,18 @@ async function loadContentTypeEntries(
 		const entriesByTitle = await groupEntriesByTitle(dir, yamlFiles);
 
 		// For each entry title, pick one locale version to represent it
-		for (const localeMap of entriesByTitle.values()) {
+		for (const [entryTitle, localeMap] of entriesByTitle.entries()) {
 			const preferredEntry = selectPreferredLocale(localeMap);
 			if (preferredEntry) {
 				entriesSet.add({
 					...preferredEntry,
 					uid: `file: ${preferredEntry.title}`,
 				});
+			} else {
+				// Log warning if entry has files but no valid locale versions
+				getUi().warn(
+					`Warning: Entry "${entryTitle}" in ${contentType.uid} has files but no valid locale versions could be selected`,
+				);
 			}
 		}
 	} catch (error) {
@@ -74,8 +80,12 @@ async function groupEntriesByTitle(
 		let entryTitle: string;
 		let locale: string;
 
-		if (multiLocaleMatch?.groups?.title && multiLocaleMatch.groups.locale) {
-			// Multi-locale file
+		if (
+			multiLocaleMatch?.groups?.title &&
+			multiLocaleMatch.groups.locale &&
+			isValidLocaleCode(multiLocaleMatch.groups.locale)
+		) {
+			// Multi-locale file with valid locale code
 			const { title, locale: localeCode } = multiLocaleMatch.groups;
 			entryTitle = title;
 			locale = localeCode;
@@ -124,4 +134,16 @@ type FsEntry = Omit<OmitIndex<Entry>, 'uid'> & Record<string, unknown>;
 
 function isFsEntry(o: Record<string, unknown>): o is FsEntry {
 	return isEntry({ ...o, uid: 'uid' });
+}
+
+/**
+ * Validates if a string is a valid locale code.
+ * Valid locale codes contain only lowercase letters, hyphens, and underscores.
+ * Examples: en-us, fr, de-DE, zh_CN
+ * This prevents misidentifying filenames like "Entry.Title.yaml" as "Entry" with locale "Title"
+ */
+function isValidLocaleCode(code: string): boolean {
+	// Locale codes should be relatively short and contain only valid characters
+	// Pattern: 2-8 characters, lowercase letters/hyphens/underscores
+	return /^[a-z]{2,3}(?:[_-][a-z]{2,4})?$/iu.test(code);
 }
