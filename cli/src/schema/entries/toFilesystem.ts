@@ -1,11 +1,12 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
-import exportEntry from '#cli/cs/entries/export.js';
+import exportEntryLocale from '#cli/cs/entries/exportEntryLocale.js';
+import getEntryLocales from '#cli/cs/entries/getEntryLocales.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
 import transformEntry from '#cli/dto/entry/fromCs.js';
 import writeYaml from '#cli/fs/writeYaml.js';
 import type ProgressBar from '#cli/ui/progress/ProgressBar.js';
-import { rm } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readdir, rm } from 'node:fs/promises';
+import { basename, resolve } from 'node:path';
 import type Ctx from '../ctx/Ctx.js';
 import Filename from '../xfer/Filename.js';
 import planMerge from '../xfer/lib/planMerge.js';
@@ -24,29 +25,99 @@ export default async function toFilesystem(
 	const csEntries = ctx.cs.entries.byTitleFor(contentType.uid);
 	const filenamesByTitle = generateFilenames(csEntries);
 
-	const getPath = (entry: Entry) =>
+	const getBasePath = (entry: Entry) =>
 		resolve(directory, resolveFilename(filenamesByTitle, entry));
 
-	const write = async (entry: Entry) => {
-		const exported = await exportEntry(
-			contentType.uid,
-			ctx.cs.client,
-			entry.uid,
-		);
-
-		const { uid, ...transformed } = transformEntry(ctx, contentType, exported);
-
-		return writeYaml(getPath(entry), transformed);
-	};
+	const write = createWriteFn(ctx, contentType, directory, getBasePath);
+	const remove = createRemoveFn(directory, getBasePath);
 
 	return processPlan<Entry>({
 		create: write,
 		deletionStrategy: 'delete',
 		plan: planMerge(equality, csEntries, fsEntries),
 		progress: bar,
-		remove: async (entry) => rm(getPath(entry), { force: true }),
+		remove,
 		update: write,
 	});
+}
+
+function createWriteFn(
+	ctx: Ctx,
+	contentType: ContentType,
+	directory: string,
+	getBasePath: (entry: Entry) => string,
+) {
+	return async (entry: Entry) => {
+		const locales = await getEntryLocales(
+			ctx.cs.client,
+			contentType.uid,
+			entry.uid,
+		);
+
+		// If only one locale, save without locale suffix for backward compatibility
+		const useLocaleSuffix = locales.length > 1;
+
+		for (const locale of locales) {
+			await writeLocaleVersion(
+				ctx,
+				contentType,
+				entry,
+				locale.code,
+				getBasePath,
+				useLocaleSuffix,
+			);
+		}
+	};
+}
+
+async function writeLocaleVersion(
+	ctx: Ctx,
+	contentType: ContentType,
+	entry: Entry,
+	localeCode: string,
+	getBasePath: (entry: Entry) => string,
+	useLocaleSuffix: boolean,
+) {
+	const exported = await exportEntryLocale(
+		contentType.uid,
+		ctx.cs.client,
+		entry.uid,
+		localeCode,
+	);
+
+	const { uid, ...transformed } = transformEntry(ctx, contentType, exported);
+
+	const basePath = getBasePath(entry);
+	const filePath = useLocaleSuffix
+		? basePath.replace(/\.yaml$/u, `.${localeCode}.yaml`)
+		: basePath;
+	await writeYaml(filePath, transformed);
+}
+
+function createRemoveFn(
+	directory: string,
+	getBasePath: (entry: Entry) => string,
+) {
+	return async (entry: Entry) => {
+		const basePath = getBasePath(entry);
+		const baseFilename = basename(basePath, '.yaml');
+
+		try {
+			const files = await readdir(directory);
+			const pattern = new RegExp(
+				`^${baseFilename.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}\\..*\\.yaml$`,
+				'u',
+			);
+
+			for (const file of files) {
+				if (pattern.test(file)) {
+					await rm(resolve(directory, file), { force: true });
+				}
+			}
+		} catch {
+			// Directory might not exist, which is fine
+		}
+	};
 }
 
 function resolveFilename(

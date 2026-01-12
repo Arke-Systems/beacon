@@ -8,8 +8,9 @@ export default async function importEntry(
 	contentTypeUid: string,
 	entry: Entry,
 	overwrite: boolean,
+	locale?: string,
 ) {
 	return overwrite
-		? await importOverwrite(client, contentTypeUid, entry)
-		: await importCreate(client, contentTypeUid, entry);
+		? await importOverwrite(client, contentTypeUid, entry, locale)
+		: await importCreate(client, contentTypeUid, entry, locale);
 }
