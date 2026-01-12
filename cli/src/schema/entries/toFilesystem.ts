@@ -48,7 +48,7 @@ function createWriteFn(
 	getBasePath: (entry: Entry) => string,
 ) {
 	return async (entry: Entry) => {
-		let locales;
+		let locales: readonly { code: string }[];
 		try {
 			locales = await getEntryLocales(
 				ctx.cs.client,
@@ -58,7 +58,11 @@ function createWriteFn(
 		} catch {
 			// If the locales endpoint fails (e.g., not supported by Contentstack instance),
 			// fall back to single-locale behavior using entry's locale property
-			locales = entry.locale ? [{ code: entry.locale }] : [];
+			if (!entry.locale || typeof entry.locale !== 'string') {
+				// Skip entries without a valid locale
+				return;
+			}
+			locales = [{ code: entry.locale }];
 		}
 
 		if (locales.length === 0) {
