@@ -138,12 +138,12 @@ function isFsEntry(o: Record<string, unknown>): o is FsEntry {
 
 /**
  * Validates if a string is a valid locale code.
- * Valid locale codes contain only lowercase letters, hyphens, and underscores.
+ * Valid locale codes contain only letters (case-insensitive), hyphens, and underscores.
  * Examples: en-us, fr, de-DE, zh_CN
  * This prevents misidentifying filenames like "Entry.Title.yaml" as "Entry" with locale "Title"
  */
 function isValidLocaleCode(code: string): boolean {
-	// Locale codes should be relatively short and contain only valid characters
-	// Pattern: 2-8 characters, lowercase letters/hyphens/underscores
+	// Locale codes: 2-3 letter language code, optionally followed by separator and 2-4 letter region code
+	// Pattern matches: en, en-us, en-US, fr-CA, zh_CN, etc.
 	return /^[a-z]{2,3}(?:[_-][a-z]{2,4})?$/iu.test(code);
 }

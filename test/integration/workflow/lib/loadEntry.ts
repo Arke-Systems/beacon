@@ -42,6 +42,7 @@ export default async function loadEntry(
 }
 
 function isValidLocaleCode(code: string): boolean {
-	// Locale codes should match common patterns like en-us, fr, de-DE, zh_CN
+	// Locale codes: 2-3 letter language code, optionally followed by separator and 2-4 letter region code
+	// Pattern matches: en, en-us, en-US, fr-CA, zh_CN, etc.
 	return /^[a-z]{2,3}(?:[_-][a-z]{2,4})?$/iu.test(code);
 }
