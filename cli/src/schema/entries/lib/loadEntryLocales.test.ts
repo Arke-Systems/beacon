@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Dirent } from 'node:fs';
+import type { Dirent, PathLike } from 'node:fs';
 import loadEntryLocales from './loadEntryLocales.js';
 
 // Mock the file system modules
@@ -68,14 +68,15 @@ describe(loadEntryLocales.name, () => {
 			'other_entry.yaml',
 		] as unknown as Dirent[]);
 
-		vi.mocked(readYaml).mockImplementation(async (path: string) => {
-			if (path.includes('en-us')) {
+		vi.mocked(readYaml).mockImplementation(async (path: PathLike) => {
+			const pathStr = String(path);
+			if (pathStr.includes('en-us')) {
 				return Promise.resolve({ locale: 'en-us', title: 'Test Entry' });
 			}
-			if (path.includes('fr')) {
+			if (pathStr.includes('fr')) {
 				return Promise.resolve({ locale: 'fr', title: 'Test Entry' });
 			}
-			if (path.includes('de')) {
+			if (pathStr.includes('de')) {
 				return Promise.resolve({ locale: 'de', title: 'Test Entry' });
 			}
 			return Promise.resolve({});
@@ -104,14 +105,15 @@ describe(loadEntryLocales.name, () => {
 			'Entry.With.Dots.fr-ca.yaml',
 		] as unknown as Dirent[]);
 
-		vi.mocked(readYaml).mockImplementation(async (path: string) => {
-			if (path.includes('en-us')) {
+		vi.mocked(readYaml).mockImplementation(async (path: PathLike) => {
+			const pathStr = String(path);
+			if (pathStr.includes('en-us')) {
 				return Promise.resolve({
 					locale: 'en-us',
 					title: 'Entry.With.Dots',
 				});
 			}
-			if (path.includes('fr-ca')) {
+			if (pathStr.includes('fr-ca')) {
 				return Promise.resolve({
 					locale: 'fr-ca',
 					title: 'Entry.With.Dots',
