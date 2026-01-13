@@ -12,8 +12,14 @@ export default function compileTypeScript(tsConfigUrl) {
 		stdio: 'inherit',
 	}).status;
 
-	if (buildResult !== 0) {
+	// buildResult can be:
+	// - 0: Success
+	// - null: Success on Windows (process completed normally)
+	// - non-zero number: Failure with specific exit code
+	if (buildResult !== 0 && buildResult !== null) {
 		console.warn(styleText('redBright', 'Build failed'));
 		process.exit(buildResult);
 	}
+
+	// Build succeeded (status is 0 or null)
 }

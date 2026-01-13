@@ -15,10 +15,7 @@ export default async function pullTaxonomy({
 		// Arrange
 		await addNewTaxonomy(client);
 
-		ui.options.schema.taxonomies = new Map([
-			['new_taxonomy', 'only taxonomy'],
-			...ui.options.schema.taxonomies,
-		]);
+		ui.options.schema.taxonomies.set('new_taxonomy', 'only taxonomy');
 
 		// Act
 		const result = await pull(client);
