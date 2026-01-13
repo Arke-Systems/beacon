@@ -20,9 +20,11 @@ export default function normalize({
 	title,
 	uid,
 }: Schema) {
+	const normalizedLabels = Array.isArray(labels) ? [...labels].sort() : labels;
+
 	return {
 		description,
-		...(labels ? { labels } : {}),
+		...(normalizedLabels ? { labels: normalizedLabels } : {}),
 		options,
 		schema: normalizeSchema(schema),
 		title,
