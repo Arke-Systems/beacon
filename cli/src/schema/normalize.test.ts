@@ -52,6 +52,39 @@ test('Normalization preserves labels when present', () => {
 	expect(normalized.labels).toEqual(['label1', 'label2']);
 });
 
+test('Normalization preserves empty labels array', () => {
+	// Arrange
+	const schemaWithEmptyLabels: Schema = {
+		description: 'Test content type',
+		labels: [],
+		options: {
+			is_page: false,
+			singleton: false,
+			sub_title: [],
+			title: 'title',
+		},
+		schema: [
+			{
+				data_type: 'text',
+				display_name: 'Title',
+				mandatory: true,
+				multiple: false,
+				non_localizable: false,
+				uid: 'title',
+				unique: true,
+			},
+		],
+		title: 'Test',
+		uid: 'test',
+	};
+
+	// Act
+	const normalized = normalize(schemaWithEmptyLabels);
+
+	// Assert
+	expect(normalized.labels).toEqual([]);
+});
+
 test('Normalization does not add labels when absent', () => {
 	// Arrange
 	const schemaWithoutLabels: Schema = {
