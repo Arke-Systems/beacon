@@ -7,15 +7,26 @@ import type { Schema } from '#cli/cs/Types.js';
 //   - SYS_ACL
 //
 // Last observed: 2024-07-26.
+//
+// This function normalizes a schema by extracting only the fields that are
+// considered stable and should be compared for equivalence. Fields like
+// labels are preserved when present to ensure they are not lost during
+// serialization/deserialization cycles.
 export default function normalize({
 	description,
+	labels,
 	options,
 	schema,
 	title,
 	uid,
 }: Schema) {
+	const normalizedLabels = Array.isArray(labels)
+		? (labels as string[]).slice().sort()
+		: labels;
+
 	return {
 		description,
+		...(normalizedLabels ? { labels: normalizedLabels } : {}),
 		options,
 		schema: normalizeSchema(schema),
 		title,

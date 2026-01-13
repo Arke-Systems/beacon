@@ -22,3 +22,87 @@ test('Equal schemas are equal', () => {
 		expect(isEquivalentSchema(read, exportFixture)).toBe(true);
 	}),
 );
+
+test('Schemas with different labels are not equivalent', () => {
+	const baseSchema: Schema = {
+		description: '',
+		options: {
+			is_page: false,
+			singleton: false,
+			sub_title: [],
+			title: 'title',
+		},
+		schema: [
+			{
+				data_type: 'text',
+				display_name: 'Title',
+				mandatory: true,
+				multiple: false,
+				non_localizable: false,
+				uid: 'title',
+				unique: true,
+			},
+		],
+		title: 'Test',
+		uid: 'test',
+	};
+
+	const schemaWithLabels: Schema = {
+		...baseSchema,
+		labels: ['label1', 'label2'],
+	};
+
+	expect(isEquivalentSchema(baseSchema, schemaWithLabels)).toBe(false);
+});
+
+test('Schemas with same labels are equivalent', () => {
+	const schema1: Schema = {
+		description: '',
+		labels: ['label1', 'label2'],
+		options: {
+			is_page: false,
+			singleton: false,
+			sub_title: [],
+			title: 'title',
+		},
+		schema: [
+			{
+				data_type: 'text',
+				display_name: 'Title',
+				mandatory: true,
+				multiple: false,
+				non_localizable: false,
+				uid: 'title',
+				unique: true,
+			},
+		],
+		title: 'Test',
+		uid: 'test',
+	};
+
+	const schema2: Schema = {
+		description: '',
+		labels: ['label1', 'label2'],
+		options: {
+			is_page: false,
+			singleton: false,
+			sub_title: [],
+			title: 'title',
+		},
+		schema: [
+			{
+				data_type: 'text',
+				display_name: 'Title',
+				mandatory: true,
+				multiple: false,
+				non_localizable: false,
+				uid: 'title',
+				unique: true,
+			},
+		],
+		title: 'Test',
+		uid: 'test',
+	};
+
+	expect(isEquivalentSchema(schema1, schema2)).toBe(true);
+});
