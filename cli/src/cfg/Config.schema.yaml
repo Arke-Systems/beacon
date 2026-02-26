@@ -76,6 +76,27 @@ properties:
               type: string
               minLength: 1
 
+      entries:
+        type: object
+        additionalProperties: false
+        description: |
+          Control whether entries are synchronized during pull and push
+          operations. Use include/exclude patterns to filter by content type UID.
+        default:
+          include: ['**']
+          exclude: []
+        properties:
+          include:
+            type: array
+            items:
+              type: string
+              minLength: 1
+          exclude:
+            type: array
+            items:
+              type: string
+              minLength: 1
+
       taxonomies:
         type: object
         minProperties: 1
@@ -109,7 +130,8 @@ properties:
         - `schema.extension`, `schema.json-rte-plugin`, and `schema.taxonomies`
           are merged.
 
-        - `schema.assets.include` and `schema.assets.exclude` are concatenated.
+        - `schema.assets.include`, `schema.assets.exclude`, `schema.entries.include`,
+          and `schema.entries.exclude` are concatenated.
 
         - All other values will prefer the named environment.
 

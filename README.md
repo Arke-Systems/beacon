@@ -257,6 +257,12 @@ schema:
     include: ['**']
     exclude: []
 
+  # Include or exclude entries by content type UID using glob patterns.
+  # To exclude all entries, use: exclude: ['**']
+  entries:
+    include: ['**']
+    exclude: []
+
   # Determine whether to serialize taxonomy terms or just the
   # taxonomy structure.
   taxonomies:
@@ -300,9 +306,9 @@ configuration. During this merge, the following rules apply:
   are merged, with values from the named environment being used _in addition_
   to values from the base configuration.
 
-- `schema.assets.include` and `schema.assets.exclude` are concatenated,
-  with values from the named environment being _added_ to the base
-  configuration.
+- `schema.assets.include`, `schema.assets.exclude`, `schema.entries.include`,
+  and `schema.entries.exclude` are concatenated, with values from the named
+  environment being _added_ to the base configuration.
 
 - All other values will prefer the named environment.
 
@@ -385,6 +391,36 @@ schema:
       page_type: 'taxonomy and terms'
       '*': only taxonomy
 ```
+
+### Cookbook: Excluding Entries
+
+To sync only the content model (content types, global fields, and taxonomies)
+without syncing entries, configure the `entries` setting to exclude all content
+types:
+
+```yaml
+# beacon.yaml
+schema:
+  entries:
+    exclude: ['**']
+```
+
+Alternatively, you can selectively include or exclude specific content types
+by their UID:
+
+```yaml
+# beacon.yaml
+schema:
+  entries:
+    include: ['blog_post', 'page']
+    exclude: ['archived_*']
+```
+
+This is useful for scenarios like:
+
+- Setting up a new environment with the schema structure only
+- Synchronizing schema changes without affecting existing content
+- Excluding large or sensitive content types from synchronization
 
 ```yaml
 # .yarnrc.yml

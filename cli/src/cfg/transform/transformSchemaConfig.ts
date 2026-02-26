@@ -12,6 +12,7 @@ export default function transformSchemaConfig(
 		...collapseMap(baseSchema?.extension, envSchema?.extension, 'extension'),
 		...collapseMap(baseSchema?.taxonomies, envSchema?.taxonomies, 'taxonomies'),
 		...collapseAssets(baseSchema?.assets, envSchema?.assets),
+		...collapseEntries(baseSchema?.entries, envSchema?.entries),
 
 		...collapseMap(
 			baseSchema?.['json-rte-plugin'],
@@ -23,6 +24,7 @@ export default function transformSchemaConfig(
 	const {
 		assets,
 		'deletion-strategy': strategy,
+		entries,
 		extension,
 		'json-rte-plugin': jsonRtePlugin,
 		'schema-path': schemaPath,
@@ -32,6 +34,7 @@ export default function transformSchemaConfig(
 	const result = {
 		...(assets ? { assets: { isIncluded: compileFilters(assets) } } : {}),
 		...(strategy ? { deletionStrategy: strategy } : {}),
+		...(entries ? { entries: { isIncluded: compileFilters(entries) } } : {}),
 		...(extension ? { extension: transformMap(extension) } : {}),
 		...(jsonRtePlugin ? { jsonRtePlugin: transformMap(jsonRtePlugin) } : {}),
 		...(schemaPath ? { schemaPath } : {}),
@@ -75,6 +78,21 @@ function collapseAssets(
 	};
 
 	return Object.keys(assets).length ? { assets } : undefined;
+}
+
+function collapseEntries(
+	baseEntries: NonNullable<Config['schema']>['entries'],
+	envEntries: NonNullable<Config['schema']>['entries'],
+) {
+	const include = collapseList(baseEntries?.include, envEntries?.include);
+	const exclude = collapseList(baseEntries?.exclude, envEntries?.exclude);
+
+	const entries = {
+		...(include ? { include } : {}),
+		...(exclude ? { exclude } : {}),
+	};
+
+	return Object.keys(entries).length ? { entries } : undefined;
 }
 
 function collapseList(

@@ -17,9 +17,16 @@ export default async function* pullModules(
 	yield ['Taxonomies', taxonomies(ctx)];
 	yield ['Content Types', contentTypes(ctx)];
 
-	const summary = summarizeContentTypes(ctx);
-	const total = [...summary.values()].reduce((acc, count) => acc + count, 0);
 	const ui = getUi();
+	const summary = summarizeContentTypes(
+		ctx,
+		ui.options.schema.entries.isIncluded,
+	);
+	const total = [...summary.values()].reduce((acc, count) => acc + count, 0);
+
+	if (total === 0) {
+		return;
+	}
 
 	{
 		using bar = ui.createProgressBar('Entries', total);
@@ -37,10 +44,14 @@ export default async function* pullModules(
 	];
 }
 
-function summarizeContentTypes(ctx: Ctx): ReadonlyMap<ContentType, number> {
+function summarizeContentTypes(
+	ctx: Ctx,
+	isIncluded: (contentTypeUid: string) => boolean,
+): ReadonlyMap<ContentType, number> {
 	const sorter = new Intl.Collator();
 
 	return [...ctx.cs.contentTypes.values()]
+		.filter((contentType) => isIncluded(contentType.uid))
 		.sort((a, b) => sorter.compare(a.title, b.title))
 		.reduce((acc, contentType) => {
 			const titles = new Set([
