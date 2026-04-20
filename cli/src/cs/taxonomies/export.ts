@@ -24,7 +24,12 @@ export default async function exportTaxonomy(client: Client, uid: string) {
 
 	// Normalize by removing locale fields that Contentstack adds
 	const { locale: _taxonomyLocale, ...taxonomy } = result.taxonomy;
-	const terms = result.terms.map(({ locale: _termLocale, ...term }) => term);
+	const terms = result.terms.map((t) => {
+		const { locale: _termLocale, ...term } = t as typeof t & {
+			locale?: string;
+		};
+		return term;
+	});
 
 	return { taxonomy, terms };
 }
