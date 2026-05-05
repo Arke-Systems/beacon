@@ -1,5 +1,6 @@
 import type Assets from '#cli/cs/assets/Assets.js';
 import resolveRawAssetItem from '#cli/cs/assets/lib/resolveRawAssetItem.js';
+import { isRawAsset } from '#cli/cs/assets/Types.js';
 import { resolve } from 'node:path';
 import type AssetMeta from '../AssetMeta.js';
 
@@ -39,6 +40,14 @@ export default async function writeAssetToContentstack(
 	assetsPath: string,
 	meta: AssetMeta,
 ) {
+	// Check if asset already exists (prevents duplicates from timeout retries)
+	const existing = resolveRawAssetItem(csState.byParentUid, meta.itemPath);
+	if (existing && isRawAsset(existing)) {
+		// Asset already exists - likely from a previous attempt that timed out
+		// but still created the asset. Return the existing asset to avoid duplicates.
+		return existing;
+	}
+
 	const parentPath = meta.itemPath.split('/').slice(0, -1).join('/');
 
 	// Ensure parent folder exists (create if missing)
