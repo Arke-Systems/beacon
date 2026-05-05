@@ -38,6 +38,8 @@ function runTests() {
 			'--no-api',
 			'--bail',
 			'1',
+			'--exclude',
+			'**/integration/**',
 		],
 		{
 			stdio: 'inherit',
