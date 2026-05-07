@@ -1,4 +1,5 @@
 import type Client from '#cli/cs/api/Client.js';
+import deleteTaxonomy from '#cli/cs/taxonomies/delete.js';
 import readYaml from '#cli/fs/readYaml.js';
 import { Store } from '#cli/schema/lib/SchemaUi.js';
 import pull from '#cli/schema/pull.js';
@@ -13,6 +14,8 @@ export default async function pullTaxonomy({
 }: TestFixtures) {
 	return Store.run(ui, async () => {
 		// Arrange
+		// Delete the taxonomy if it exists from a previous test run
+		await deleteIfExists(client, 'new_taxonomy');
 		await addNewTaxonomy(client);
 
 		ui.options.schema.taxonomies.set('new_taxonomy', 'only taxonomy');
@@ -61,5 +64,13 @@ async function addNewTaxonomy(client: Client) {
 
 	if (!x.response.ok) {
 		throw new Error('Failed to create new taxonomy');
+	}
+}
+
+async function deleteIfExists(client: Client, uid: string) {
+	try {
+		await deleteTaxonomy(client, uid);
+	} catch {
+		// Taxonomy doesn't exist, which is fine
 	}
 }

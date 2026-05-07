@@ -283,16 +283,15 @@ async function deleteAllAssets(
 	const files = new Map<string, RawAsset>();
 
 	for (const asset of assets.values()) {
-		// Nested assets get deleted when parents are deleted, so we only need to
-		// delete top-level assets
-		if (asset.parent_uid) {
-			continue;
-		}
-
 		// Check if the asset is included by the filters (unless deleteAssets flag is set)
 		if (!deleteAssets) {
 			const itemPath = resolveItemPath(assets, asset);
 			if (!isIncluded(itemPath)) {
+				continue;
+			}
+
+			// When filtering by included assets, skip nested ones as they'll be deleted with parent
+			if (asset.parent_uid) {
 				continue;
 			}
 		}

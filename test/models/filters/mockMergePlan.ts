@@ -15,6 +15,11 @@ export default function mockMergePlan(
 		toUpdate: new Map<string, AssetMeta>(),
 	};
 
+	// Excluded assets should not appear in any result set
+	if (!theory.included) {
+		return expected;
+	}
+
 	const sourceItem = source.get(itemPath);
 	const destinationItem = destination.get(itemPath);
 

@@ -41,14 +41,12 @@ function processCsAssets(
 				} else {
 					result.toUpdate.set(path, csMeta);
 				}
-			} else {
-				result.toSkip.set(path, csMeta);
 			}
+			// Don't add excluded assets to toSkip - they shouldn't appear in results
 		} else if (isIncluded(path)) {
 			result.toCreate.set(path, csMeta);
-		} else {
-			result.toSkip.set(path, csMeta);
 		}
+		// Don't add excluded assets to toSkip - they shouldn't appear in results
 	}
 
 	return { result, seen };
@@ -66,8 +64,7 @@ function processFsAssets(
 
 		if (isIncluded(path)) {
 			result.toRemove.set(path, fsMeta);
-		} else {
-			result.toSkip.set(path, fsMeta);
 		}
+		// Don't add excluded assets to toSkip - they shouldn't appear in results
 	}
 }

@@ -65,8 +65,15 @@ export default class Assets {
 		const assetsByPath = new Map<string, AssetMeta>();
 		const foldersByPath = new Map<string, FolderMeta>();
 		const entries = await tryReadDir(assetsPath, true);
+		const ui = getUi();
+		const { isIncluded } = ui.options.schema.assets;
 
 		for (const paths of assetPaths(assetsPath, entries)) {
+			// Skip excluded assets - don't even validate their metadata
+			if (!isIncluded(paths.itemPath)) {
+				continue;
+			}
+
 			try {
 				const meta = await load(paths);
 				assetsByPath.set(meta.itemPath, meta);

@@ -53,13 +53,13 @@ function processFsItems(
 				}
 			} else {
 				warning(ui, itemPath);
-				toSkip.set(itemPath, fsMeta);
+				// Don't add to toSkip - excluded assets shouldn't appear in results
 			}
 		} else if (isIncluded(itemPath)) {
 			toCreate.set(itemPath, fsMeta);
 		} else {
 			warning(ui, itemPath);
-			toSkip.set(itemPath, fsMeta);
+			// Don't add to toSkip - excluded assets shouldn't appear in results
 		}
 	}
 
@@ -82,9 +82,8 @@ function processCsItems(
 
 		if (isIncluded(itemPath)) {
 			toRemove.set(itemPath, csMeta);
-		} else {
-			toSkip.set(itemPath, csMeta);
 		}
+		// Don't add excluded assets to toSkip - they shouldn't appear in results
 	}
 
 	return { toRemove, toSkip };
