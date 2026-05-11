@@ -32,7 +32,7 @@ function runTests() {
 		'yarn',
 		[
 			'workspace',
-			'@arkebcacy/beacon-test',
+			'@arke-systems/beacon-test',
 			'vitest',
 			'run',
 			'--no-api',

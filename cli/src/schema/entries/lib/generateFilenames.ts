@@ -10,7 +10,7 @@ import sanitize from 'sanitize-filename';
 export default function generateFilenames(
 	entriesByTitle: ReadonlyMap<Entry['title'], Entry>,
 	format: SerializationFormat = 'yaml',
-): ReadonlyMap<Entry['uid'], string> {
+): ReadonlyMap<Entry['title'], string> {
 	const { byFilename, byTitle } = sanitizeFilenames(entriesByTitle);
 	const result = new Map<string, string>();
 	const ext = getFileExtension(format);

@@ -8,11 +8,11 @@ import processPlan from '../xfer/lib/processPlan.js';
 export default async function toFilesystem(ctx: Ctx) {
 	using bar = createProgressBar(
 		'Labels',
-		ctx.cs.labels.byUid,
-		ctx.fs.labels.byUid,
+		ctx.cs.labels.byName,
+		ctx.fs.labels.byName,
 	);
 
-	const plan = planMerge(equality, ctx.cs.labels.byUid, ctx.fs.labels.byUid);
+	const plan = planMerge(equality, ctx.cs.labels.byName, ctx.fs.labels.byName);
 
 	return await processPlan<NormalizedLabel>({
 		create: async (x) => ctx.fs.labels.create(x),

@@ -20,7 +20,7 @@ export default class CsLabelCollection implements LabelCollection {
 		this.#uidByName = new Map(uidByName);
 	}
 
-	public get byUid(): ReadonlyMap<Label['name'], NormalizedLabel> {
+	public get byName(): ReadonlyMap<Label['name'], NormalizedLabel> {
 		return this.#labels;
 	}
 

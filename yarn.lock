@@ -16,18 +16,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arke-systems/cs-rate-limit-middleware@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@arke-systems/cs-rate-limit-middleware@npm:1.0.4"
-  dependencies:
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/857bfd9d91b2130d2b4956d1298f80fd21a091262e3fac48c5a348dc186b6938f68c9a2288d67db732eedcd38939148958ac5b1244a3caacdf3b7d83c4f5dadd
-  languageName: node
-  linkType: hard
-
-"@arkebcacy/beacon-cli@workspace:cli":
+"@arke-systems/beacon-cli@workspace:cli":
   version: 0.0.0-use.local
-  resolution: "@arkebcacy/beacon-cli@workspace:cli"
+  resolution: "@arke-systems/beacon-cli@workspace:cli"
   dependencies:
     "@arke-systems/cs-rate-limit-middleware": "npm:^1.0.4"
     "@types/asciichart": "npm:^1.5.8"
@@ -53,9 +44,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@arkebcacy/beacon-test@workspace:test":
+"@arke-systems/beacon-test@workspace:test":
   version: 0.0.0-use.local
-  resolution: "@arkebcacy/beacon-test@workspace:test"
+  resolution: "@arke-systems/beacon-test@workspace:test"
   dependencies:
     http-status-codes: "npm:^2.3.0"
     vite-tsconfig-paths: "npm:^6.0.3"
@@ -64,9 +55,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@arkebcacy/beacon@workspace:.":
+"@arke-systems/beacon@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@arkebcacy/beacon@workspace:."
+  resolution: "@arke-systems/beacon@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.39.2"
     "@types/node": "npm:^22.19.3"
@@ -78,6 +69,15 @@ __metadata:
     typescript-eslint: "npm:^8.50.0"
   languageName: unknown
   linkType: soft
+
+"@arke-systems/cs-rate-limit-middleware@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@arke-systems/cs-rate-limit-middleware@npm:1.0.4"
+  dependencies:
+    tslib: "npm:^2.8.1"
+  checksum: 10c0/857bfd9d91b2130d2b4956d1298f80fd21a091262e3fac48c5a348dc186b6938f68c9a2288d67db732eedcd38939148958ac5b1244a3caacdf3b7d83c4f5dadd
+  languageName: node
+  linkType: hard
 
 "@babel/code-frame@npm:^7.26.2":
   version: 7.29.0

@@ -29,19 +29,19 @@ and production.
 
 ## Installation
 
-Beacon is available as an NPM package under `@arkebcacy/qorvo-beacon-cli`. It can
+Beacon is available as an NPM package under `@arke-systems/qorvo-beacon-cli`. It can
 be installed using any package manager that supports NPM packages.
 
 ### Install via Yarn:
 
 ```sh
-yarn add --dev @arkebcacy/qorvo-beacon-cli
+yarn add --dev @arke-systems/qorvo-beacon-cli
 ```
 
 ### Install via NPM:
 
 ```sh
-npm install --save-dev @arkebcacy/qorvo-beacon-cli
+npm install --save-dev @arke-systems/qorvo-beacon-cli
 ```
 
 ## Usage
@@ -265,7 +265,7 @@ The YAML configuration file allows for additional options.
 Example:
 
 ```yaml
-# yaml-language-server: $schema=node_modules/@arkebcacy/qorvo-beacon-cli/dist/cfg/Config.schema.yaml
+# yaml-language-server: $schema=node_modules/@arke-systems/qorvo-beacon-cli/dist/cfg/Config.schema.yaml
 
 client:
   api-key: bltcfcf264c-example
@@ -606,7 +606,7 @@ Some development scripts are provided:
 - `yarn lint` - Invoke ESLint.
 - `yarn pretty` - Invoke Prettier.
 - `yarn test` - Invoke unit tests.
-- `yarn workspace @arkebcacy/qorvo-beacon-cli generate` - Rebuild OpenAPI type
+- `yarn workspace @arke-systems/qorvo-beacon-cli generate` - Rebuild OpenAPI type
   definitions.
 
 ## Deployment

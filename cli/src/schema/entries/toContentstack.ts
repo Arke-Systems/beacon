@@ -86,7 +86,7 @@ async function processUnmodifiedEntries(
 	csEntriesByTitle: ReadonlyMap<string, Entry>,
 	fsEntriesByTitle: ReadonlyMap<string, Entry>,
 	transformer: BeaconReplacer,
-	filenamesByTitle: ReadonlyMap<Entry['uid'], string>,
+	filenamesByTitle: ReadonlyMap<Entry['title'], string>,
 ) {
 	const ui = getUi();
 
@@ -139,7 +139,7 @@ function buildUpdateFn(
 	csEntriesByTitle: ReadonlyMap<string, Entry>,
 	transformer: BeaconReplacer,
 	contentType: ContentType,
-	filenamesByTitle: ReadonlyMap<Entry['uid'], string>,
+	filenamesByTitle: ReadonlyMap<Entry['title'], string>,
 ) {
 	return async (entry: Entry) => {
 		const match = csEntriesByTitle.get(entry.title);
@@ -174,7 +174,7 @@ function buildUpdateFn(
 async function loadFsLocaleVersions(
 	entry: Entry,
 	contentTypeUid: string,
-	filenamesByTitle: ReadonlyMap<Entry['uid'], string>,
+	filenamesByTitle: ReadonlyMap<Entry['title'], string>,
 ) {
 	const filename = filenamesByTitle.get(entry.title);
 	if (!filename) {

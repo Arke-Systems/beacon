@@ -26,13 +26,11 @@ export default async function clear(
 	deleteAssets = false,
 	contentTypes: string[] = [],
 ) {
-	// If specific content types are provided, delete entries and the content types themselves
 	if (contentTypes.length > 0) {
 		await deleteEntriesAndContentTypes(client, ui, contentTypes);
 		return;
 	}
 
-	// Otherwise, delete everything (original behavior)
 	await Promise.allSettled([
 		deleteAllContentTypes(client, ui),
 		deleteAllGlobalFields(client, ui),
@@ -46,37 +44,23 @@ async function deleteEntriesAndContentTypes(
 	ui: UiContext,
 	contentTypeUids: string[],
 ) {
-	// Get all content types to find the ones we need
 	const allContentTypes = await indexContentTypes(client);
 	const globalFields = await indexGlobalFields(client);
 
-	// Debug: Log all available content types
-	ui.info('\nAvailable content types:');
-	for (const [uid, ct] of allContentTypes) {
-		ui.info(`  - ${uid} (${ct.title})`);
-	}
-	ui.info(`\nRequested content types: ${contentTypeUids.join(', ')}\n`);
+	logAvailableContentTypes(ui, allContentTypes);
 
-	// Filter to only the requested content types
-	const contentTypesToClear = contentTypeUids
-		.map((uid) => {
-			const ct = allContentTypes.get(uid);
-			if (!ct) {
-				ui.warn(`Content type UID not found: ${uid}`);
-			}
-			return ct;
-		})
-		.filter((ct) => ct !== undefined);
-
+	const contentTypesToClear = filterContentTypes(
+		allContentTypes,
+		contentTypeUids,
+		ui,
+	);
 	if (contentTypesToClear.length === 0) {
 		ui.warn('No matching content types found for the specified UIDs.');
 		return;
 	}
 
-	// Get all locales to ensure we fetch entries from all locale versions
 	const locales = await getLocales(client);
 
-	// Delete entries for each content type
 	for (const contentType of contentTypesToClear) {
 		await deleteEntriesForContentType(
 			client,
@@ -87,7 +71,6 @@ async function deleteEntriesAndContentTypes(
 		);
 	}
 
-	// Now delete the content types themselves
 	ui.info('\nDeleting content types...\n');
 	await deleteAll(
 		ui,
@@ -98,6 +81,32 @@ async function deleteEntriesAndContentTypes(
 	);
 }
 
+function logAvailableContentTypes(
+	ui: UiContext,
+	allContentTypes: ReadonlyMap<string, ContentType>,
+) {
+	if (!ui.options.verbose) return;
+	ui.info('\nAvailable content types:');
+	for (const [uid, ct] of allContentTypes) {
+		ui.info(`  - ${uid} (${ct.title})`);
+	}
+	ui.info('');
+}
+
+function filterContentTypes(
+	allContentTypes: ReadonlyMap<string, ContentType>,
+	contentTypeUids: string[],
+	ui: UiContext,
+): ContentType[] {
+	return contentTypeUids
+		.map((uid) => {
+			const ct = allContentTypes.get(uid);
+			if (!ct) ui.warn(`Content type UID not found: ${uid}`);
+			return ct;
+		})
+		.filter((ct) => ct !== undefined);
+}
+
 async function deleteEntriesForContentType(
 	client: Client,
 	ui: UiContext,
@@ -106,8 +115,6 @@ async function deleteEntriesForContentType(
 	locales: readonly { code: string }[],
 ) {
 	const orphanedEntries: { uid: string; title: string }[] = [];
-
-	// Fetch entries first to log count
 	const entries = await indexEntriesForAllLocales(
 		client,
 		globalFields,
@@ -130,10 +137,7 @@ async function deleteEntriesForContentType(
 		(entry) => entry.title,
 		() => entries,
 		async (entry) => {
-			// When deleting all localized versions, don't pass a locale parameter
-			// The delete_all_localized=true flag handles all locales automatically
-			// Passing a locale parameter with delete_all_localized causes API errors
-			// for non-localized entries
+			// delete_all_localized=true handles all locales; don't pass locale parameter
 			const result = await deleteEntry(
 				client,
 				contentType.uid,
@@ -142,7 +146,6 @@ async function deleteEntriesForContentType(
 			);
 
 			if (result.notFound) {
-				// Entry appeared in listing but can't be deleted
 				orphanedEntries.push({ title: entry.title, uid: entry.uid });
 			}
 		},
@@ -156,26 +159,21 @@ function reportOrphanedEntries(
 	contentTypeName: string,
 	orphanedEntries: { uid: string; title: string }[],
 ) {
-	if (orphanedEntries.length === 0) {
-		return;
-	}
+	if (orphanedEntries.length === 0) return;
 
-	const maxOrphanedToDisplay = 5;
-
+	const maxDisplay = 5;
 	ui.warn(
 		`Warning: Found ${orphanedEntries.length} orphaned/corrupted ${contentTypeName} entries that could not be deleted:`,
 	);
-	for (const entry of orphanedEntries.slice(0, maxOrphanedToDisplay)) {
+	orphanedEntries.slice(0, maxDisplay).forEach((entry) => {
 		ui.warn(`  - "${entry.title}" (${entry.uid})`);
-	}
-	if (orphanedEntries.length > maxOrphanedToDisplay) {
-		ui.warn(`  ... and ${orphanedEntries.length - maxOrphanedToDisplay} more`);
+	});
+	if (orphanedEntries.length > maxDisplay) {
+		ui.warn(`  ... and ${orphanedEntries.length - maxDisplay} more`);
 	}
 	ui.warn(
-		'These entries appear in the listing API but return "not found" when attempting to delete.',
-	);
-	ui.warn(
-		'You may need to contact Contentstack support to clean up these orphaned entries.',
+		'These entries appear in listing API but return "not found" when attempting to delete. ' +
+			'Contact Contentstack support to clean up orphaned entries.',
 	);
 }
 
@@ -194,15 +192,11 @@ async function indexEntriesForAllLocales(
 				contentType,
 				locale.code,
 			);
-			// Tag each entry with the locale it was fetched from
 			return { entries, locale: locale.code };
 		}),
 	);
 
-	// Merge all entries, deduplicating by UID
-	// Since the same entry can exist in multiple locales with the same UID,
-	// we only need to keep one instance per UID for deletion purposes
-	// We preserve the locale it was fetched from so we can use it for deletion
+	// Deduplicate entries by UID (same entry exists across locales)
 	const uniqueEntries = new Map<
 		string,
 		Entry & { _fetchedFromLocale: string }
@@ -226,19 +220,14 @@ async function deleteAll<T>(
 	deleteItem: (item: T) => Promise<void>,
 ) {
 	const items = await indexItems();
+	if (!items.size) return;
 
-	if (!items.size) {
-		return;
-	}
-
-	{
-		using bar = ui.createProgressBar(pluralNoun, items.size);
-		for (const item of items.values()) {
-			using reporter = new ProgressReporter(bar, 'deleting', humanize(item));
-			await deleteItem(item);
-			bar.increment();
-			reporter.finish('deleted');
-		}
+	using bar = ui.createProgressBar(pluralNoun, items.size);
+	for (const item of items.values()) {
+		using reporter = new ProgressReporter(bar, 'deleting', humanize(item));
+		await deleteItem(item);
+		bar.increment();
+		reporter.finish('deleted');
 	}
 }
 
@@ -283,17 +272,10 @@ async function deleteAllAssets(
 	const files = new Map<string, RawAsset>();
 
 	for (const asset of assets.values()) {
-		// Check if the asset is included by the filters (unless deleteAssets flag is set)
 		if (!deleteAssets) {
 			const itemPath = resolveItemPath(assets, asset);
-			if (!isIncluded(itemPath)) {
-				continue;
-			}
-
-			// When filtering by included assets, skip nested ones as they'll be deleted with parent
-			if (asset.parent_uid) {
-				continue;
-			}
+			// Skip assets not matching filters or nested assets (deleted with parent)
+			if (!isIncluded(itemPath) || asset.parent_uid) continue;
 		}
 
 		if (isRawAsset(asset)) {

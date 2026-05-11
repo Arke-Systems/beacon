@@ -40,7 +40,7 @@ The multi-language implementation maintains full backward compatibility with pro
 
 3. **Smart serialization**: During pull operations:
    - If an entry has only one locale version, it's saved **without** a locale suffix (backward compatible)
-   - If an entry has multiple locale versions, all are saved **with** locale suffixes
+   - If an entry has multiple locale versions, default locale is saved **without** a locale suffix and all other locales are saved **with** locale suffixes
 
 4. **Loading preference**: When indexing filesystem entries, if both patterns exist, the code prefers: `default` locale → `en-us` → first available locale.
 

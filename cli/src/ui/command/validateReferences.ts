@@ -34,7 +34,7 @@ validate.action(async (cliOptions: CommandOptions) =>
 		displayValidationReport(ui, report);
 
 		if (report.invalidReferences.length > 0) {
-			process.exit(1);
+			process.exitCode = 1;
 		}
 	}),
 );

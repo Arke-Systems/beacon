@@ -10,7 +10,7 @@
     "#test/*": "./*"
   },
   "license": "MIT",
-  "name": "@arkebcacy/beacon-test",
+  "name": "@arke-systems/beacon-test",
   "private": true,
   "scripts": {
     "clean": "node ./build/clean.js"

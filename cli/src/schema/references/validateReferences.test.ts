@@ -8,7 +8,7 @@ import type { validateReferencesFromContext as ValidateReferencesFromContextType
 
 const logs = new TestLogContext();
 const ui = new TestPushUiContext('fixtures', logs);
-vi.doMock(import('../lib/SchemaUi.js'), () => ({ default: () => ui }));
+vi.doMock('../lib/SchemaUi.js', () => ({ default: () => ui }));
 
 function createMockContentType(uid: string): ContentType {
 	return {

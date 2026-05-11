@@ -1,6 +1,6 @@
 {
   "author": "Chris Nielsen <cnielsen@arke.com>, Bill Cacy <bcacy@arke.com>",
-  "bugs": "https://github.com/ArkeBcacy/qorvo-beacon/issues",
+  "bugs": "https://github.com/Arke-Systems/qorvo-beacon/issues",
   "description": "Development scripts for the Beacon project",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
@@ -15,15 +15,15 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "homepage": "https://github.com/ArkeBcacy/qorvo-beacon",
+  "homepage": "https://github.com/Arke-Systems/qorvo-beacon",
   "imports": {
     "#cli/*": "./cli/src/*",
     "#test/*": "./test/*"
   },
   "license": "MIT",
-  "name": "@arkebcacy/beacon",
+  "name": "@arke-systems/beacon",
   "packageManager": "yarn@4.12.0",
-  "repository": "github:ArkeBcacy/qorvo-beacon",
+  "repository": "github:Arke-Systems/qorvo-beacon",
   "scripts": {
     "build": "node ./build/build.js",
     "clean": "node ./build/clean.js",
@@ -31,13 +31,13 @@
     "lint": "eslint",
     "pretty": "prettier --check .",
     "pretty:fix": "prettier --write .",
-    "test": "yarn workspace @arkebcacy/beacon-test vitest",
-    "version:patch": "yarn version patch && yarn workspace @arkebcacy/beacon-cli version patch",
-    "version:minor": "yarn version minor && yarn workspace @arkebcacy/beacon-cli version minor",
-    "version:major": "yarn version major && yarn workspace @arkebcacy/beacon-cli version major"
+    "test": "yarn workspace @arke-systems/beacon-test vitest",
+    "version:patch": "yarn version patch && yarn workspace @arke-systems/beacon-cli version patch",
+    "version:minor": "yarn version minor && yarn workspace @arke-systems/beacon-cli version minor",
+    "version:major": "yarn version major && yarn workspace @arke-systems/beacon-cli version major"
   },
   "type": "module",
-  "version": "0.4.15",
+  "version": "1.11.4",
   "workspaces": [
     "cli",
     "test"

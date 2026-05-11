@@ -7,7 +7,6 @@ export default function attachRateLimiter<
 	TClient extends ReturnType<typeof createOpenApiClient>,
 >(ui: UiContext, client: TClient) {
 	// The middleware handles rate limits automatically with retries and delays
-	// The middleware handles rate limits automatically with retries and delays
 	const rateLimiter = new RateLimitMiddleware();
 
 	rateLimiter.on('rate-limit-exceeded', () => {

@@ -16,7 +16,7 @@ export default class FsLabelCollection implements LabelCollection {
 		this.#labels = new Map(labels);
 	}
 
-	public get byUid(): ReadonlyMap<Label['name'], NormalizedLabel> {
+	public get byName(): ReadonlyMap<Label['name'], NormalizedLabel> {
 		return this.#labels;
 	}
 

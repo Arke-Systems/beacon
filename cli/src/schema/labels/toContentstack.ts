@@ -9,11 +9,11 @@ import processPlan from '../xfer/lib/processPlan.js';
 export default async function toContentstack(ctx: Ctx) {
 	using bar = createProgressBar(
 		'Labels',
-		ctx.cs.labels.byUid,
-		ctx.fs.labels.byUid,
+		ctx.cs.labels.byName,
+		ctx.fs.labels.byName,
 	);
 
-	const plan = planMerge(equality, ctx.fs.labels.byUid, ctx.cs.labels.byUid);
+	const plan = planMerge(equality, ctx.fs.labels.byName, ctx.cs.labels.byName);
 
 	return await processPlan<NormalizedLabel>({
 		create: async (x) => ctx.cs.labels.create(x),
