@@ -69,7 +69,9 @@ fields, labels, taxonomies, and assets.
   removed. **Note:** This deletes both the entries _and_ the content type
   definitions themselves.
 
-- `--delete-assets` - Whether to delete assets as well. Default value is `false`
+- `--delete-assets` - Delete all assets ignoring asset filters. By default,
+  assets matching the configured filters are deleted. Use this flag to delete
+  ALL assets regardless of filter configuration. Default: `false`
 
 **⚠️ Warning:** The `clear` command is destructive and cannot be undone. When
 using `--content-types`, both the content type schema and all associated entries

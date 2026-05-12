@@ -1,3 +1,4 @@
+/* eslint-disable sort-keys */
 import { describe, it, expect } from 'vitest';
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import type { ReferencePath } from '#cli/cs/entries/Types.js';
@@ -180,5 +181,75 @@ describe('processHtmlRteAsset - Entry References', () => {
 		// Original text should be preserved
 		expect(result).toContain('Millimeter wave');
 		expect(result).toContain('Beamforming');
+	});
+
+	it('should use custom locale when set via process method', () => {
+		const replacer = new BeaconReplacer(
+			mockCtx as unknown as MinimalCtx,
+			mockContentType,
+		);
+
+		const entry = {
+			title: 'Source Entry',
+			uid: 'blttest123',
+			description: '<a href="$beacon: page_article_page/Test Entry">Link</a>',
+		};
+
+		// Process with fr-fr locale
+		const result = replacer.process(entry, 'fr-fr');
+
+		expect(result.description).toContain('data-sys-entry-locale="fr-fr"');
+		expect(result.description).not.toContain('data-sys-entry-locale="en-us"');
+	});
+
+	it('should use different locales for different entries', () => {
+		const replacer = new BeaconReplacer(
+			mockCtx as unknown as MinimalCtx,
+			mockContentType,
+		);
+
+		const entry = {
+			title: 'Source Entry',
+			uid: 'blttest123',
+			description: '<a href="$beacon: page_article_page/Test Entry">Link</a>',
+		};
+
+		// Process with de-de locale
+		const resultDe = replacer.process(entry, 'de-de');
+		expect(resultDe.description).toContain('data-sys-entry-locale="de-de"');
+
+		// Process with es-es locale
+		const resultEs = replacer.process(entry, 'es-es');
+		expect(resultEs.description).toContain('data-sys-entry-locale="es-es"');
+
+		// Process without locale (should use default)
+		const resultDefault = replacer.process(entry);
+		expect(resultDefault.description).toContain(
+			'data-sys-entry-locale="en-us"',
+		);
+	});
+
+	it('should handle multiple entry references with custom locale', () => {
+		const replacer = new BeaconReplacer(
+			mockCtx as unknown as MinimalCtx,
+			mockContentType,
+		);
+
+		const entry = {
+			title: 'Source Entry',
+			uid: 'blttest123',
+			description:
+				'<a href="$beacon: page_article_page/Test Entry">First</a> and <a href="$beacon: page_application_category/Wireless">Second</a>',
+		};
+
+		// Process with ja-jp locale
+		const result = replacer.process(entry, 'ja-jp');
+
+		// Both references should use the same locale
+		const description = result.description as string;
+		expect(description.match(/data-sys-entry-locale="ja-jp"/gu)).toHaveLength(
+			EXPECTED_MATCH_COUNT,
+		);
+		expect(description).not.toContain('data-sys-entry-locale="en-us"');
 	});
 });

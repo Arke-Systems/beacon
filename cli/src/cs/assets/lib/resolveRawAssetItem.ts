@@ -1,5 +1,6 @@
 import type { RawAssetItem } from '../Types.js';
 import { isRawAsset } from '../Types.js';
+import normalizeFolderName from '#cli/schema/assets/lib/normalizeFolderName.js';
 
 export default function resolveRawAssetItem(
 	byParent: ReadonlyMap<string | null, ReadonlySet<RawAssetItem>>,
@@ -18,7 +19,7 @@ export default function resolveRawAssetItem(
 			if (child.filename === name) {
 				return child;
 			}
-		} else if (child.name === name) {
+		} else if (normalizeFolderName(child.name) === name) {
 			return child;
 		}
 	}

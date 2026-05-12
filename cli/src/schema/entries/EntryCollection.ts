@@ -1,5 +1,7 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
+import getUi from '#cli/schema/lib/SchemaUi.js';
+import { styleText } from 'node:util';
 
 export interface ReadonlyEntryCollection {
 	// readonly byPath: ReadonlyMap<ReferencePath, Entry>;
@@ -67,13 +69,17 @@ export default class EntryCollection implements ReadonlyEntryCollection {
 
 			// Warn about duplicate titles
 			if (duplicates.length > 0) {
+				const ui = getUi();
 				for (const dup of duplicates) {
-					// eslint-disable-next-line no-console -- User-facing diagnostic warning about duplicate entry titles
-					console.warn(
-						`Warning: Multiple entries found with title "${dup.title}" in ${contentType.uid}:\n` +
-							`  UIDs: ${dup.uids.join(', ')}\n` +
-							`  Only the last entry (${dup.uids[dup.uids.length - 1]}) will be used for title matching.\n` +
-							`  This may cause "title is not unique" errors. Please delete duplicate entries.`,
+					ui.warn(
+						`Multiple entries found with title ${styleText('yellowBright', `"${dup.title}"`)} in ${styleText('cyan', contentType.uid)}:`,
+					);
+					ui.warn(`  UIDs: ${dup.uids.join(', ')}`);
+					ui.warn(
+						`  Only the last entry (${dup.uids[dup.uids.length - 1]}) will be used for title matching.`,
+					);
+					ui.warn(
+						'  This may cause "title is not unique" errors. Please delete duplicate entries.',
 					);
 				}
 			}

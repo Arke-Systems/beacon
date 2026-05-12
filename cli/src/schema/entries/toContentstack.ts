@@ -1,9 +1,11 @@
+/* eslint-disable max-lines */
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import deleteEntry from '#cli/cs/entries/delete.js';
 import getEntryLocales from '#cli/cs/entries/getEntryLocales.js';
 import importEntry from '#cli/cs/entries/import.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
 import { ensureLocaleExists } from '#cli/cs/locales/ensureLocaleExists.js';
+import { getLocales } from '#cli/cs/locales/getLocales.js';
 import BeaconReplacer from '#cli/dto/entry/BeaconReplacer.js';
 import { getFileExtension } from '#cli/fs/serializationFormat.js';
 import escapeRegex from '#cli/util/escapeRegex.js';
@@ -210,6 +212,28 @@ async function getExistingLocales(
 	}
 }
 
+/**
+ * Determines the master/default locale from a list of locales.
+ * The master locale is the one without a fallback_locale property.
+ * Falls back to the first locale if none found.
+ */
+function getMasterLocale(
+	locales: readonly { code: string; fallback_locale?: string }[],
+): string | null {
+	if (locales.length === 0) {
+		return null;
+	}
+
+	// Find locale without a fallback - this is the master locale
+	const masterLocale = locales.find((locale) => !locale.fallback_locale);
+	if (masterLocale) {
+		return masterLocale.code;
+	}
+
+	// Fallback to first locale if none found without fallback_locale
+	return locales[0]?.code ?? null;
+}
+
 async function importDefaultLocale(
 	ctx: Ctx,
 	transformer: BeaconReplacer,
@@ -217,14 +241,18 @@ async function importDefaultLocale(
 	defaultLocaleVersion: EntryWithLocale,
 	entryUid: string,
 	csLocaleSet: Set<string>,
-	hasOtherLocales: boolean,
+	masterLocaleCode: string | null,
 ) {
-	const transformed = transformer.process(defaultLocaleVersion.entry);
+	// Use masterLocaleCode for the default locale transformation
+	const localeCode = masterLocaleCode ?? undefined;
+	const transformed = transformer.process(
+		defaultLocaleVersion.entry,
+		localeCode,
+	);
 	const overwrite = csLocaleSet.size > 0;
 
-	// When there are multiple locales, explicitly use 'en-us' for the default locale
+	// When there are multiple locales, explicitly specify the master locale
 	// Contentstack requires the master locale to be specified when adding translations
-	const localeCode = hasOtherLocales ? 'en-us' : undefined;
 
 	await importEntry(
 		ctx.cs.client,
@@ -243,7 +271,11 @@ async function importOtherLocales(
 	entryUid: string,
 ) {
 	const otherImportPromises = otherLocaleVersions.map(async (localeVersion) => {
-		const transformed = transformer.process(localeVersion.entry);
+		// Pass the locale to the transformer for proper HTML RTE entry reference processing
+		const transformed = transformer.process(
+			localeVersion.entry,
+			localeVersion.locale,
+		);
 
 		return importEntry(
 			ctx.cs.client,
@@ -272,14 +304,20 @@ async function updateAllLocales(
 
 	await Promise.all(localeEnsurePromises);
 
+	// Determine the master locale for the default file
+	const otherLocaleVersions = fsLocaleVersions.filter(
+		(lv) => lv.locale !== 'default',
+	);
+	const masterLocaleCode =
+		otherLocaleVersions.length > 0
+			? await determineMasterLocale(ctx, csLocaleSet)
+			: null;
+
 	// Import locales sequentially: default locale first, then others
 	// This is required because Contentstack needs the entry to exist in the default
 	// locale before additional locale versions can be added.
 	const defaultLocaleVersion = fsLocaleVersions.find(
 		(lv) => lv.locale === 'default',
-	);
-	const otherLocaleVersions = fsLocaleVersions.filter(
-		(lv) => lv.locale !== 'default',
 	);
 
 	// Import default locale first (if it exists)
@@ -291,7 +329,7 @@ async function updateAllLocales(
 			defaultLocaleVersion,
 			entryUid,
 			csLocaleSet,
-			otherLocaleVersions.length > 0,
+			masterLocaleCode,
 		);
 	}
 
@@ -303,4 +341,29 @@ async function updateAllLocales(
 		otherLocaleVersions,
 		entryUid,
 	);
+}
+
+/**
+ * Determines the master locale for the stack.
+ * First tries to infer from existing entry locales, then falls back to stack locales.
+ */
+async function determineMasterLocale(
+	ctx: Ctx,
+	csLocaleSet: Set<string>,
+): Promise<string | null> {
+	// If entry already has locales in Contentstack, try to infer from them
+	if (csLocaleSet.size > 0) {
+		// We can't determine fallback_locale from the Set alone
+		// Fall through to get stack locales
+	}
+
+	// Get stack locales to determine the master
+	try {
+		const stackLocales = await getLocales(ctx.cs.client);
+		return getMasterLocale(stackLocales);
+	} catch {
+		// If we can't get locales, fall back to null (undefined locale)
+		// This maintains backward compatibility
+		return null;
+	}
 }

@@ -17,7 +17,20 @@ export default async function loadEntry(
 	try {
 		return (await readYaml(simplePath)) as Item;
 	} catch (simpleError: unknown) {
-		// If simple format doesn't exist, try finding locale-specific file
+		// Only fall back to locale-specific files if the simple file doesn't exist
+		// Rethrow other errors (YAML parse errors, permission errors, etc.) immediately
+		const isFileNotFound =
+			simpleError !== null &&
+			typeof simpleError === 'object' &&
+			'code' in simpleError &&
+			simpleError.code === 'ENOENT';
+
+		if (!isFileNotFound) {
+			// File exists but has other error (parse error, permission, etc.)
+			throw simpleError;
+		}
+
+		// File doesn't exist, try finding locale-specific file
 		try {
 			const files = await readdir(entriesDir);
 
@@ -39,7 +52,6 @@ export default async function loadEntry(
 		}
 
 		// If neither exists, throw the original error
-
 		if (simpleError instanceof Error) {
 			throw simpleError;
 		}

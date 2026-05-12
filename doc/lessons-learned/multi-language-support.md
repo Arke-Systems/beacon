@@ -16,12 +16,20 @@ schema/entries/event/Entry Title.yaml
 
 ### Multi-Locale Format
 
-When an entry exists in multiple locales, each locale version is stored separately with a locale suffix:
+When an entry exists in multiple locales, each locale version is stored separately. The **stack's default/master locale** (the one without a `fallback_locale` property) is stored without a suffix, while all other locales use a locale suffix:
 
 ```
-schema/entries/event/Entry Title.en-us.yaml
+schema/entries/event/Entry Title.yaml          # Default locale (e.g., en-us)
 schema/entries/event/Entry Title.fr-ca.yaml
 schema/entries/event/Entry Title.de.yaml
+```
+
+**Important**: The unsuffixed base file corresponds to the stack's master locale, which may not be English. For example, if a stack's default locale is Chinese (`zh-cn`):
+
+```
+schema/entries/event/Entry Title.yaml          # Chinese (default locale)
+schema/entries/event/Entry Title.en-us.yaml    # English
+schema/entries/event/Entry Title.fr.yaml       # French
 ```
 
 The locale code must be a valid locale identifier (2-3 letter language code, optionally followed by a hyphen or underscore and a 2-4 letter region code). Examples: `en`, `en-us`, `fr-CA`, `zh_CN`.

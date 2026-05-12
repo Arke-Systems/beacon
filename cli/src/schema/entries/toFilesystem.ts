@@ -81,6 +81,29 @@ async function fetchEntryLocales(
 	}
 }
 
+/**
+ * Determines the default (master) locale from a list of locales.
+ * The default locale is typically:
+ * 1. The one without a fallback_locale property (master locale)
+ * 2. Or the first locale in the list (Contentstack returns master first)
+ */
+function getDefaultLocale(
+	locales: readonly { code: string; fallback_locale?: string }[],
+): string | null {
+	if (locales.length === 0) {
+		return null;
+	}
+
+	// Find locale without a fallback - this is the master locale
+	const masterLocale = locales.find((locale) => !locale.fallback_locale);
+	if (masterLocale) {
+		return masterLocale.code;
+	}
+
+	// Fallback to first locale if none found without fallback_locale
+	return locales[0]?.code ?? null;
+}
+
 function createWriteFn(
 	ctx: Ctx,
 	contentType: ContentType,
@@ -101,14 +124,15 @@ function createWriteFn(
 		}
 
 		// If only one locale, save without locale suffix for backward compatibility.
-		// When multiple locales exist, write English as base file and other locales
-		// with locale suffixes (e.g., Entry.yaml for English, Entry.zh-chs.yaml for Chinese)
+		// When multiple locales exist, write the default locale as base file and other locales
+		// with locale suffixes (e.g., Entry.yaml for default, Entry.zh-cn.yaml for Chinese)
+		const defaultLocaleCode = getDefaultLocale(locales);
 
 		// Write all locale versions in parallel for better performance
 		const writePromises = locales.map(async (locale) => {
-			const isEnglish = /^en(?:[-_]|$)/iu.test(locale.code);
-			// Use locale suffix for non-English locales when multiple locales exist
-			const useLocaleSuffix = locales.length > 1 && !isEnglish;
+			const isDefaultLocale = locale.code === defaultLocaleCode;
+			// Use locale suffix for non-default locales when multiple locales exist
+			const useLocaleSuffix = locales.length > 1 && !isDefaultLocale;
 
 			return writeLocaleVersion(
 				ctx,
@@ -146,8 +170,9 @@ function shouldSkipFallbackLocale(
 	// Skip writing this locale version if it's a fallback (locale doesn't match requested)
 	// This happens when Contentstack returns the default locale content because
 	// no localized version exists for the requested locale
+	// Check for fallback regardless of useLocaleSuffix to prevent overwriting base files
+	// with content from the wrong locale
 	if (
-		useLocaleSuffix &&
 		exported.locale &&
 		typeof exported.locale === 'string' &&
 		exported.locale !== localeCode

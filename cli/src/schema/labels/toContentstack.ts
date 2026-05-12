@@ -7,22 +7,38 @@ import planMerge from '../xfer/lib/planMerge.js';
 import processPlan from '../xfer/lib/processPlan.js';
 
 export default async function toContentstack(ctx: Ctx) {
-	using bar = createProgressBar(
-		'Labels',
-		ctx.cs.labels.byName,
-		ctx.fs.labels.byName,
-	);
+	const ui = getUi();
+	const { isIncluded } = ui.options.schema.labels;
 
-	const plan = planMerge(equality, ctx.fs.labels.byName, ctx.cs.labels.byName);
+	// Filter CS and FS label maps to only include labels that pass the filter
+	const csLabels = filterLabels(ctx.cs.labels.byName, isIncluded);
+	const fsLabels = filterLabels(ctx.fs.labels.byName, isIncluded);
+
+	using bar = createProgressBar('Labels', csLabels, fsLabels);
+
+	const plan = planMerge(equality, fsLabels, csLabels);
 
 	return await processPlan<NormalizedLabel>({
 		create: async (x) => ctx.cs.labels.create(x),
-		deletionStrategy: getUi().options.schema.deletionStrategy,
+		deletionStrategy: ui.options.schema.deletionStrategy,
 		plan,
 		progress: bar,
 		remove: async (x) => ctx.cs.labels.remove(x),
 		update: async (x) => ctx.cs.labels.update(x),
 	});
+}
+
+function filterLabels(
+	labels: ReadonlyMap<string, NormalizedLabel>,
+	isIncluded: (labelName: string) => boolean,
+): ReadonlyMap<string, NormalizedLabel> {
+	const filtered = new Map<string, NormalizedLabel>();
+	for (const [name, label] of labels) {
+		if (isIncluded(name)) {
+			filtered.set(name, label);
+		}
+	}
+	return filtered;
 }
 
 function equality(a: NormalizedLabel, b: NormalizedLabel) {

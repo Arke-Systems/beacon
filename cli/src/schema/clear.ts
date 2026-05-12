@@ -23,7 +23,7 @@ import resolveItemPath from './assets/lib/resolveItemPath.js';
 export default async function clear(
 	client: Client,
 	ui: UiContext,
-	deleteAssets = false,
+	deleteAssets = true,
 	contentTypes: string[] = [],
 ) {
 	if (contentTypes.length > 0) {

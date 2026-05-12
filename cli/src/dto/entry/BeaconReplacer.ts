@@ -14,6 +14,7 @@ import type MinimalCtx from './lib/MinimalCtx.js';
 export default class BeaconReplacer {
 	public readonly process: typeof process;
 	protected refPath: ReferencePath | undefined;
+	protected locale: string | undefined;
 	protected readonly mapItemPathToAsset: typeof mapItemPathToAsset;
 	protected readonly processAsset: typeof processAsset;
 	protected readonly processHtmlRteAsset: typeof processHtmlRteAsset;

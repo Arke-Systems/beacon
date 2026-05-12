@@ -43,8 +43,10 @@ export default function processHtmlRteAsset(
 			refPath,
 		);
 
-		// Get the locale from the current entry context (default to 'en-us')
-		const locale = 'en-us'; // TODO: extract from entry context if needed
+		// Get the locale from the current entry context
+		// If locale is not available, use 'en-us' as fallback for backward compatibility
+		const { locale: currentLocale } = this;
+		const locale = typeof currentLocale === 'string' ? currentLocale : 'en-us';
 
 		// Use Contentstack's HTML RTE entry reference format
 		// Must include data-sys-entry-uid, data-sys-content-type-uid, data-sys-entry-locale, sys-style-type, type, and class
