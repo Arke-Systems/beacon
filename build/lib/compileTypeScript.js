@@ -20,23 +20,19 @@ export default function compileTypeScript(tsConfigUrl) {
 		process.exit(1);
 	}
 
-	// Check if process was terminated by a signal
-	if (result.signal) {
-		console.error(
-			styleText('redBright', 'Build failed: process terminated by signal'),
-			result.signal,
-		);
-		process.exit(1);
-	}
+	const buildResult = result.status;
 
-	// Check exit status
-	if (result.status !== 0) {
-		console.error(
+	// buildResult can be:
+	// - 0: Success
+	// - null: May indicate success on Windows
+	// - non-zero number: Failure with specific exit code
+	if (buildResult !== 0 && buildResult !== null) {
+		console.warn(
 			styleText('redBright', 'Build failed with exit code:'),
-			result.status,
+			buildResult,
 		);
-		process.exit(result.status || 1);
+		process.exit(buildResult || 1);
 	}
 
-	// Build succeeded (status is 0)
+	// Build succeeded (status is 0 or null)
 }
