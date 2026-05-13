@@ -47,7 +47,13 @@ async function deleteEntriesAndContentTypes(
 	const allContentTypes = await indexContentTypes(client);
 	const globalFields = await indexGlobalFields(client);
 
-	logAvailableContentTypes(ui, allContentTypes);
+	if (ui.options.verbose) {
+		ui.info('\nAvailable content types:');
+		for (const [uid, ct] of allContentTypes) {
+			ui.info(`  - ${uid} (${ct.title})`);
+		}
+		ui.info('');
+	}
 
 	const contentTypesToClear = filterContentTypes(
 		allContentTypes,
@@ -79,18 +85,6 @@ async function deleteEntriesAndContentTypes(
 		() => new Map(contentTypesToClear.map((ct) => [ct.uid, ct])),
 		async (item) => deleteContentType(client, item.uid),
 	);
-}
-
-function logAvailableContentTypes(
-	ui: UiContext,
-	allContentTypes: ReadonlyMap<string, ContentType>,
-) {
-	if (!ui.options.verbose) return;
-	ui.info('\nAvailable content types:');
-	for (const [uid, ct] of allContentTypes) {
-		ui.info(`  - ${uid} (${ct.title})`);
-	}
-	ui.info('');
 }
 
 function filterContentTypes(
