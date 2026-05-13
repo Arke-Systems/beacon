@@ -1,4 +1,5 @@
 import type Client from '../api/Client.js';
+import ContentstackError from '../api/ContentstackError.js';
 import type Label from './Label.js';
 import { isLabel } from './Label.js';
 
@@ -6,16 +7,23 @@ export default async function exportLabel(
 	client: Client,
 	labelUid: string,
 ): Promise<Label> {
-	const { data } = await client.GET('/v3/labels/{label_uid}', {
+	const { data, error, response } = await client.GET('/v3/labels/{label_uid}', {
 		params: {
 			path: { label_uid: labelUid },
 		},
 	});
 
+	const msg = `Failed to export label: ${labelUid}`;
+	ContentstackError.throwIfError(error, msg);
+
+	if (!response.ok) {
+		throw new Error(msg);
+	}
+
 	const result = data as unknown;
 
 	if (!isValidLabelResponse(result)) {
-		throw new Error(`Invalid label response for ${labelUid}`);
+		throw new Error(msg);
 	}
 
 	return result.label;
