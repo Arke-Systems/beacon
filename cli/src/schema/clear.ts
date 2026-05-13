@@ -23,7 +23,7 @@ import resolveItemPath from './assets/lib/resolveItemPath.js';
 export default async function clear(
 	client: Client,
 	ui: UiContext,
-	deleteAssets = true,
+	deleteAssets = false,
 	contentTypes: string[] = [],
 ) {
 	if (contentTypes.length > 0) {
@@ -272,10 +272,13 @@ async function deleteAllAssets(
 	const files = new Map<string, RawAsset>();
 
 	for (const asset of assets.values()) {
+		// Always skip nested assets (deleted with parent)
+		if (asset.parent_uid) continue;
+
 		if (!deleteAssets) {
 			const itemPath = resolveItemPath(assets, asset);
-			// Skip assets not matching filters or nested assets (deleted with parent)
-			if (!isIncluded(itemPath) || asset.parent_uid) continue;
+			// Skip assets not matching filters
+			if (!isIncluded(itemPath)) continue;
 		}
 
 		if (isRawAsset(asset)) {

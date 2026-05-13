@@ -20,7 +20,7 @@ export function getFilePattern(
 	format: SerializationFormat,
 ): string {
 	const ext = format === 'json' ? 'json' : 'yaml';
-	return `${baseFilename}\\.${ext}$`;
+	return `${escapeRegex(baseFilename)}\\.${ext}$`;
 }
 
 /**
