@@ -33,13 +33,13 @@ jobs:
 
       - name: Publish CLI package to NPM
         shell: bash
-        run: yarn workspace @arkebcacy/beacon-cli npm publish --access public --provenance
+        run: yarn workspace @arke-systems/beacon-cli npm publish --access public
         env:
           YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
 
       - name: Publish CLI package to GitHub
         shell: bash
-        run: yarn workspace @arkebcacy/beacon-cli npm publish
+        run: yarn workspace @arke-systems/beacon-cli npm publish
         env:
           YARN_NPM_PUBLISH_REGISTRY: https://npm.pkg.github.com
           YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

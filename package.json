@@ -1,6 +1,6 @@
 {
   "author": "Chris Nielsen <cnielsen@arke.com>, Bill Cacy <bcacy@arke.com>",
-  "bugs": "https://github.com/Arke-Systems/qorvo-beacon/issues",
+  "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "description": "Development scripts for the Beacon project",
   "devDependencies": {
     "@eslint/js": "^9.39.2",
@@ -15,7 +15,7 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "homepage": "https://github.com/Arke-Systems/qorvo-beacon",
+  "homepage": "https://github.com/Arke-Systems/beacon",
   "imports": {
     "#cli/*": "./cli/src/*",
     "#test/*": "./test/*"
@@ -23,7 +23,7 @@
   "license": "MIT",
   "name": "@arke-systems/beacon",
   "packageManager": "yarn@4.12.0",
-  "repository": "github:Arke-Systems/qorvo-beacon",
+  "repository": "github:Arke-Systems/beacon",
   "scripts": {
     "build": "node ./build/build.js",
     "clean": "node ./build/clean.js",

@@ -16,7 +16,7 @@ runs:
         cache: yarn
         cache-dependency-path: ./yarn.lock
         registry-url: https://registry.npmjs.org
-        scope: '@arkebcacy'
+        scope: '@arke-systems'
 
     - name: Install dependencies
       run: yarn install --immutable

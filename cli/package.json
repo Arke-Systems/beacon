@@ -3,7 +3,7 @@
   "bin": {
     "beacon": "./dist/beacon.js"
   },
-  "bugs": "https://github.com/Arke-Systems/qorvo-beacon/issues",
+  "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "dependencies": {
     "@arke-systems/cs-rate-limit-middleware": "^1.0.4",
     "ajv": "^8.17.1",
@@ -31,7 +31,7 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "homepage": "https://github.com/Arke-Systems/qorvo-beacon",
+  "homepage": "https://github.com/Arke-Systems/beacon",
   "imports": {
     "#cli/*": "./dist/*"
   },
@@ -42,7 +42,7 @@
       "./dist/beacon.js"
     ]
   },
-  "repository": "github:Arke-Systems/qorvo-beacon",
+  "repository": "github:Arke-Systems/beacon",
   "scripts": {
     "build": "node ./build/build.js",
     "clean": "node ./build/clean.js",
