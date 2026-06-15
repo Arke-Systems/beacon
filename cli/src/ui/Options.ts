@@ -11,6 +11,9 @@ export default interface Options {
 			readonly isIncluded: (path: string) => boolean;
 		};
 		readonly deletionStrategy: 'delete' | 'ignore' | 'warn';
+		readonly entries: {
+			readonly isIncluded: (contentTypeUid: string) => boolean;
+		};
 		readonly extension: {
 			readonly byName: ReadonlyMap<string, string>;
 			readonly byUid: ReadonlyMap<string, string>;
@@ -19,11 +22,17 @@ export default interface Options {
 			readonly byName: ReadonlyMap<string, string>;
 			readonly byUid: ReadonlyMap<string, string>;
 		};
+		readonly labels: {
+			readonly isIncluded: (labelUid: string) => boolean;
+		};
 		readonly schemaPath: string;
+		readonly serializationFormat: SerializationFormat;
 		readonly taxonomies: TaxonomyStrategies;
 	};
 	readonly verbose: boolean;
 }
+
+export type SerializationFormat = 'json' | 'yaml';
 
 export type TaxonomyStrategy = 'only taxonomy' | 'taxonomy and terms';
 export type TaxonomyStrategies = ReadonlyMap<string, TaxonomyStrategy>;

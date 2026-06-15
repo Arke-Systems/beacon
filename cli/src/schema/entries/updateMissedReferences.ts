@@ -19,7 +19,7 @@ export default async function updateMissedReferences(
 	}
 
 	using bar = getUi().createProgressBar('References', missed);
-	const minimalCtx = { cs: ctx.cs, references: references.seal() };
+	const minimalCtx = { cs: ctx.cs, fs: ctx.fs, references: references.seal() };
 
 	for (const [
 		contentTypeUid,

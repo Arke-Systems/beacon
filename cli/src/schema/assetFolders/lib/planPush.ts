@@ -16,7 +16,7 @@ export default function planPush(
 	return {
 		toCreate: fsResult.toCreate,
 		toRemove: csResult.toRemove,
-		toSkip: new Set([...fsResult.toSkip, ...csResult.toSkip]),
+		toSkip: new Map([...fsResult.toSkip, ...csResult.toSkip]),
 		toUpdate: new Map(),
 	};
 }
@@ -57,6 +57,9 @@ function* allKeys(
 }
 
 function warning(ui: UiContext, itemPath: string) {
+	if (!ui.options.verbose) {
+		return;
+	}
 	const msg1 = 'Skipping folder which exists in the file system,';
 	const msg2 = 'but is not included by filters, and contains no';
 	const msg3 = 'included children:';
@@ -75,14 +78,14 @@ function processFsItems(
 	const hasChildren = (x: string) => hasIncludedChildren(isIncluded, keys(), x);
 	const seen = new Set<string>();
 	const toCreate = new Map<string, FolderMeta>();
-	const toSkip = new Set<string>();
+	const toSkip = new Map<string, FolderMeta>();
 
 	for (const [itemPath, fsMeta] of fsFolders) {
 		seen.add(itemPath);
 		const csMeta = cs.get(itemPath);
 
 		if (csMeta) {
-			toSkip.add(itemPath);
+			toSkip.set(itemPath, fsMeta);
 
 			if (!isIncluded(itemPath) && !hasChildren(itemPath)) {
 				warning(ui, itemPath);
@@ -99,7 +102,7 @@ function processFsItems(
 		if (hasChildren(itemPath)) {
 			toCreate.set(itemPath, fsMeta);
 		} else {
-			toSkip.add(itemPath);
+			toSkip.set(itemPath, fsMeta);
 			warning(ui, itemPath);
 		}
 	}
@@ -114,7 +117,7 @@ function processCsItems(
 	const ui = getUi();
 	const { isIncluded } = ui.options.schema.assets;
 	const toRemove = new Map<string, FolderMeta>();
-	const toSkip = new Set<string>();
+	const toSkip = new Map<string, FolderMeta>();
 
 	for (const [itemPath, csMeta] of cs) {
 		if (seen.has(itemPath)) {
@@ -124,7 +127,7 @@ function processCsItems(
 		if (isIncluded(itemPath)) {
 			toRemove.set(itemPath, csMeta);
 		} else {
-			toSkip.add(itemPath);
+			toSkip.set(itemPath, csMeta);
 		}
 	}
 

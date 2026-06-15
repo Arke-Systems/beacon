@@ -36,7 +36,7 @@ jobs:
         run: yarn workspace @arke-systems/beacon-cli npm publish --access public
         env:
           YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish CLI package to GitHub
         shell: bash

@@ -7,7 +7,7 @@ export default function planMerge<TItem>(
 ): MergePlan<TItem> {
 	const toCreate = new Map<string, TItem>();
 	const toUpdate = new Map<string, TItem>();
-	const toSkip = new Set<string>();
+	const toSkip = new Map<string, TItem>();
 
 	const toRemove = [...destination]
 		.filter(([key]) => !source.has(key))
@@ -18,7 +18,7 @@ export default function planMerge<TItem>(
 
 		if (existing) {
 			if (equality(item, existing)) {
-				toSkip.add(key);
+				toSkip.set(key, item);
 			} else {
 				toUpdate.set(key, item);
 			}

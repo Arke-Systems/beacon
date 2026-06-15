@@ -1,4 +1,6 @@
 import type { Entry } from '#cli/cs/entries/Types.js';
+import { getFileExtension } from '#cli/fs/serializationFormat.js';
+import type { SerializationFormat } from '#cli/ui/Options.js';
 import sanitize from 'sanitize-filename';
 
 // This function generates a list of unique filenames for all entries, based
@@ -7,9 +9,11 @@ import sanitize from 'sanitize-filename';
 // already unique.
 export default function generateFilenames(
 	entriesByTitle: ReadonlyMap<Entry['title'], Entry>,
-): ReadonlyMap<Entry['uid'], string> {
+	format: SerializationFormat = 'yaml',
+): ReadonlyMap<Entry['title'], string> {
 	const { byFilename, byTitle } = sanitizeFilenames(entriesByTitle);
 	const result = new Map<string, string>();
+	const ext = getFileExtension(format);
 
 	for (const title of entriesByTitle.keys()) {
 		const filename = byTitle.get(title);
@@ -22,7 +26,7 @@ export default function generateFilenames(
 		const siblings = byFilename.get(lc) ?? new Set<Entry['title']>();
 
 		if (siblings.size === 1) {
-			result.set(title, filename + '.yaml');
+			result.set(title, filename + ext);
 			continue;
 		}
 
@@ -33,7 +37,7 @@ export default function generateFilenames(
 			throw new Error(`No index for entry ${title}`);
 		}
 
-		result.set(title, `${filename} (${(idx + 1).toLocaleString()}).yaml`);
+		result.set(title, `${filename} (${(idx + 1).toLocaleString()})${ext}`);
 	}
 
 	return result;

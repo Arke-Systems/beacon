@@ -1,6 +1,8 @@
 import type Taxonomy from '#cli/cs/taxonomies/Taxonomy.js';
 import type NormalizedTaxonomy from '#cli/dto/taxonomy/NormalizedTaxonomy.js';
-import writeYaml from '#cli/fs/writeYaml.js';
+import { getFileExtension } from '#cli/fs/serializationFormat.js';
+import writeSerializedData from '#cli/fs/writeSerializedData.js';
+import getUi from '#cli/schema/lib/SchemaUi.js';
 import { rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import schemaDirectory from '../../taxonomies/schemaDirectory.js';
@@ -36,11 +38,17 @@ export default class FsTaxonomyCollection implements TaxonomyCollection {
 	}
 
 	async #write(normalized: NormalizedTaxonomy) {
+		const ui = getUi();
+		const format = ui.options.schema.serializationFormat;
 		const path = this.#getPath(normalized.taxonomy.uid);
-		return writeYaml(path, normalized, { sortMapEntries: false });
+		return writeSerializedData(path, normalized, format, {
+			sortMapEntries: false,
+		});
 	}
 
 	#getPath(uid: string) {
-		return resolve(this.#directory, `${uid}.yaml`);
+		const ui = getUi();
+		const format = ui.options.schema.serializationFormat;
+		return resolve(this.#directory, `${uid}${getFileExtension(format)}`);
 	}
 }

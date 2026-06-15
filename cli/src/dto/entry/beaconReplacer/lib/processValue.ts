@@ -10,6 +10,11 @@ export default function processValue(
 		return value.map((v) => this.processValue(v));
 	}
 
+	// Check if value is a string containing $beacon asset references
+	if (typeof value === 'string' && value.includes('$beacon')) {
+		return this.processHtmlRteAsset(value);
+	}
+
 	if (!isRecord(value)) {
 		return value;
 	}

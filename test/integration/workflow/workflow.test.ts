@@ -29,7 +29,7 @@ describe(
 	},
 	() => {
 		const ctx = new WorkflowTestContext();
-		beforeAll(async () => clear(ctx.client, ctx.ui), longTest);
+		beforeAll(async () => clear(ctx.client, ctx.ui, true), longTest);
 		afterAll(async () => ctx[Symbol.asyncDispose]());
 
 		ctx.test('can push changes to an empty stack', canPushChanges);

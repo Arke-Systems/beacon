@@ -35,7 +35,7 @@ export default async function createEntry(
 	return {
 		...data.entry,
 		async [Symbol.asyncDispose]() {
-			return deleteEntry(client, contentTypeUid, uid);
+			await deleteEntry(client, contentTypeUid, uid);
 		},
 	};
 }

@@ -11,7 +11,7 @@ stack in the Contentstack headless CMS platform.
 Beacon enables full-stack synchronization by allowing users to:
 
 - Serialize (export) a stack's entire contents, including entries, assets,
-  content types, global fields, and taxonomies, into the file system.
+  content types, global fields, labels, and taxonomies, into the file system.
 
 - Store the serialized data under version control for tracking and
   CI/CD deployment.
@@ -60,7 +60,23 @@ npx beacon <command>
 #### `clear`
 
 Completely empties a stack by removing all entries, content types, global
-fields, taxonomies, and assets.
+fields, labels, taxonomies, and assets.
+
+**Options:**
+
+- `--content-types <types...>` - Space-delimited list of content type UIDs to
+  delete. When specified, only the listed content types and their entries are
+  removed. **Note:** This deletes both the entries _and_ the content type
+  definitions themselves.
+
+- `--delete-assets` - Delete all assets ignoring asset filters. By default,
+  assets matching the configured filters are deleted. Use this flag to delete
+  ALL assets regardless of filter configuration. Default: `false`
+
+**⚠️ Warning:** The `clear` command is destructive and cannot be undone. When
+using `--content-types`, both the content type schema and all associated entries
+are permanently deleted. Always ensure you have a backup (using `beacon pull`)
+before clearing a stack.
 
 #### `pull`
 
@@ -69,6 +85,24 @@ Serializes a stack's content into the file system for version control or backup.
 #### `push`
 
 Deserializes the contents from the file system into the stack.
+
+#### `validate-references`
+
+Validates all entry and asset references in Contentstack without modifying any
+data. This is a read-only operation that generates a report of invalid
+references, including:
+
+- Missing entry references (references to entries that don't exist)
+- Missing content type references (references to content types that don't exist)
+- Missing asset references (in both JSON RTE and HTML RTE fields)
+- Invalid reference structures
+
+This command is useful for:
+
+- Identifying broken references before pushing changes
+- Auditing content integrity in existing stacks
+- Troubleshooting reference-related issues
+- Ensuring data quality across environments
 
 ### Common CLI Options
 
@@ -245,6 +279,7 @@ client:
 schema:
   deletion-strategy: warn # delete | ignore | warn
   schema-path: ./cs/schema
+  serialization-format: yaml # yaml | json (default: yaml)
 
   extension:
     Bynder: blt6b7c082b-example
@@ -254,6 +289,17 @@ schema:
 
   # Include or exclude assets using glob patterns.
   assets:
+    include: ['**']
+    exclude: []
+
+  # Include or exclude entries by content type UID using glob patterns.
+  # To exclude all entries, use: exclude: ['**']
+  entries:
+    include: ['**']
+    exclude: []
+
+  # Include or exclude labels using glob patterns.
+  labels:
     include: ['**']
     exclude: []
 
@@ -281,6 +327,37 @@ environments:
 verbose: false
 ```
 
+### Serialization Format
+
+Beacon supports two file formats for serializing data: YAML and JSON. You can
+configure which format to use via the `serialization-format` option in your
+configuration file.
+
+**YAML Format (Default)**
+
+- Better readability for human review
+- Supports multi-line strings without escaping
+- Better suited for version control diffs
+- Use when: Team members frequently review serialized data
+
+**JSON Format**
+
+- Native compatibility with Contentstack exports
+- No encoding issues with special characters
+- Simpler parsing and processing
+- Use when: Integrating with Contentstack's native export/import tools
+
+Example configuration:
+
+```yaml
+schema:
+  serialization-format: json # Use JSON instead of default YAML
+```
+
+**Note:** Changing formats requires re-pulling data. Beacon automatically
+detects and reads both formats when loading existing data, enabling
+migration between formats.
+
 ### Named Environments
 
 The configuration file may contain an optional `environments` section. This
@@ -300,9 +377,9 @@ configuration. During this merge, the following rules apply:
   are merged, with values from the named environment being used _in addition_
   to values from the base configuration.
 
-- `schema.assets.include` and `schema.assets.exclude` are concatenated,
-  with values from the named environment being _added_ to the base
-  configuration.
+- `schema.assets.include`, `schema.assets.exclude`, `schema.entries.include`,
+  and `schema.entries.exclude` are concatenated, with values from the named
+  environment being _added_ to the base configuration.
 
 - All other values will prefer the named environment.
 
@@ -335,11 +412,72 @@ yarn beacon push \
 
 ### Clearing a Stack
 
+Clear all content from a stack (entries, content types, global fields,
+labels, taxonomies, and optionally assets):
+
 ```sh
 yarn beacon clear \
   --api-key bltcfcf264c-example \
   --management-token cs-example \
   --base-url https://api.contentstack.io
+```
+
+Clear specific content types only (deletes both the content type schema
+and all entries):
+
+```sh
+yarn beacon clear \
+  --api-key bltcfcf264c-example \
+  --management-token cs-example \
+  --base-url https://api.contentstack.io \
+  --content-types page_article_page data_author
+```
+
+**Note:** When using `--content-types`, both the content type definitions and
+all associated entries are permanently deleted. This is useful for cleaning up
+orphaned or corrupted entries that cannot be deleted individually. You can
+restore the content type schema by running `beacon push` after clearing.
+
+### Validating References
+
+```sh
+yarn beacon validate-references \
+  --api-key bltcfcf264c-example \
+  --management-token cs-example \
+  --base-url https://api.contentstack.io
+```
+
+This command analyzes all entries and their references without making any
+changes to the stack. If invalid references are found, the command exits with
+a non-zero status code and displays a detailed report showing:
+
+- Which entries contain invalid references
+- The type of issue (missing entry, missing content type, missing asset, or
+  invalid structure)
+- The field path where the issue was found
+- The target of the invalid reference
+
+Example output:
+
+```
+Validation Report:
+────────────────────────────────────────────────────────────
+Total entries checked:      125
+Entries with issues:        2
+Total invalid references:   3
+
+Issues by type:
+  Missing entries:          2
+  Missing assets:           1
+
+Detailed issues:
+
+Entry: navigation/Main Nav
+  missing-entry        linked_page               → page/blt999
+  missing-asset        background_image          → sys_assets/blt888
+
+Entry: footer/Footer
+  missing-entry        related_content           → blog_post/blt777
 ```
 
 ### Cookbook: Project Configuration
@@ -386,6 +524,57 @@ schema:
       '*': only taxonomy
 ```
 
+### Cookbook: Excluding Entries
+
+To sync only the content model (content types, global fields, labels, and taxonomies)
+without syncing entries, configure the `entries` setting to exclude all content
+types:
+
+```yaml
+# beacon.yaml
+schema:
+  entries:
+    exclude: ['**']
+```
+
+Alternatively, you can selectively include or exclude specific content types
+by their UID:
+
+```yaml
+# beacon.yaml
+schema:
+  entries:
+    include: ['blog_post', 'page']
+    exclude: ['archived_*']
+```
+
+### Cookbook: Filtering Labels
+
+To selectively sync labels, use include/exclude patterns with label UIDs:
+
+```yaml
+# beacon.yaml
+schema:
+  labels:
+    include: ['production', 'staging', 'review_*']
+    exclude: ['deprecated_*', 'internal_*']
+```
+
+To exclude all labels from syncing:
+
+```yaml
+# beacon.yaml
+schema:
+  labels:
+    exclude: ['**']
+```
+
+This is useful for scenarios like:
+
+- Setting up a new environment with the schema structure only
+- Synchronizing schema changes without affecting existing content
+- Excluding large or sensitive content types from synchronization
+
 ```yaml
 # .yarnrc.yml
 injectEnvironmentFiles: [.env?]
@@ -397,6 +586,7 @@ Under this configuration, the push, pull, and clear commands become:
 yarn beacon pull
 yarn beacon push
 yarn beacon clear
+yarn beacon validate-references
 ```
 
 For CI/CD environments, the `.env` file will not exist, so environment variables

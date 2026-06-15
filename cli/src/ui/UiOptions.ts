@@ -46,15 +46,30 @@ function schema(...others: PartialOptions['schema'][]): Options['schema'] {
 	return {
 		assets: assets(...others.map((o) => o?.assets)),
 		deletionStrategy: other.deletionStrategy ?? defaultStrategy,
+		entries: entries(...others.map((o) => o?.entries)),
 		extension: maps(...others.map((o) => o?.extension)),
 		jsonRtePlugin: maps(...others.map((o) => o?.jsonRtePlugin)),
+		labels: labels(...others.map((o) => o?.labels)),
 		schemaPath: other.schemaPath ?? defaultSchemaPath,
+		serializationFormat: other.serializationFormat ?? 'yaml',
 		taxonomies: other.taxonomies ?? DefaultTaxonomyStrategies,
 	};
 }
 
 type AssetOptions = NonNullable<PartialOptions['schema']>['assets'];
 function assets(...others: AssetOptions[]): Options['schema']['assets'] {
+	const other = mergeExceptUndefined(...others);
+	return { isIncluded: other.isIncluded ?? (() => true) };
+}
+
+type EntryOptions = NonNullable<PartialOptions['schema']>['entries'];
+function entries(...others: EntryOptions[]): Options['schema']['entries'] {
+	const other = mergeExceptUndefined(...others);
+	return { isIncluded: other.isIncluded ?? (() => true) };
+}
+
+type LabelOptions = NonNullable<PartialOptions['schema']>['labels'];
+function labels(...others: LabelOptions[]): Options['schema']['labels'] {
 	const other = mergeExceptUndefined(...others);
 	return { isIncluded: other.isIncluded ?? (() => true) };
 }

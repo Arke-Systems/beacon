@@ -11,9 +11,14 @@ export default function mockMergePlan(
 	const expected = {
 		toCreate: new Map<string, AssetMeta>(),
 		toRemove: new Map<string, AssetMeta>(),
-		toSkip: new Set<string>(),
+		toSkip: new Map<string, AssetMeta>(),
 		toUpdate: new Map<string, AssetMeta>(),
 	};
+
+	// Excluded assets should not appear in any result set
+	if (!theory.included) {
+		return expected;
+	}
 
 	const sourceItem = source.get(itemPath);
 	const destinationItem = destination.get(itemPath);
@@ -21,7 +26,7 @@ export default function mockMergePlan(
 	switch (theory.expected) {
 		case 'skip':
 		case 'warning':
-			expected.toSkip.add(itemPath);
+			expected.toSkip.set(itemPath, sourceItem ?? destinationItem!);
 			break;
 
 		case 'create':

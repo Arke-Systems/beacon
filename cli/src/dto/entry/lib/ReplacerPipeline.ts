@@ -3,6 +3,7 @@ import type { SchemaField } from '#cli/cs/Types.js';
 import type Ctx from '#cli/schema/ctx/Ctx.js';
 import AssetReplacer from './AssetReplacer.js';
 import BooleanDefaults from './BooleanDefaults.js';
+import HtmlRteReplacer from './HtmlRteReplacer.js';
 import JsonRteReplacer from './JsonRteReplacer.js';
 import ReferenceReplacer from './ReferenceReplacer.js';
 import type Replacer from './Replacer.js';
@@ -16,6 +17,7 @@ export default class ReplacerPipeline {
 			new AssetReplacer(ctx, refPath),
 			new ReferenceReplacer(ctx, refPath),
 			new JsonRteReplacer(ctx, refPath),
+			new HtmlRteReplacer(ctx, refPath),
 			new TaxonomyRemover(refPath),
 			new BooleanDefaults(),
 		];

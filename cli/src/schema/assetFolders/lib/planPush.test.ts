@@ -46,6 +46,7 @@ describe('Asset Folders: planPush', () => {
 			// Arrange
 			const { assets, cs, isIncluded, fs, itemPath } = arrange(theory);
 			ui.options.schema.assets = { isIncluded };
+			ui.options.verbose = theory.expected === 'warning';
 
 			// Act
 			const actual = sut(cs, fs, assets);
@@ -64,9 +65,9 @@ describe('Asset Folders: planPush', () => {
 			}
 
 			if (theory.expected === 'skip' || theory.expected === 'warning') {
-				expect(actual.toSkip).toContain(itemPath);
+				expect(actual.toSkip.keys()).toContain(itemPath);
 			} else {
-				expect(actual.toSkip).not.toContain(itemPath);
+				expect(actual.toSkip.keys()).not.toContain(itemPath);
 			}
 
 			if (theory.expected === 'update') {

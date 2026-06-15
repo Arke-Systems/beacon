@@ -1,12 +1,15 @@
 import type { RawAssetItem } from '#cli/cs/assets/Types.js';
 import { isRawFolder } from '#cli/cs/assets/Types.js';
+import normalizeFolderName from './normalizeFolderName.js';
 
 export default function resolveItemPath(
 	byUid: ReadonlyMap<string, RawAssetItem>,
 	item: RawAssetItem,
 ): string {
 	const { parent_uid: parentUid } = item;
-	const name = isRawFolder(item) ? item.name : item.filename;
+	const rawName = isRawFolder(item) ? item.name : item.filename;
+	// Normalize folder names to replace spaces with underscores
+	const name = isRawFolder(item) ? normalizeFolderName(rawName) : rawName;
 	if (!parentUid) {
 		return name;
 	}

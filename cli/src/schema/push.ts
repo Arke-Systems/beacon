@@ -1,4 +1,5 @@
 import type Client from '#cli/cs/api/Client.js';
+import type { ContentType } from '#cli/cs/content-types/Types.js';
 import assetFolders from './assetFolders/toContentstack.js';
 import assets from './assets/toContentstack.js';
 import contentTypeShims from './content-types/shimsToContentstack.js';
@@ -7,6 +8,7 @@ import Ctx from './ctx/Ctx.js';
 import entries from './entries/toContentstack.js';
 import updateMissedReferences from './entries/updateMissedReferences.js';
 import globalFields from './global-fields/toContentstack.js';
+import labels from './labels/toContentstack.js';
 import PushResults from './lib/PushResults.js';
 import getUi from './lib/SchemaUi.js';
 import taxonomies from './taxonomies/toContentstack.js';
@@ -50,23 +52,29 @@ export default async function push(client: Client) {
 	await results.set('Global Fields', globalFields(ctx));
 	await results.set('Content Types', contentTypes(ctx));
 
-	const totalEntries = calculateTotalEntries(ctx);
+	const ui = getUi();
+	const { isIncluded } = ui.options.schema.entries;
+	const contentTypesToSync = [...ctx.fs.contentTypes.values()].filter((ct) =>
+		isIncluded(ct.uid),
+	);
+	const totalEntries = calculateTotalEntries(ctx, contentTypesToSync);
 
 	if (totalEntries > 0) {
-		using bar = getUi().createProgressBar('Entries', totalEntries);
+		using bar = ui.createProgressBar('Entries', totalEntries);
 
-		for (const contentType of ctx.fs.contentTypes.values()) {
+		for (const contentType of contentTypesToSync) {
 			const task = entries(ctx, contentType, bar);
 			await results.set(`${contentType.title} entries`, task);
 		}
 	}
 
+	await results.set('Labels', labels(ctx));
 	await results.set('References', updateMissedReferences(ctx));
 	return results.value;
 }
 
-function calculateTotalEntries(ctx: Ctx) {
-	return [...ctx.fs.contentTypes.values()].reduce((acc, ct) => {
+function calculateTotalEntries(ctx: Ctx, contentTypeList: ContentType[]) {
+	return contentTypeList.reduce((acc, ct) => {
 		const titles = new Set([
 			...ctx.cs.entries.byTitleFor(ct.uid).keys(),
 			...ctx.fs.entries.byTitleFor(ct.uid).keys(),

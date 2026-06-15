@@ -1,5 +1,7 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import type { Entry } from '#cli/cs/entries/Types.js';
+import getUi from '#cli/schema/lib/SchemaUi.js';
+import { styleText } from 'node:util';
 
 export interface ReadonlyEntryCollection {
 	// readonly byPath: ReadonlyMap<ReferencePath, Entry>;
@@ -43,10 +45,43 @@ export default class EntryCollection implements ReadonlyEntryCollection {
 	public constructor(initial: ReadonlyMap<ContentType, ReadonlySet<Entry>>) {
 		for (const [contentType, entries] of initial) {
 			const byTitle = new Map<Entry['title'], Entry>();
+			const duplicates: { title: string; uids: string[] }[] = [];
 
 			for (const entry of entries) {
 				this.#byTypedUid.set(`${contentType.uid}/${entry.uid}`, entry);
+
+				// Track duplicates for warning
+				const existing = byTitle.get(entry.title);
+				if (existing) {
+					const existingDup = duplicates.find((d) => d.title === entry.title);
+					if (existingDup) {
+						existingDup.uids.push(entry.uid);
+					} else {
+						duplicates.push({
+							title: entry.title,
+							uids: [existing.uid, entry.uid],
+						});
+					}
+				}
+
 				byTitle.set(entry.title, entry);
+			}
+
+			// Warn about duplicate titles
+			if (duplicates.length > 0) {
+				const ui = getUi();
+				for (const dup of duplicates) {
+					ui.warn(
+						`Multiple entries found with title ${styleText('yellowBright', `"${dup.title}"`)} in ${styleText('cyan', contentType.uid)}:`,
+					);
+					ui.warn(`  UIDs: ${dup.uids.join(', ')}`);
+					ui.warn(
+						`  Only the last entry (${dup.uids[dup.uids.length - 1]}) will be used for title matching.`,
+					);
+					ui.warn(
+						'  This may cause "title is not unique" errors. Please delete duplicate entries.',
+					);
+				}
 			}
 
 			this.#byTitle.set(contentType.uid, byTitle);

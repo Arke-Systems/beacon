@@ -24,7 +24,13 @@ export default class TimeoutAndRetryBehavior extends EventEmitter<EventMap> {
 		let attempts = 0;
 
 		do {
-			using antiStallRequest = new RequestWithTimeout(original, this._timeout);
+			// Always clone the request to avoid "Request already used" errors on retries
+			// Clone before first use since RequestWithTimeout will consume it
+			const requestForAttempt = original.clone();
+			using antiStallRequest = new RequestWithTimeout(
+				requestForAttempt,
+				this._timeout,
+			);
 
 			try {
 				return await fetch(antiStallRequest);

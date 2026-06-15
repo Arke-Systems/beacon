@@ -24,7 +24,7 @@ function processCsAssets(
 	const result = {
 		toCreate: new Map<string, AssetMeta>(),
 		toRemove: new Map<string, AssetMeta>(),
-		toSkip: new Set<string>(),
+		toSkip: new Map<string, AssetMeta>(),
 		toUpdate: new Map<string, AssetMeta>(),
 	};
 
@@ -37,18 +37,16 @@ function processCsAssets(
 		if (fsMeta) {
 			if (isIncluded(path)) {
 				if (isDeepStrictEqual(csMeta, fsMeta)) {
-					result.toSkip.add(path);
+					result.toSkip.set(path, csMeta);
 				} else {
 					result.toUpdate.set(path, csMeta);
 				}
-			} else {
-				result.toSkip.add(path);
 			}
+			// Don't add excluded assets to toSkip - they shouldn't appear in results
 		} else if (isIncluded(path)) {
 			result.toCreate.set(path, csMeta);
-		} else {
-			result.toSkip.add(path);
 		}
+		// Don't add excluded assets to toSkip - they shouldn't appear in results
 	}
 
 	return { result, seen };
@@ -66,8 +64,7 @@ function processFsAssets(
 
 		if (isIncluded(path)) {
 			result.toRemove.set(path, fsMeta);
-		} else {
-			result.toSkip.add(path);
 		}
+		// Don't add excluded assets to toSkip - they shouldn't appear in results
 	}
 }

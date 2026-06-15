@@ -13,6 +13,7 @@ export interface TransferContext<TItem> {
 	readonly plan: MergePlan<TItem>;
 	readonly progress: ProgressBar;
 	readonly remove: (item: TItem) => Promise<void>;
+	readonly unmodified?: (item: TItem) => Promise<unknown>;
 	readonly update: (item: TItem) => Promise<unknown>;
 }
 
@@ -20,9 +21,12 @@ export default async function processPlan<TItem>(
 	ctx: TransferContext<TItem>,
 ): Promise<TransferResults> {
 	const total =
-		ctx.plan.toCreate.size + ctx.plan.toRemove.size + ctx.plan.toUpdate.size;
+		ctx.plan.toCreate.size +
+		ctx.plan.toRemove.size +
+		ctx.plan.toUpdate.size +
+		(ctx.unmodified ? ctx.plan.toSkip.size : 0);
 
-	const unmodified = handleUnmodified(ctx);
+	const unmodified = await handleUnmodified(ctx);
 
 	if (total === 0) {
 		const result = new MutableTransferResults();

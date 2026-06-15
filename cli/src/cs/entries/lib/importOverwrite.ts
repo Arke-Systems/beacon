@@ -12,9 +12,17 @@ export default async function importOverwrite(
 	client: Client,
 	contentTypeUid: ContentType['uid'],
 	entry: Entry,
+	locale?: string,
 ): Promise<Entry> {
 	const errorContext = buildContext(contentTypeUid, entry);
-	const req = attempt.bind(null, client, contentTypeUid, entry, errorContext);
+	const req = attempt.bind(
+		null,
+		client,
+		contentTypeUid,
+		entry,
+		locale,
+		errorContext,
+	);
 	return useRetryStrategy(req, errorContext);
 }
 
@@ -29,6 +37,7 @@ async function attempt(
 	client: Client,
 	contentTypeUid: ContentType['uid'],
 	entry: Entry,
+	locale: string | undefined,
 	errorContext: string,
 ) {
 	const response = await client.POST(
@@ -42,7 +51,10 @@ async function attempt(
 					content_type_uid: contentTypeUid,
 					entry_uid: entry.uid,
 				},
-				query: { overwrite: 'true' },
+				query: {
+					...(locale ? { locale } : {}),
+					overwrite: 'true',
+				},
 			},
 		},
 	);

@@ -8,7 +8,9 @@ export default async function deleteEntry(
 	client: Client,
 	contentTypeUid: string,
 	entryUid: string,
-) {
+	deleteAllLocalized = true,
+	locale?: string,
+): Promise<{ deleted: boolean; notFound: boolean }> {
 	const result = await client.DELETE(
 		'/v3/content_types/{content_type_uid}/entries/{entry_uid}',
 		{
@@ -16,6 +18,10 @@ export default async function deleteEntry(
 				path: {
 					content_type_uid: contentTypeUid,
 					entry_uid: entryUid,
+				},
+				query: {
+					...(deleteAllLocalized ? { delete_all_localized: 'true' } : {}),
+					...(locale ? { locale } : {}),
 				},
 			},
 		},
@@ -25,8 +31,8 @@ export default async function deleteEntry(
 	const error = result.error as unknown;
 
 	if (isRecord(error) && error.error_code === EntryNotFound) {
-		// Safe to ignore
-		return;
+		// Entry not found - might be orphaned/corrupted
+		return { deleted: false, notFound: true };
 	}
 
 	ContentstackError.throwIfError(error, msg);
@@ -34,4 +40,6 @@ export default async function deleteEntry(
 	if (!result.response.ok) {
 		throw new Error(msg);
 	}
+
+	return { deleted: true, notFound: false };
 }

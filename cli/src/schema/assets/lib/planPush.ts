@@ -14,12 +14,15 @@ export default function planPush(
 	return {
 		toCreate: fsResult.toCreate,
 		toRemove: csResult.toRemove,
-		toSkip: new Set([...fsResult.toSkip, ...csResult.toSkip]),
+		toSkip: new Map([...fsResult.toSkip, ...csResult.toSkip]),
 		toUpdate: fsResult.toUpdate,
 	};
 }
 
 function warning(ui: UiContext, itemPath: string) {
+	if (!ui.options.verbose) {
+		return;
+	}
 	const msg1 = 'Skipping asset which exists in the file system,';
 	const msg2 = 'but is not included by filters:';
 	const msg3 = styleText('yellowBright', itemPath);
@@ -34,7 +37,7 @@ function processFsItems(
 	const ui = getUi();
 	const { isIncluded } = ui.options.schema.assets;
 	const toCreate = new Map<string, AssetMeta>();
-	const toSkip = new Set<string>();
+	const toSkip = new Map<string, AssetMeta>();
 	const toUpdate = new Map<string, AssetMeta>();
 
 	for (const [itemPath, fsMeta] of fs) {
@@ -44,19 +47,19 @@ function processFsItems(
 		if (csMeta) {
 			if (isIncluded(itemPath)) {
 				if (isDeepStrictEqual(csMeta, fsMeta)) {
-					toSkip.add(itemPath);
+					toSkip.set(itemPath, fsMeta);
 				} else {
 					toUpdate.set(itemPath, fsMeta);
 				}
 			} else {
 				warning(ui, itemPath);
-				toSkip.add(itemPath);
+				// Don't add to toSkip - excluded assets shouldn't appear in results
 			}
 		} else if (isIncluded(itemPath)) {
 			toCreate.set(itemPath, fsMeta);
 		} else {
 			warning(ui, itemPath);
-			toSkip.add(itemPath);
+			// Don't add to toSkip - excluded assets shouldn't appear in results
 		}
 	}
 
@@ -70,7 +73,7 @@ function processCsItems(
 	const ui = getUi();
 	const { isIncluded } = ui.options.schema.assets;
 	const toRemove = new Map<string, AssetMeta>();
-	const toSkip = new Set<string>();
+	const toSkip = new Map<string, AssetMeta>();
 
 	for (const [itemPath, csMeta] of cs) {
 		if (seenItems.has(itemPath)) {
@@ -79,9 +82,8 @@ function processCsItems(
 
 		if (isIncluded(itemPath)) {
 			toRemove.set(itemPath, csMeta);
-		} else {
-			toSkip.add(itemPath);
 		}
+		// Don't add excluded assets to toSkip - they shouldn't appear in results
 	}
 
 	return { toRemove, toSkip };

@@ -1,4 +1,5 @@
-import readYaml from '#cli/fs/readYaml.js';
+import readSerializedData from '#cli/fs/readSerializedData.js';
+import { getSupportedExtensions } from '#cli/fs/serializationFormat.js';
 import tryReadDir from '#cli/fs/tryReadDir.js';
 import isRecord from '#cli/util/isRecord.js';
 import { extname, resolve } from 'node:path';
@@ -16,14 +17,16 @@ export default async function indexFromFilesystem<
 	const files = await tryReadDir(schemaPath);
 	const result = new Map<string, TItem & { [Filename]: string }>();
 	const ui = getUi();
+	const supportedExtensions = getSupportedExtensions();
 
 	for (const file of files) {
-		if (!file.isFile() || extname(file.name).toLowerCase() !== '.yaml') {
+		const ext = extname(file.name).toLowerCase();
+		if (!file.isFile() || !supportedExtensions.includes(ext)) {
 			continue;
 		}
 
 		const fullPath = resolve(schemaPath, file.name);
-		const parsed = await readYaml(fullPath);
+		const parsed = await readSerializedData(fullPath);
 
 		if (!isRecord(parsed) || !typeGuard(parsed)) {
 			ui.warn(

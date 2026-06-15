@@ -1,5 +1,5 @@
 {
-  "author": "Chris Nielsen <cnielsen@arke.com>",
+  "author": "Chris Nielsen <cnielsen@arke.com>, Bill Cacy <bcacy@arke.com>",
   "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "description": "Development scripts for the Beacon project",
   "devDependencies": {
@@ -31,7 +31,10 @@
     "lint": "eslint",
     "pretty": "prettier --check .",
     "pretty:fix": "prettier --write .",
-    "test": "yarn workspace @arke-systems/beacon-test vitest"
+    "test": "yarn workspace @arke-systems/beacon-test vitest",
+    "version:patch": "yarn version patch && yarn workspace @arke-systems/beacon-cli version patch",
+    "version:minor": "yarn version minor && yarn workspace @arke-systems/beacon-cli version minor",
+    "version:major": "yarn version major && yarn workspace @arke-systems/beacon-cli version major"
   },
   "type": "module",
   "version": "1.11.4",

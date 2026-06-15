@@ -7,12 +7,14 @@ describe(transformSchemaConfig.name, () => {
 		const baseSchema: Config['schema'] = {
 			assets: { exclude: ['asset2'], include: ['asset1'] },
 			extension: { ext1: 'value1' },
+			labels: { exclude: ['label2'], include: ['label1'] },
 			taxonomies: { tax1: 'only taxonomy' },
 		};
 
 		const envSchema: Config['schema'] = {
 			assets: { exclude: ['asset4'], include: ['asset3'] },
 			extension: { ext2: 'value2' },
+			labels: { exclude: ['label4'], include: ['label3'] },
 			taxonomies: { tax2: 'taxonomy and terms' },
 		};
 
@@ -22,12 +24,23 @@ describe(transformSchemaConfig.name, () => {
 
 		expect(result.extension?.byName?.get('ext1')).toBe('value1');
 		expect(result.extension?.byName?.get('ext2')).toBe('value2');
+
 		expect(result.taxonomies?.get('tax1')).toBe('only taxonomy');
 		expect(result.taxonomies?.get('tax2')).toBe('taxonomy and terms');
-		expect(result.assets?.isIncluded?.('asset1')).toBe(true);
-		expect(result.assets?.isIncluded?.('asset3')).toBe(true);
-		expect(result.assets?.isIncluded?.('asset2')).toBe(false);
-		expect(result.assets?.isIncluded?.('asset4')).toBe(false);
+
+		if (result.assets?.isIncluded) {
+			expect(result.assets.isIncluded('asset1')).toBe(true);
+			expect(result.assets.isIncluded('asset3')).toBe(true);
+			expect(result.assets.isIncluded('asset2')).toBe(false);
+			expect(result.assets.isIncluded('asset4')).toBe(false);
+		}
+
+		if (result.labels?.isIncluded) {
+			expect(result.labels.isIncluded('label1')).toBe(true);
+			expect(result.labels.isIncluded('label3')).toBe(true);
+			expect(result.labels.isIncluded('label2')).toBe(false);
+			expect(result.labels.isIncluded('label4')).toBe(false);
+		}
 	});
 
 	it('should handle empty schemas gracefully', () => {

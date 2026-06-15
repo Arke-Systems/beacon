@@ -5,6 +5,7 @@ import { Store } from '#cli/schema/lib/SchemaUi.js';
 import createStylus from '#cli/ui/createStylus.js';
 import HandledError from '#cli/ui/HandledError.js';
 import logApiPerformance from '#cli/ui/logApiPerformance.js';
+import * as Options from '#cli/ui/option/index.js';
 import { ConsoleUiContext } from '#cli/ui/UiContext.js';
 import { Command } from 'commander';
 import logOptions from '../logOptions.js';
@@ -14,9 +15,15 @@ import { addCommonOptions } from '../option/commonOptions.js';
 const clear = new Command('clear');
 
 addCommonOptions(clear);
+clear.addOption(Options.deleteAssets);
+clear.addOption(Options.contentTypes);
 clear.description('Empty all data from a stack.');
 
-clear.action(async (cliOptions: CommonOptions) =>
+type CommandOptions = CommonOptions &
+	Options.ContentTypesOption &
+	Options.DeleteAssetsOption;
+
+clear.action(async (cliOptions: CommandOptions) =>
 	HandledError.ExitIfThrown(async () => {
 		const options = await mapOptions(cliOptions);
 		using ui = new ConsoleUiContext(options);
@@ -24,7 +31,12 @@ clear.action(async (cliOptions: CommonOptions) =>
 
 		const histogram = await Store.run(ui, async () => {
 			await using client = createClient(ui);
-			await clearJob(client, ui);
+			await clearJob(
+				client,
+				ui,
+				cliOptions.deleteAssets,
+				cliOptions.contentTypes,
+			);
 			return client.performance;
 		});
 

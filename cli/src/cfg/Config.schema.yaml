@@ -57,10 +57,40 @@ properties:
         type: string
         minLength: 1
 
+      serialization-format:
+        type: string
+        enum: ['yaml', 'json']
+        default: yaml
+        description: |
+          Format for serialized data files. Choose 'json' for compatibility
+          with Contentstack's default export format, or 'yaml' for better
+          readability and multi-line string handling.
+
       assets:
         type: object
         additionalProperties: false
         description: Include or exclude assets using glob patterns.
+        default:
+          include: ['**']
+          exclude: []
+        properties:
+          include:
+            type: array
+            items:
+              type: string
+              minLength: 1
+          exclude:
+            type: array
+            items:
+              type: string
+              minLength: 1
+
+      entries:
+        type: object
+        additionalProperties: false
+        description: |
+          Control whether entries are synchronized during pull and push
+          operations. Use include/exclude patterns to filter by content type UID.
         default:
           include: ['**']
           exclude: []
@@ -90,6 +120,25 @@ properties:
         default:
           '*': 'taxonomy and terms'
 
+      labels:
+        type: object
+        additionalProperties: false
+        description: Include or exclude labels using glob patterns.
+        default:
+          include: ['**']
+          exclude: []
+        properties:
+          include:
+            type: array
+            items:
+              type: string
+              minLength: 1
+          exclude:
+            type: array
+            items:
+              type: string
+              minLength: 1
+
   verbose:
     type: boolean
     default: false
@@ -109,7 +158,9 @@ properties:
         - `schema.extension`, `schema.json-rte-plugin`, and `schema.taxonomies`
           are merged.
 
-        - `schema.assets.include` and `schema.assets.exclude` are concatenated.
+        - `schema.assets.include`, `schema.assets.exclude`, `schema.entries.include`,
+          `schema.entries.exclude`, `schema.labels.include`, and `schema.labels.exclude`
+          are concatenated.
 
         - All other values will prefer the named environment.
 

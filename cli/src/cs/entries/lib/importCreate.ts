@@ -9,6 +9,7 @@ export default async function importCreate(
 	client: Client,
 	contentTypeUid: ContentType['uid'],
 	entry: Entry,
+	locale?: string,
 ): Promise<Entry> {
 	const y = createStylus('yellowBright');
 	const msg = y`Failed to create ${contentTypeUid} entry: ${entry.title}.`;
@@ -21,7 +22,10 @@ export default async function importCreate(
 
 			params: {
 				path: { content_type_uid: contentTypeUid },
-				query: { overwrite: 'false' },
+				query: {
+					...(locale ? { locale } : {}),
+					overwrite: 'false',
+				},
 			},
 		},
 	);
