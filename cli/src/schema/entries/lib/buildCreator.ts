@@ -26,6 +26,17 @@ export default function buildCreator(
 	return async (entry: Entry) => {
 		const fsLocaleVersions = await loadLocaleVersions(entry, contentType.uid);
 
+		// Skip entries with empty title fields
+		const [firstLocale] = fsLocaleVersions;
+		if (firstLocale && !firstLocale.entry.title) {
+			getUi().warn(
+				'Skipping entry with empty title field:',
+				`file: ${entry.title}`,
+				`(content type: ${contentType.uid})`,
+			);
+			return;
+		}
+
 		const created = await createFirstLocale(
 			ctx,
 			transformer,

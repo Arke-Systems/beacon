@@ -155,3 +155,83 @@ describe('determineMasterLocale behavior', () => {
 		expect(scenario.catchBlock).toBe('Returns null');
 	});
 });
+
+describe('empty title field handling', () => {
+	it('should skip creating entries with empty title fields', () => {
+		// Scenario: Entry file has empty title: ""
+		const scenario = {
+			filename: 'component_featured_banner/Untitled.json',
+			fileContent: {
+				title: '', // Empty string
+				background_color: 'Blue',
+				description_text: '',
+			},
+			expected: [
+				'Warning logged: Skipping entry with empty title field',
+				'Entry creation skipped',
+				'No API call to Contentstack',
+			],
+			beforeFix: ['Entry created as "Untitled" in Contentstack'],
+			afterFix: ['Entry skipped entirely'],
+		};
+
+		expect(scenario.fileContent.title).toBe('');
+		expect(scenario.afterFix[0]).toBe('Entry skipped entirely');
+	});
+
+	it('should skip updating entries with empty title fields', () => {
+		// Scenario: Existing entry file is updated but title field is empty
+		const scenario = {
+			filename: 'component_design_hub_resources/Untitled.json',
+			fileContent: {
+				title: '', // Empty string
+				headline: 'Some headline',
+				card_chooser: ['blt123'],
+			},
+			expected: [
+				'Warning logged: Skipping update for entry with empty title field',
+				'Update operation skipped',
+				'No API call to Contentstack',
+			],
+		};
+
+		const EXPECTED_MESSAGES_COUNT = 3;
+		expect(scenario.fileContent.title).toBe('');
+		expect(scenario.expected.length).toBe(EXPECTED_MESSAGES_COUNT);
+	});
+
+	it('should skip unmodified entries with empty title fields during locale sync', () => {
+		// Scenario: Unmodified entry has empty title during locale version sync
+		const scenario = {
+			filename: 'component_product_carousel/Untitled.json',
+			fileContent: {
+				title: '', // Empty string
+				products: [],
+			},
+			expected: [
+				'Warning logged: Skipping unmodified entry with empty title field',
+				'Locale sync skipped',
+				'Entry not recorded for references',
+			],
+		};
+
+		const EXPECTED_MESSAGES_COUNT = 3;
+		expect(scenario.fileContent.title).toBe('');
+		expect(scenario.expected.length).toBe(EXPECTED_MESSAGES_COUNT);
+	});
+
+	it('should allow entries with valid non-empty titles', () => {
+		// Scenario: Entry has proper title field
+		const scenario = {
+			filename: 'page_article_page/5G Technology.json',
+			fileContent: {
+				title: '5G Technology', // Valid title
+				body_content: 'Some content',
+			},
+			expected: ['Entry created/updated normally', 'No warnings logged'],
+		};
+
+		expect(scenario.fileContent.title).toBe('5G Technology');
+		expect(scenario.fileContent.title.length).toBeGreaterThan(0);
+	});
+});

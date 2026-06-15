@@ -81,6 +81,56 @@ function shouldSyncLocales(
 	);
 }
 
+async function syncUnmodifiedEntryLocales(
+	ctx: Ctx,
+	contentType: ContentType,
+	cs: Entry,
+	fs: Entry,
+	transformer: BeaconReplacer,
+	filenamesByTitle: ReadonlyMap<Entry['title'], string>,
+): Promise<boolean> {
+	const ui = getUi();
+
+	// Load all locale versions from filesystem
+	const fsLocaleVersions = await loadFsLocaleVersions(
+		fs,
+		contentType.uid,
+		filenamesByTitle,
+	);
+
+	// Skip entries with empty title fields
+	const [firstLocale] = fsLocaleVersions;
+	if (firstLocale && !firstLocale.entry.title) {
+		ui.warn(
+			'Skipping unmodified entry with empty title field:',
+			`file: ${fs.title}`,
+			`(content type: ${contentType.uid})`,
+		);
+		return false;
+	}
+
+	const csLocaleSet = await getExistingLocales(ctx, contentType, cs.uid);
+
+	// Only push if there are new locale versions to sync
+	if (!shouldSyncLocales(fsLocaleVersions, csLocaleSet)) {
+		return false;
+	}
+
+	// Push all locale versions (including new locales like zh-cn)
+	await updateAllLocales(
+		ctx,
+		transformer,
+		contentType,
+		fsLocaleVersions,
+		cs.uid,
+		csLocaleSet,
+	);
+
+	const entry = { ...fs, uid: cs.uid };
+	ctx.references.recordEntryForReferences(contentType.uid, entry);
+	return true;
+}
+
 async function processUnmodifiedEntries(
 	unmodified: Iterable<string>,
 	ctx: Ctx,
@@ -107,32 +157,14 @@ async function processUnmodifiedEntries(
 			throw new Error(`No matching entry found for ${title}.`);
 		}
 
-		// Load all locale versions from filesystem
-		const fsLocaleVersions = await loadFsLocaleVersions(
+		await syncUnmodifiedEntryLocales(
+			ctx,
+			contentType,
+			cs,
 			fs,
-			contentType.uid,
+			transformer,
 			filenamesByTitle,
 		);
-
-		const csLocaleSet = await getExistingLocales(ctx, contentType, cs.uid);
-
-		// Only push if there are new locale versions to sync
-		if (!shouldSyncLocales(fsLocaleVersions, csLocaleSet)) {
-			continue;
-		}
-
-		// Push all locale versions (including new locales like zh-cn)
-		await updateAllLocales(
-			ctx,
-			transformer,
-			contentType,
-			fsLocaleVersions,
-			cs.uid,
-			csLocaleSet,
-		);
-
-		const entry = { ...fs, uid: cs.uid };
-		ctx.references.recordEntryForReferences(contentType.uid, entry);
 	}
 }
 
@@ -154,6 +186,17 @@ function buildUpdateFn(
 			contentType.uid,
 			filenamesByTitle,
 		);
+
+		// Skip entries with empty title fields
+		const [firstLocale] = fsLocaleVersions;
+		if (firstLocale && !firstLocale.entry.title) {
+			getUi().warn(
+				'Skipping update for entry with empty title field:',
+				`file: ${entry.title}`,
+				`(content type: ${contentType.uid})`,
+			);
+			return;
+		}
 
 		const csLocaleSet = await getExistingLocales(ctx, contentType, match.uid);
 

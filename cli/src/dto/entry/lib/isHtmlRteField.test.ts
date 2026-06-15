@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { SchemaField } from '#cli/cs/Types.js';
 import isHtmlRteField from './isHtmlRteField.js';
 
 describe('isHtmlRteField', () => {
@@ -51,8 +52,7 @@ describe('isHtmlRteField', () => {
 			uid: 'body',
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-		expect(isHtmlRteField(field as any)).toBe(false);
+		expect(isHtmlRteField(field as SchemaField | undefined)).toBe(false);
 	});
 
 	it('returns false when allow_rich_text is false', () => {

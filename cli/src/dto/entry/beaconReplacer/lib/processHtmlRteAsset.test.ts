@@ -7,6 +7,12 @@ import type MinimalCtx from '../../lib/MinimalCtx.js';
 
 const EXPECTED_MATCH_COUNT = 2;
 
+// Test helper to access protected members
+type BeaconReplacerWithProtected = BeaconReplacer & {
+	refPath: ReferencePath | undefined;
+	processHtmlRteAsset: (input: string) => string;
+};
+
 describe('processHtmlRteAsset - Entry References', () => {
 	const mockContentType: ContentType = {
 		schema: [],
@@ -39,6 +45,12 @@ describe('processHtmlRteAsset - Entry References', () => {
 				) {
 					return 'bltentry345678';
 				}
+				if (
+					toPath ===
+					'page_article_page/Small Cell Networks and the Evolution of 5G (Part 1)'
+				) {
+					return 'blta7ed6bbc6ed7780a';
+				}
 				throw new Error(`Unknown reference: ${toPath}`);
 			},
 		},
@@ -48,17 +60,12 @@ describe('processHtmlRteAsset - Entry References', () => {
 		const replacer = new BeaconReplacer(
 			mockCtx as unknown as MinimalCtx,
 			mockContentType,
-		);
-		(replacer as BeaconReplacer & { refPath: string }).refPath =
-			'test_content_type/Source Entry';
+		) as BeaconReplacerWithProtected;
+		replacer.refPath = 'test_content_type/Source Entry';
 
 		const input =
 			'<a href="$beacon: page_article_page/Test Entry">Click here</a>';
-		const result = (
-			replacer as BeaconReplacer & {
-				processHtmlRteAsset: (input: string) => string;
-			}
-		).processHtmlRteAsset(input);
+		const result = replacer.processHtmlRteAsset(input);
 
 		expect(result).toContain('data-sys-entry-uid="bltentry123456"');
 		expect(result).toContain('data-sys-content-type-uid="page_article_page"');
@@ -73,17 +80,12 @@ describe('processHtmlRteAsset - Entry References', () => {
 		const replacer = new BeaconReplacer(
 			mockCtx as unknown as MinimalCtx,
 			mockContentType,
-		);
-		(replacer as BeaconReplacer & { refPath: string }).refPath =
-			'test_content_type/Source Entry';
+		) as BeaconReplacerWithProtected;
+		replacer.refPath = 'test_content_type/Source Entry';
 
 		const input =
 			'<a href="$beacon: page_article_page/Test Entry">First</a> and <a href="$beacon: page_application_category/Wireless">Second</a>';
-		const result = (
-			replacer as BeaconReplacer & {
-				processHtmlRteAsset: (input: string) => string;
-			}
-		).processHtmlRteAsset(input);
+		const result = replacer.processHtmlRteAsset(input);
 
 		expect(result).toContain('data-sys-entry-uid="bltentry123456"');
 		expect(result).toContain('data-sys-entry-uid="bltentry789012"');
@@ -104,16 +106,11 @@ describe('processHtmlRteAsset - Entry References', () => {
 		const replacer = new BeaconReplacer(
 			mockCtx as unknown as MinimalCtx,
 			mockContentType,
-		);
-		(replacer as BeaconReplacer & { refPath: string }).refPath =
-			'test_content_type/Test Entry';
+		) as BeaconReplacerWithProtected;
+		replacer.refPath = 'test_content_type/Test Entry';
 
 		const input = '<a href="https://example.com">External Link</a>';
-		const result = (
-			replacer as BeaconReplacer & {
-				processHtmlRteAsset: (input: string) => string;
-			}
-		).processHtmlRteAsset(input);
+		const result = replacer.processHtmlRteAsset(input);
 
 		expect(result).toBe(input);
 	});
@@ -122,17 +119,12 @@ describe('processHtmlRteAsset - Entry References', () => {
 		const replacer = new BeaconReplacer(
 			mockCtx as unknown as MinimalCtx,
 			mockContentType,
-		);
-		(replacer as BeaconReplacer & { refPath: string }).refPath =
-			'test_content_type/Source Entry';
+		) as BeaconReplacerWithProtected;
+		replacer.refPath = 'test_content_type/Source Entry';
 
 		const input = `<p>Visit our <a href="$beacon: page_article_page/Test Entry">product page</a> for more info.</p>
 <p><a href="https://external.com">External</a></p>`;
-		const result = (
-			replacer as BeaconReplacer & {
-				processHtmlRteAsset: (input: string) => string;
-			}
-		).processHtmlRteAsset(input);
+		const result = replacer.processHtmlRteAsset(input);
 
 		expect(result).toContain('data-sys-entry-uid="bltentry123456"');
 		expect(result).toContain('href="https://external.com"');
@@ -144,17 +136,12 @@ describe('processHtmlRteAsset - Entry References', () => {
 		const replacer = new BeaconReplacer(
 			mockCtx as unknown as MinimalCtx,
 			mockContentType,
-		);
-		(replacer as BeaconReplacer & { refPath: string }).refPath =
-			'page_article_page/5G in 60: 5G Base Station Rollout';
+		) as BeaconReplacerWithProtected;
+		replacer.refPath = 'page_article_page/5G in 60: 5G Base Station Rollout';
 
 		const input =
 			'<a href="$beacon: page_application_category/Wireless">Millimeter wave</a>. <a href="$beacon: page_article_page/How Carrier Networks Will Enable 5G">Beamforming</a>.';
-		const result = (
-			replacer as BeaconReplacer & {
-				processHtmlRteAsset: (input: string) => string;
-			}
-		).processHtmlRteAsset(input);
+		const result = replacer.processHtmlRteAsset(input);
 
 		// First entry reference
 		expect(result).toContain('data-sys-entry-uid="bltentry789012"');
@@ -181,6 +168,24 @@ describe('processHtmlRteAsset - Entry References', () => {
 		// Original text should be preserved
 		expect(result).toContain('Millimeter wave');
 		expect(result).toContain('Beamforming');
+	});
+
+	it('should decode HTML entities in entry reference paths', () => {
+		// Regression test: &nbsp; in href was not decoded before lookup, causing
+		// the reference map to miss the entry and return the placeholder UID.
+		const replacer = new BeaconReplacer(
+			mockCtx as unknown as MinimalCtx,
+			mockContentType,
+		) as BeaconReplacerWithProtected;
+		replacer.refPath =
+			'page_article_page/Our 5 Most Popular Blog Posts of 2017';
+
+		const input =
+			'<a href="$beacon: page_article_page/Small Cell Networks and the Evolution of 5G (Part&nbsp;1)">Read more</a>';
+		const result = replacer.processHtmlRteAsset(input);
+
+		expect(result).toContain('data-sys-entry-uid="blta7ed6bbc6ed7780a"');
+		expect(result).toContain('data-sys-content-type-uid="page_article_page"');
 	});
 
 	it('should use custom locale when set via process method', () => {

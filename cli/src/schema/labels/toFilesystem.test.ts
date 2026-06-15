@@ -1,4 +1,4 @@
-/* eslint-disable sort-keys, @typescript-eslint/no-empty-function, @typescript-eslint/unbound-method, @typescript-eslint/no-magic-numbers, @typescript-eslint/require-await, @typescript-eslint/no-unused-vars */
+/* eslint-disable sort-keys, @typescript-eslint/no-empty-function, @typescript-eslint/require-await, @typescript-eslint/no-unused-vars */
 import type NormalizedLabel from '#cli/dto/label/NormalizedLabel.js';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type Ctx from '../ctx/Ctx.js';
@@ -95,6 +95,7 @@ describe('Labels: toFilesystem', () => {
 		// Assert
 		expect(createdLabels).toEqual(['production', 'staging']);
 		expect(createdLabels).not.toContain('deprecated_old');
+		// eslint-disable-next-line @typescript-eslint/unbound-method, @typescript-eslint/no-magic-numbers
 		expect(ctx.fs.labels.create).toHaveBeenCalledTimes(2);
 	});
 
@@ -157,6 +158,7 @@ describe('Labels: toFilesystem', () => {
 		// Assert
 		expect(removedLabels).toEqual(['production']);
 		expect(removedLabels).not.toContain('deprecated_old');
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		expect(ctx.fs.labels.remove).toHaveBeenCalledTimes(1);
 	});
 
@@ -228,6 +230,7 @@ describe('Labels: toFilesystem', () => {
 		// Assert
 		expect(updatedLabels).toEqual(['production']);
 		expect(updatedLabels).not.toContain('deprecated_old');
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		expect(ctx.fs.labels.update).toHaveBeenCalledTimes(1);
 	});
 });

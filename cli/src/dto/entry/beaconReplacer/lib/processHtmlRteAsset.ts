@@ -28,7 +28,13 @@ export default function processHtmlRteAsset(
 
 	result = result.replace(entryPattern, (match) => {
 		const execResult = /href="\$beacon:\s*(?<refPath>[^"]+)"/u.exec(match);
-		const refPath = execResult?.groups?.refPath;
+		const rawRefPath = execResult?.groups?.refPath;
+
+		// Decode HTML entities in the path, as href attribute values may contain
+		// encoded characters (e.g. &nbsp; instead of a space) that don't match
+		// the plain-text entry title stored in the reference map.
+		const refPath = rawRefPath ? decodeHtmlEntities(rawRefPath) : rawRefPath;
+
 		if (!refPath || !isReferencePath(refPath)) {
 			return match;
 		}
@@ -54,4 +60,19 @@ export default function processHtmlRteAsset(
 	});
 
 	return result;
+}
+
+function decodeHtmlEntities(text: string): string {
+	return text
+		.replace(/&nbsp;/gu, ' ')
+		.replace(/&amp;/gu, '&')
+		.replace(/&lt;/gu, '<')
+		.replace(/&gt;/gu, '>')
+		.replace(/&quot;/gu, '"')
+		.replace(/&#(?<code>\d+);/gu, (_, code: string) =>
+			String.fromCharCode(parseInt(code, 10)),
+		)
+		.replace(/&#x(?<hex>[0-9a-f]+);/giu, (_, hex: string) =>
+			String.fromCharCode(parseInt(hex, 16)),
+		);
 }
