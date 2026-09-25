@@ -65,4 +65,22 @@ describe(transformSchemaConfig.name, () => {
 		expect(result?.entries?.isIncluded?.('blog_post')).toBe(true);
 		expect(result?.entries?.isIncluded?.('archived_post')).toBe(false);
 	});
+
+	it('preserves an explicitly empty entry include list', () => {
+		const result = transformSchemaConfig(
+			{ entries: { include: [] } },
+			undefined,
+		);
+
+		expect(result?.entries?.isIncluded?.('blog_post')).toBe(false);
+	});
+
+	it('preserves an empty entry include list from an environment', () => {
+		const result = transformSchemaConfig(
+			{ entries: { exclude: ['archived_*'] } },
+			{ entries: { include: [] } },
+		);
+
+		expect(result?.entries?.isIncluded?.('blog_post')).toBe(false);
+	});
 });

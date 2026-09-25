@@ -86,9 +86,11 @@ function collapseEntries(
 ) {
 	const include = collapseList(baseEntries?.include, envEntries?.include);
 	const exclude = collapseList(baseEntries?.exclude, envEntries?.exclude);
+	const hasInclude =
+		baseEntries?.include !== undefined || envEntries?.include !== undefined;
 
 	const entries = {
-		...(include ? { include } : { include: ['**'] }),
+		include: hasInclude ? (include ?? []) : ['**'],
 		...(exclude ? { exclude } : {}),
 	};
 

@@ -5,6 +5,7 @@ import assets from './assets/toContentstack.js';
 import contentTypeShims from './content-types/shimsToContentstack.js';
 import contentTypes from './content-types/toContentstack.js';
 import Ctx from './ctx/Ctx.js';
+import recordExcludedReferences from './entries/recordExcludedReferences.js';
 import entries from './entries/toContentstack.js';
 import updateMissedReferences from './entries/updateMissedReferences.js';
 import globalFields from './global-fields/toContentstack.js';
@@ -56,6 +57,8 @@ export default async function push(client: Client) {
 	const contentTypesToSync = [...ctx.fs.contentTypes.values()].filter((ct) =>
 		isIncluded(ct.uid),
 	);
+	// Excluded entries stay untouched, but included entries may reference them.
+	recordExcludedReferences(ctx, isIncluded);
 	const totalEntries = calculateTotalEntries(ctx, contentTypesToSync);
 
 	if (totalEntries > 0) {
