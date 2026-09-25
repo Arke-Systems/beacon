@@ -20,12 +20,14 @@ const pull = new Command('pull');
 addCommonOptions(pull);
 
 pull
+	.addOption(Options.entries)
 	.addOption(Options.extension)
 	.addOption(Options.jsonRtePlugin)
 	.addOption(Options.schemaPath)
 	.description('Serialize data and schema from a stack into the file system.');
 
 type CommandOptions = CommonOptions &
+	Options.EntriesOption &
 	Options.ExtensionOption &
 	Options.JsonRtePluginOption &
 	Options.SchemaPathOption;
@@ -64,6 +66,9 @@ async function mapOptions(options: CommandOptions) {
 		namedEnvironment: options.environment,
 		schema: {
 			deletionStrategy: 'delete',
+			...(options.entries === false
+				? { entries: { isIncluded: () => false } }
+				: {}),
 			extension: options.extension,
 			jsonRtePlugin: options.jsonRtePlugin,
 			schemaPath: options.schemaPath,

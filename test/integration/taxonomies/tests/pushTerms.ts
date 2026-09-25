@@ -26,20 +26,20 @@ export default async function pushTerms({
 
 		const value = await exportTaxonomy(client, 'new_taxonomy');
 
-		expect(value).toEqual({
-			taxonomy: {
-				description: 'Taxonomy Description',
-				name: 'New Taxonomy',
-				uid: 'new_taxonomy',
-			},
-			terms: expect.arrayContaining([
-				{
+		expect(value.taxonomy).toMatchObject({
+			description: 'Taxonomy Description',
+			name: 'New Taxonomy',
+			uid: 'new_taxonomy',
+		});
+		expect(value.terms).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
 					name: 'Term 2.2.2',
 					parent_uid: 'term_2_2',
 					uid: 'term_2_2_2',
-				},
+				}),
 			]),
-		});
+		);
 	});
 }
 

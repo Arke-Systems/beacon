@@ -42,4 +42,13 @@ describe('UiOptions', () => {
 		expect(options.client.timeout).toBe(fromCommandEnvironment.client.timeout);
 		expect(options.schema.schemaPath).toBe('cli-path');
 	});
+
+	it('lets the command disable entries configured for inclusion', () => {
+		const options = new UiOptions(
+			{ schema: { entries: { isIncluded: () => true } } },
+			{ schema: { entries: { isIncluded: () => false } } },
+		);
+
+		expect(options.schema.entries.isIncluded('blog_post')).toBe(false);
+	});
 });

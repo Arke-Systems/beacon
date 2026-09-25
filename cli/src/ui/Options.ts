@@ -11,6 +11,9 @@ export default interface Options {
 			readonly isIncluded: (path: string) => boolean;
 		};
 		readonly deletionStrategy: 'delete' | 'ignore' | 'warn';
+		readonly entries: {
+			readonly isIncluded: (contentTypeUid: string) => boolean;
+		};
 		readonly extension: {
 			readonly byName: ReadonlyMap<string, string>;
 			readonly byUid: ReadonlyMap<string, string>;
