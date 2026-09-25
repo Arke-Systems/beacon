@@ -65,6 +65,9 @@ fields, taxonomies, and assets.
 #### `pull`
 
 Serializes a stack's content into the file system for version control or backup.
+Use `yarn beacon pull --no-entries` to sync the content model without fetching
+or changing entry files. This option overrides `schema.entries` filters for the
+pull command.
 
 #### `push`
 
@@ -91,6 +94,12 @@ Deserializes the contents from the file system into the stack.
 | `--schema-path <path>`         | Path to store serialized data.                                | `./cs/schema` |
 | `--extension [name:uid]`       | Maps third-party plugin UIDs to stable names for portability. | N/A           |
 | `--json-rte-plugin [name:uid]` | Similar to `--extension` but for JSON RTE plugins.            | N/A           |
+
+### Additional Options for `pull`
+
+| Option         | Description                              | Default |
+| -------------- | ---------------------------------------- | ------- |
+| `--no-entries` | Skip fetching and synchronizing entries. | Off     |
 
 ### Additional Options for `push`
 
@@ -397,6 +406,8 @@ schema:
 To sync only the content model (content types, global fields, and taxonomies)
 without syncing entries, configure the `entries` setting to exclude all content
 types:
+
+For a single pull, run `yarn beacon pull --no-entries` instead.
 
 ```yaml
 # beacon.yaml
