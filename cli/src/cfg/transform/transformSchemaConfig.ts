@@ -88,11 +88,11 @@ function collapseEntries(
 	const exclude = collapseList(baseEntries?.exclude, envEntries?.exclude);
 
 	const entries = {
-		...(include ? { include } : {}),
+		...(include ? { include } : { include: ['**'] }),
 		...(exclude ? { exclude } : {}),
 	};
 
-	return Object.keys(entries).length ? { entries } : undefined;
+	return baseEntries || envEntries ? { entries } : undefined;
 }
 
 function collapseList(

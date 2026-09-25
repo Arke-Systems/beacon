@@ -7,6 +7,7 @@ import { MutableTransferResults } from '../xfer/TransferResults.js';
 export default async function clean(
 	baseSchemaPath: string,
 	exceptForContentTypeUids: ReadonlySet<string>,
+	isIncluded: (contentTypeUid: string) => boolean = () => true,
 ): Promise<TransferResults> {
 	const baseDirectory = resolve(baseSchemaPath, 'entries');
 	const results = new MutableTransferResults();
@@ -17,7 +18,7 @@ export default async function clean(
 			continue;
 		}
 
-		if (exceptForContentTypeUids.has(child.name)) {
+		if (!isIncluded(child.name) || exceptForContentTypeUids.has(child.name)) {
 			continue;
 		}
 

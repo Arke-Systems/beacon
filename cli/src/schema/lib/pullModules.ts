@@ -24,11 +24,7 @@ export default async function* pullModules(
 	);
 	const total = [...summary.values()].reduce((acc, count) => acc + count, 0);
 
-	if (total === 0) {
-		return;
-	}
-
-	{
+	if (total > 0) {
 		using bar = ui.createProgressBar('Entries', total);
 
 		for (const contentType of summary.keys()) {
@@ -40,7 +36,11 @@ export default async function* pullModules(
 
 	yield [
 		'Stale Entries',
-		clean(ui.options.schema.schemaPath, new Set(ctx.cs.contentTypes.keys())),
+		clean(
+			ui.options.schema.schemaPath,
+			new Set(ctx.cs.contentTypes.keys()),
+			ui.options.schema.entries.isIncluded,
+		),
 	];
 }
 
