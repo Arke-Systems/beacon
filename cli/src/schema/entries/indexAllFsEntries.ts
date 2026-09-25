@@ -6,16 +6,20 @@ import indexContentTypes from '../content-types/indexFromFilesystem.js';
 import indexFromFilesystem from '../xfer/indexFromFilesystem.js';
 import schemaDirectory from './schemaDirectory.js';
 
-export default async function indexAllFsEntries(): Promise<
-	ReadonlyMap<ContentType, ReadonlySet<Entry>>
-> {
+export default async function indexAllFsEntries(
+	isIncluded: (contentTypeUid: string) => boolean = () => true,
+): Promise<ReadonlyMap<ContentType, ReadonlySet<Entry>>> {
 	const contentTypes = await indexContentTypes();
 	const entries = new Map<ContentType, ReadonlySet<Entry>>();
 
 	for (const contentType of contentTypes.values()) {
-		const dir = schemaDirectory(contentType.uid);
 		const x = new Set<Entry>();
 		entries.set(contentType, x);
+		if (!isIncluded(contentType.uid)) {
+			continue;
+		}
+
+		const dir = schemaDirectory(contentType.uid);
 		const raw = await indexFromFilesystem(dir, isFsEntry, key);
 
 		for (const entry of raw.values()) {

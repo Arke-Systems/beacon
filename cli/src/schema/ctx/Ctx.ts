@@ -74,7 +74,10 @@ export default class Ctx {
 		this.cs = { ...this.cs, entries: this.#transformCsEntries(csEntries) };
 	}
 
-	public static async prepare(client: Client): Promise<Ctx> {
+	public static async prepare(
+		client: Client,
+		isIncluded: (contentTypeUid: string) => boolean = () => true,
+	): Promise<Ctx> {
 		const [
 			csTaxonomies,
 			csAssets,
@@ -85,9 +88,9 @@ export default class Ctx {
 		] = await Promise.all([
 			indexCsTaxonomies(client),
 			indexAssets(client),
-			indexAllCsEntries(client),
+			indexAllCsEntries(client, isIncluded),
 			indexFsTaxonomies(),
-			indexAllFsEntries(),
+			indexAllFsEntries(isIncluded),
 			FsAssets.create(),
 		]);
 
