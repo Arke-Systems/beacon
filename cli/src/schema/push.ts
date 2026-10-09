@@ -52,13 +52,10 @@ export default async function push(client: Client) {
 	await results.set('Global Fields', globalFields(ctx));
 	await results.set('Content Types', contentTypes(ctx));
 
-	const {
-		createProgressBar,
-		options: { schema: { entries: { isIncluded }}}
-	} = getUi();
+	const ui = getUi();
 
 	const contentTypesToSync = [...ctx.fs.contentTypes.values()].filter((ct) =>
-		isIncluded(ct.uid),
+		ui.options.schema.entries.isIncluded(ct.uid),
 	);
 
 	// Excluded entries stay untouched, but included entries may reference them.
@@ -67,7 +64,7 @@ export default async function push(client: Client) {
 	const totalEntries = calculateTotalEntries(ctx, contentTypesToSync);
 
 	if (totalEntries > 0) {
-		using bar = createProgressBar('Entries', totalEntries);
+		using bar = ui.createProgressBar('Entries', totalEntries);
 
 		for (const contentType of contentTypesToSync) {
 			const task = entries(ctx, contentType, bar);
