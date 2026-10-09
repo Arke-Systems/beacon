@@ -10,7 +10,6 @@ import type { Entry } from './Types.js';
 
 export default async function indexAllCsEntries(
 	client: Client,
-	isIncluded: (contentTypeUid: string) => boolean,
 ): Promise<
 	[
 		ReadonlyMap<Schema['uid'], Schema>,
@@ -27,6 +26,8 @@ export default async function indexAllCsEntries(
 	const sorted = [...rawContentTypes.values()].sort((a, b) =>
 		a.title.localeCompare(b.title),
 	);
+	const ui = getUi();
+	const { isIncluded } = ui.options.schema.entries;
 
 	// Pull needs every entry to resolve references when even one content type
 	// is included. When all are excluded, no entry indexing is needed.
@@ -43,8 +44,6 @@ export default async function indexAllCsEntries(
 	if (toIndex.length === 0) {
 		return [globalFields, allEntries];
 	}
-
-	const ui = getUi();
 
 	{
 		using bar = ui.createProgressBar('Indexing entries', toIndex.length);

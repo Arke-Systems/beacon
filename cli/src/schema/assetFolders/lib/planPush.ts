@@ -21,11 +21,9 @@ export default function planPush(
 	};
 }
 
-function hasIncludedChildren(
-	isIncluded: (path: string) => boolean,
-	keys: Iterable<string>,
-	itemPath: string,
-) {
+function hasIncludedChildren(keys: Iterable<string>, itemPath: string) {
+	const { isIncluded } = getUi().options.schema.assets;
+
 	for (const otherItemPath of keys) {
 		if (!otherItemPath.startsWith(itemPath + '/')) {
 			continue;
@@ -72,7 +70,7 @@ function processFsItems(
 	const ui = getUi();
 	const { isIncluded } = ui.options.schema.assets;
 	const keys = allKeys.bind(null, fsFolders, fsAssets);
-	const hasChildren = (x: string) => hasIncludedChildren(isIncluded, keys(), x);
+	const hasChildren = (x: string) => hasIncludedChildren(keys(), x);
 	const seen = new Set<string>();
 	const toCreate = new Map<string, FolderMeta>();
 	const toSkip = new Set<string>();

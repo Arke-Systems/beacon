@@ -7,11 +7,8 @@ export default function planPull(
 	cs: ReadonlyMap<string, AssetMeta>,
 	fs: ReadonlyMap<string, AssetMeta>,
 ): MergePlan<AssetMeta> {
-	const ui = getUi();
-	const { isIncluded } = ui.options.schema.assets;
-
-	const { result, seen } = processCsAssets(cs, fs, isIncluded);
-	processFsAssets(fs, isIncluded, { result, seen });
+	const { result, seen } = processCsAssets(cs, fs);
+	processFsAssets(fs, { result, seen });
 
 	return result;
 }
@@ -19,8 +16,8 @@ export default function planPull(
 function processCsAssets(
 	cs: ReadonlyMap<string, AssetMeta>,
 	fs: ReadonlyMap<string, AssetMeta>,
-	isIncluded: (path: string) => boolean,
 ) {
+	const { isIncluded } = getUi().options.schema.assets;
 	const result = {
 		toCreate: new Map<string, AssetMeta>(),
 		toRemove: new Map<string, AssetMeta>(),
@@ -56,9 +53,10 @@ function processCsAssets(
 
 function processFsAssets(
 	fs: ReadonlyMap<string, AssetMeta>,
-	isIncluded: (path: string) => boolean,
 	{ result, seen }: ReturnType<typeof processCsAssets>,
 ) {
+	const { isIncluded } = getUi().options.schema.assets;
+
 	for (const [path, fsMeta] of fs) {
 		if (seen.has(path)) {
 			continue;

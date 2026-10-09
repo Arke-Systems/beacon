@@ -1,6 +1,5 @@
 import type Client from '#cli/cs/api/Client.js';
 import Ctx from './ctx/Ctx.js';
-import getUi from './lib/SchemaUi.js';
 import pullModules from './lib/pullModules.js';
 import type TransferResults from './xfer/TransferResults.js';
 
@@ -9,10 +8,7 @@ type Result = ReadonlyMap<string, PromiseSettledResult<TransferResults>>;
 export default async function pull(client: Client): Promise<Result> {
 	const names: string[] = [];
 	const tasks = [];
-	const ctx = await Ctx.prepare(
-		client,
-		getUi().options.schema.entries.isIncluded,
-	);
+	const ctx = await Ctx.prepare(client);
 
 	for await (const [name, task] of pullModules(ctx)) {
 		names.push(name);
