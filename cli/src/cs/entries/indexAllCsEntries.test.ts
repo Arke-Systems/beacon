@@ -63,7 +63,11 @@ it('indexes all types when any type is included', async () => {
 	await indexAllCsEntries(client, isIncluded);
 
 	// Assert
-	expect(indexEntries).toHaveBeenCalledWith(client, globalFields, blogPostSchema);
+	expect(indexEntries).toHaveBeenCalledWith(
+		client,
+		globalFields,
+		blogPostSchema,
+	);
 
 	expect(indexEntries).toHaveBeenCalledWith(client, globalFields, pageSchema);
 });

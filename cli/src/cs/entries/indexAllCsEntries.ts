@@ -10,7 +10,7 @@ import type { Entry } from './Types.js';
 
 export default async function indexAllCsEntries(
 	client: Client,
-	isIncluded: (contentTypeUid: string) => boolean
+	isIncluded: (contentTypeUid: string) => boolean,
 ): Promise<
 	[
 		ReadonlyMap<Schema['uid'], Schema>,

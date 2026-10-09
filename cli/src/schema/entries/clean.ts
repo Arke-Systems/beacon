@@ -8,10 +8,14 @@ import { MutableTransferResults } from '../xfer/TransferResults.js';
 export default async function clean(
 	exceptForContentTypeUids: ReadonlySet<string>,
 ): Promise<TransferResults> {
-	const { options: { schema: {
-		schemaPath,
-		entries: { isIncluded }
-	}} } = getUi();
+	const {
+		options: {
+			schema: {
+				schemaPath,
+				entries: { isIncluded },
+			},
+		},
+	} = getUi();
 
 	const baseDirectory = resolve(schemaPath, 'entries');
 	const results = new MutableTransferResults();

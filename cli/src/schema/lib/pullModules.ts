@@ -31,12 +31,18 @@ export default async function* pullModules(
 		}
 	}
 
-	yield [ 'Stale Entries', clean(new Set(ctx.cs.contentTypes.keys())) ];
+	yield ['Stale Entries', clean(new Set(ctx.cs.contentTypes.keys()))];
 }
 
 function summarizeContentTypes(ctx: Ctx): ReadonlyMap<ContentType, number> {
 	const sorter = new Intl.Collator();
-	const { options: { schema: { entries: { isIncluded } }} } = getUi();
+	const {
+		options: {
+			schema: {
+				entries: { isIncluded },
+			},
+		},
+	} = getUi();
 
 	return [...ctx.cs.contentTypes.values()]
 		.filter((contentType) => isIncluded(contentType.uid))

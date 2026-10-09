@@ -14,7 +14,7 @@ vi.mock(import('../../fs/tryReadDir.js'), () => ({
 }));
 
 vi.mock(import('../lib/SchemaUi.js'), () => ({
-	default: vi.fn()
+	default: vi.fn(),
 }));
 
 const mockGetUi = vi.mocked(getUi);
@@ -60,7 +60,7 @@ describe(clean.name, () => {
 		vi.mocked(tryReadDir).mockResolvedValueOnce([
 			{ isDirectory: () => true, name: excludedUid },
 			{ isDirectory: () => true, name: includedNotStaleUid },
-			{ isDirectory: () => true, name: includedStaleUid }
+			{ isDirectory: () => true, name: includedStaleUid },
 		] as Awaited<ReturnType<typeof tryReadDir>>);
 
 		// Act
@@ -75,6 +75,11 @@ describe(clean.name, () => {
 	});
 });
 
-function buildMockUi(schemaPath: string, isIncluded: (contentTypeUid: string) => boolean = () => true): UiContext {
-	return { options: { schema: { entries: {isIncluded}, schemaPath } } } as UiContext;
+function buildMockUi(
+	schemaPath: string,
+	isIncluded: (contentTypeUid: string) => boolean = () => true,
+): UiContext {
+	return {
+		options: { schema: { entries: { isIncluded }, schemaPath } },
+	} as UiContext;
 }

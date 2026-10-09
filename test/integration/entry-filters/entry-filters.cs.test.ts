@@ -193,10 +193,8 @@ type SchemaConfig = NonNullable<Config['schema']>;
 type EntryFilters = NonNullable<SchemaConfig['entries']>;
 
 function configureEntryFilters(ui: TestPushUiContext, filters: EntryFilters) {
-	const isIncluded = transformSchemaConfig(
-		{ entries: filters },
-		undefined,
-	)?.entries?.isIncluded;
+	const isIncluded = transformSchemaConfig({ entries: filters }, undefined)
+		?.entries?.isIncluded;
 
 	if (!isIncluded) {
 		throw new Error('Expected transformed entry filters.');
