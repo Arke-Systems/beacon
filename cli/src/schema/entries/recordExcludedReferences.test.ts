@@ -40,7 +40,6 @@ describe(recordExcludedReferences.name, () => {
 		// Act
 		recordExcludedReferences(ctx);
 
-
 		// Assert
 		const from: ReferencePath = `${blogPost.uid}/${newBlogPost.title}`;
 		const to: ReferencePath = `${category.uid}/${existingCategory.title}`;
