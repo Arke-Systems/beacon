@@ -18,17 +18,17 @@ describe(transformSchemaConfig.name, () => {
 		};
 
 		// Act
-		const result = transformSchemaConfig(baseSchema, envSchema);
+		const result = transformSchemaConfig(baseSchema, envSchema)!;
 
 		// Assert
-		expect(result?.extension?.byName?.get('ext1')).toBe('value1');
-		expect(result?.extension?.byName?.get('ext2')).toBe('value2');
-		expect(result?.taxonomies?.get('tax1')).toBe('only taxonomy');
-		expect(result?.taxonomies?.get('tax2')).toBe('taxonomy and terms');
-		expect(result?.assets?.isIncluded?.('asset1')).toBe(true);
-		expect(result?.assets?.isIncluded?.('asset3')).toBe(true);
-		expect(result?.assets?.isIncluded?.('asset2')).toBe(false);
-		expect(result?.assets?.isIncluded?.('asset4')).toBe(false);
+		expect(result.extension?.byName?.get('ext1')).toBe('value1');
+		expect(result.extension?.byName?.get('ext2')).toBe('value2');
+		expect(result.taxonomies?.get('tax1')).toBe('only taxonomy');
+		expect(result.taxonomies?.get('tax2')).toBe('taxonomy and terms');
+		expect(result.assets?.isIncluded?.('asset1')).toBe(true);
+		expect(result.assets?.isIncluded?.('asset3')).toBe(true);
+		expect(result.assets?.isIncluded?.('asset2')).toBe(false);
+		expect(result.assets?.isIncluded?.('asset4')).toBe(false);
 	});
 
 	it('should handle empty schemas gracefully', () => {
@@ -49,11 +49,11 @@ describe(transformSchemaConfig.name, () => {
 		const envSchema: Config['schema'] = { extension: { key: 'envValue' } };
 
 		// Act
-		const result = transformSchemaConfig(baseSchema, envSchema);
+		const result = transformSchemaConfig(baseSchema, envSchema)!;
 
 		// Assert
-		expect(result?.extension?.byName).toBeDefined();
-		expect(result?.extension?.byName?.get('key')).toBe('envValue');
+		expect(result.extension?.byName).toBeDefined();
+		expect(result.extension?.byName?.get('key')).toBe('envValue');
 	});
 
 	it('includes other content types when only an exclusion exists', () => {
@@ -61,11 +61,11 @@ describe(transformSchemaConfig.name, () => {
 		const baseSchema = { entries: { exclude: ['archived_*'] } };
 
 		// Act
-		const result = transformSchemaConfig(baseSchema, undefined);
+		const result = transformSchemaConfig(baseSchema, undefined)!;
 
 		// Assert
-		expect(result?.entries?.isIncluded?.('blog_post')).toBe(true);
-		expect(result?.entries?.isIncluded?.('archived_post')).toBe(false);
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(true);
+		expect(result.entries?.isIncluded?.('archived_post')).toBe(false);
 	});
 
 	it('preserves an explicitly empty entry include list', () => {
@@ -73,10 +73,10 @@ describe(transformSchemaConfig.name, () => {
 		const baseSchema = { entries: { include: [] } };
 
 		// Act
-		const result = transformSchemaConfig(baseSchema, undefined);
+		const result = transformSchemaConfig(baseSchema, undefined)!;
 
 		// Assert
-		expect(result?.entries?.isIncluded?.('blog_post')).toBe(false);
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(false);
 	});
 
 	it('preserves an empty entry include list from an environment', () => {
@@ -85,14 +85,12 @@ describe(transformSchemaConfig.name, () => {
 		const envSchema = { entries: { include: [] } };
 
 		// Act
-		const result = transformSchemaConfig(baseSchema, envSchema);
+		const result = transformSchemaConfig(baseSchema, envSchema)!;
 
 		// Assert
-		expect(result?.entries?.isIncluded?.('blog_post')).toBe(false);
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(false);
 	});
-});
 
-describe('entry filter precedence', () => {
 	it('prioritizes exclusions over inclusions', () => {
 		// Arrange
 		const baseSchema = {
@@ -100,10 +98,10 @@ describe('entry filter precedence', () => {
 		};
 
 		// Act
-		const result = transformSchemaConfig(baseSchema, undefined);
+		const result = transformSchemaConfig(baseSchema, undefined)!;
 
 		// Assert
-		expect(result?.entries?.isIncluded?.('blog_post')).toBe(true);
-		expect(result?.entries?.isIncluded?.('archived_post')).toBe(false);
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(true);
+		expect(result.entries?.isIncluded?.('archived_post')).toBe(false);
 	});
 });
