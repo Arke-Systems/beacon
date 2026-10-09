@@ -10,7 +10,7 @@ import type { Entry } from './Types.js';
 
 export default async function indexAllCsEntries(
 	client: Client,
-	isIncluded: (contentTypeUid: string) => boolean = () => true,
+	isIncluded: (contentTypeUid: string) => boolean
 ): Promise<
 	[
 		ReadonlyMap<Schema['uid'], Schema>,
@@ -27,13 +27,15 @@ export default async function indexAllCsEntries(
 	const sorted = [...rawContentTypes.values()].sort((a, b) =>
 		a.title.localeCompare(b.title),
 	);
+
 	// Pull needs every entry to resolve references when even one content type
 	// is included. When all are excluded, no entry indexing is needed.
 	const toIndex = sorted.some((contentType) => isIncluded(contentType.uid))
 		? sorted
 		: [];
 
-	// Keep all content types in the context so schema synchronization still works.
+	// Keep all content types in the context so schema synchronization
+	// still works.
 	for (const contentType of sorted) {
 		allEntries.set(contentType, new Set());
 	}

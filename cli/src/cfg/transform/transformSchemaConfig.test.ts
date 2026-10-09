@@ -4,6 +4,7 @@ import transformSchemaConfig from './transformSchemaConfig';
 
 describe(transformSchemaConfig.name, () => {
 	it('should merge baseSchema and envSchema correctly', () => {
+		// Arrange
 		const baseSchema: Config['schema'] = {
 			assets: { exclude: ['asset2'], include: ['asset1'] },
 			extension: { ext1: 'value1' },
@@ -16,71 +17,77 @@ describe(transformSchemaConfig.name, () => {
 			taxonomies: { tax2: 'taxonomy and terms' },
 		};
 
+		// Act
 		const result = transformSchemaConfig(baseSchema, envSchema);
 
-		if (!result) throw new Error('Result is undefined');
-
-		expect(result.extension?.byName?.get('ext1')).toBe('value1');
-		expect(result.extension?.byName?.get('ext2')).toBe('value2');
-		expect(result.taxonomies?.get('tax1')).toBe('only taxonomy');
-		expect(result.taxonomies?.get('tax2')).toBe('taxonomy and terms');
-		expect(result.assets?.isIncluded?.('asset1')).toBe(true);
-		expect(result.assets?.isIncluded?.('asset3')).toBe(true);
-		expect(result.assets?.isIncluded?.('asset2')).toBe(false);
-		expect(result.assets?.isIncluded?.('asset4')).toBe(false);
+		// Assert
+		expect(result?.extension?.byName?.get('ext1')).toBe('value1');
+		expect(result?.extension?.byName?.get('ext2')).toBe('value2');
+		expect(result?.taxonomies?.get('tax1')).toBe('only taxonomy');
+		expect(result?.taxonomies?.get('tax2')).toBe('taxonomy and terms');
+		expect(result?.assets?.isIncluded?.('asset1')).toBe(true);
+		expect(result?.assets?.isIncluded?.('asset3')).toBe(true);
+		expect(result?.assets?.isIncluded?.('asset2')).toBe(false);
+		expect(result?.assets?.isIncluded?.('asset4')).toBe(false);
 	});
 
 	it('should handle empty schemas gracefully', () => {
+		// Arrange
 		const baseSchema: Config['schema'] = {};
 		const envSchema: Config['schema'] = {};
 
+		// Act
 		const result = transformSchemaConfig(baseSchema, envSchema);
 
+		// Assert
 		expect(result).toBeUndefined();
 	});
 
 	it('should prioritize envSchema over baseSchema for overlapping keys', () => {
-		const baseSchema: Config['schema'] = {
-			extension: { key: 'baseValue' },
-		};
+		// Arrange
+		const baseSchema: Config['schema'] = { extension: { key: 'baseValue' } };
+		const envSchema: Config['schema'] = { extension: { key: 'envValue' } };
 
-		const envSchema: Config['schema'] = {
-			extension: { key: 'envValue' },
-		};
-
+		// Act
 		const result = transformSchemaConfig(baseSchema, envSchema);
 
-		if (!result) throw new Error('Result is undefined');
-
-		expect(result.extension?.byName).toBeDefined();
-		expect(result.extension?.byName?.get('key')).toBe('envValue');
+		// Assert
+		expect(result?.extension?.byName).toBeDefined();
+		expect(result?.extension?.byName?.get('key')).toBe('envValue');
 	});
 
-	it('includes other content types when only an entry exclusion is configured', () => {
-		const result = transformSchemaConfig(
-			{ entries: { exclude: ['archived_*'] } },
-			undefined,
-		);
+	it('includes other content types when only an exclusion exists', () => {
+		// Arrange
+		const baseSchema = { entries: { exclude: ['archived_*'] } };
 
+		// Act
+		const result = transformSchemaConfig(baseSchema, undefined);
+
+		// Assert
 		expect(result?.entries?.isIncluded?.('blog_post')).toBe(true);
 		expect(result?.entries?.isIncluded?.('archived_post')).toBe(false);
 	});
 
 	it('preserves an explicitly empty entry include list', () => {
-		const result = transformSchemaConfig(
-			{ entries: { include: [] } },
-			undefined,
-		);
+		// Arrange
+		const baseSchema = { entries: { include: [] } };
 
+		// Act
+		const result = transformSchemaConfig(baseSchema, undefined);
+
+		// Assert
 		expect(result?.entries?.isIncluded?.('blog_post')).toBe(false);
 	});
 
 	it('preserves an empty entry include list from an environment', () => {
-		const result = transformSchemaConfig(
-			{ entries: { exclude: ['archived_*'] } },
-			{ entries: { include: [] } },
-		);
+		// Arrange
+		const baseSchema = { entries: { exclude: ['archived_*'] } };
+		const envSchema = { entries: { include: [] } };
 
+		// Act
+		const result = transformSchemaConfig(baseSchema, envSchema);
+
+		// Assert
 		expect(result?.entries?.isIncluded?.('blog_post')).toBe(false);
 	});
 });

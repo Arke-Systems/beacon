@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { PartialOptions } from './PartialOptions.js';
 import UiOptions from './UiOptions.js';
 
 describe('UiOptions', () => {
@@ -44,11 +45,17 @@ describe('UiOptions', () => {
 	});
 
 	it('lets the command disable entries configured for inclusion', () => {
-		const options = new UiOptions(
-			{ schema: { entries: { isIncluded: () => true } } },
-			{ schema: { entries: { isIncluded: () => false } } },
-		);
+		// Arrange
+		const fn = vi.fn();
+		fn.mockImplementation(() => false);
+		const cfg: PartialOptions = { schema: { entries: { isIncluded: fn } } };
+		const contentTypeUid = 'blog_post';
 
-		expect(options.schema.entries.isIncluded('blog_post')).toBe(false);
+		// Act
+		const options = new UiOptions(cfg);
+
+		// Assert
+		expect(options.schema.entries.isIncluded(contentTypeUid)).toBe(false);
+		expect(fn).toHaveBeenCalledWith(contentTypeUid);
 	});
 });

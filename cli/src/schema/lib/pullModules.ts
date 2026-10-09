@@ -18,10 +18,7 @@ export default async function* pullModules(
 	yield ['Content Types', contentTypes(ctx)];
 
 	const ui = getUi();
-	const summary = summarizeContentTypes(
-		ctx,
-		ui.options.schema.entries.isIncluded,
-	);
+	const summary = summarizeContentTypes(ctx);
 	const total = [...summary.values()].reduce((acc, count) => acc + count, 0);
 
 	if (total > 0) {
@@ -34,21 +31,12 @@ export default async function* pullModules(
 		}
 	}
 
-	yield [
-		'Stale Entries',
-		clean(
-			ui.options.schema.schemaPath,
-			new Set(ctx.cs.contentTypes.keys()),
-			ui.options.schema.entries.isIncluded,
-		),
-	];
+	yield [ 'Stale Entries', clean(new Set(ctx.cs.contentTypes.keys())) ];
 }
 
-function summarizeContentTypes(
-	ctx: Ctx,
-	isIncluded: (contentTypeUid: string) => boolean,
-): ReadonlyMap<ContentType, number> {
+function summarizeContentTypes(ctx: Ctx): ReadonlyMap<ContentType, number> {
 	const sorter = new Intl.Collator();
+	const { options: { schema: { entries: { isIncluded } }} } = getUi();
 
 	return [...ctx.cs.contentTypes.values()]
 		.filter((contentType) => isIncluded(contentType.uid))

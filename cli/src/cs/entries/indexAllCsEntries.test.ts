@@ -1,22 +1,26 @@
 import { expect, it, vi } from 'vitest';
-import indexAllCsEntries from './indexAllCsEntries.js';
+import type Client from '../api/Client.js';
 import indexEntries from './index.js';
+import indexAllCsEntries from './indexAllCsEntries.js';
 
 vi.mock(import('../content-types/index.js'), () => ({
 	default: vi.fn(
 		async () =>
 			await Promise.resolve(
 				new Map([
-					['blog_post', { schema: [], title: 'Blog Post', uid: 'blog_post' }],
-					['page', { schema: [], title: 'Page', uid: 'page' }],
+					[blogPostSchema.uid, blogPostSchema],
+					[pageSchema.uid, pageSchema],
 				]),
 			),
 	),
 }));
+
 vi.mock(import('../global-fields/index.js'), () => ({
-	default: vi.fn(async () => await Promise.resolve(new Map())),
+	default: vi.fn(async () => await Promise.resolve(globalFields)),
 }));
+
 vi.mock(import('./index.js'), () => ({ default: vi.fn() }));
+
 vi.mock('../../schema/lib/SchemaUi.js', () => ({
 	default: () => ({
 		createProgressBar: () => ({
@@ -27,28 +31,39 @@ vi.mock('../../schema/lib/SchemaUi.js', () => ({
 	}),
 }));
 
-it('keeps content types while skipping entry requests for excluded types', async () => {
-	const [globalFields, entries] = await indexAllCsEntries(
-		{} as Parameters<typeof indexAllCsEntries>[0],
-		() => false,
-	);
+const globalFields = new Map();
+const blogPostSchema = { schema: [], title: 'Blog Post', uid: 'blog_post' };
+const pageSchema = { schema: [], title: 'Page', uid: 'page' };
 
-	expect(globalFields.size).toBe(0);
-	expect([...entries.keys()].map((contentType) => contentType.uid)).toEqual([
-		'blog_post',
-		'page',
+it('keeps content types while skipping excluded entry requests', async () => {
+	// Arrange
+	const client = {} as Client;
+	const isIncluded = () => false;
+
+	// Act
+	const [, entries] = await indexAllCsEntries(client, isIncluded);
+
+	// Assert
+	const expected = new Map([
+		[blogPostSchema, new Set()],
+		[pageSchema, new Set()],
 	]);
-	expect([...entries.values()].every((value) => value.size === 0)).toBe(true);
+
+	expect(entries).toEqual(expected);
 	expect(indexEntries).not.toHaveBeenCalled();
 });
 
-it('indexes all types when a selected type may reference an excluded type', async () => {
+it('indexes all types when any type is included', async () => {
+	// Arrange
+	const client = {} as Client;
+	const isIncluded = (contentTypeUid: string) => contentTypeUid === 'blog_post';
 	vi.mocked(indexEntries).mockResolvedValue(new Map());
 
-	await indexAllCsEntries(
-		{} as Parameters<typeof indexAllCsEntries>[0],
-		(uid) => uid === 'blog_post',
-	);
+	// Act
+	await indexAllCsEntries(client, isIncluded);
 
-	expect(indexEntries).toHaveBeenCalledTimes(['blog_post', 'page'].length);
+	// Assert
+	expect(indexEntries).toHaveBeenCalledWith(client, globalFields, blogPostSchema);
+
+	expect(indexEntries).toHaveBeenCalledWith(client, globalFields, pageSchema);
 });

@@ -81,7 +81,8 @@ properties:
         additionalProperties: false
         description: |
           Control whether entries are synchronized during pull and push
-          operations. Use include/exclude patterns to filter by content type UID.
+          operations. Use include/exclude patterns to filter by content
+          type UID.
         default:
           include: ['**']
           exclude: []

@@ -1,15 +1,19 @@
 import { rm } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import tryReadDir from '../../fs/tryReadDir.js';
+import getUi from '../lib/SchemaUi.js';
 import type TransferResults from '../xfer/TransferResults.js';
 import { MutableTransferResults } from '../xfer/TransferResults.js';
 
 export default async function clean(
-	baseSchemaPath: string,
 	exceptForContentTypeUids: ReadonlySet<string>,
-	isIncluded: (contentTypeUid: string) => boolean = () => true,
 ): Promise<TransferResults> {
-	const baseDirectory = resolve(baseSchemaPath, 'entries');
+	const { options: { schema: {
+		schemaPath,
+		entries: { isIncluded }
+	}} } = getUi();
+
+	const baseDirectory = resolve(schemaPath, 'entries');
 	const results = new MutableTransferResults();
 	const children = await tryReadDir(baseDirectory);
 

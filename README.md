@@ -65,9 +65,6 @@ fields, taxonomies, and assets.
 #### `pull`
 
 Serializes a stack's content into the file system for version control or backup.
-Use `yarn beacon pull --no-entries` to sync the content model without fetching
-or changing entry files. This option overrides `schema.entries` filters for the
-pull command.
 
 #### `push`
 
