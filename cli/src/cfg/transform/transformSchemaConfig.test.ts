@@ -91,3 +91,19 @@ describe(transformSchemaConfig.name, () => {
 		expect(result?.entries?.isIncluded?.('blog_post')).toBe(false);
 	});
 });
+
+describe('entry filter precedence', () => {
+	it('prioritizes exclusions over inclusions', () => {
+		// Arrange
+		const baseSchema = {
+			entries: { exclude: ['archived_*'], include: ['*_post'] },
+		};
+
+		// Act
+		const result = transformSchemaConfig(baseSchema, undefined);
+
+		// Assert
+		expect(result?.entries?.isIncluded?.('blog_post')).toBe(true);
+		expect(result?.entries?.isIncluded?.('archived_post')).toBe(false);
+	});
+});
