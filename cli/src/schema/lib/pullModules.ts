@@ -17,11 +17,11 @@ export default async function* pullModules(
 	yield ['Taxonomies', taxonomies(ctx)];
 	yield ['Content Types', contentTypes(ctx)];
 
+	const ui = getUi();
 	const summary = summarizeContentTypes(ctx);
 	const total = [...summary.values()].reduce((acc, count) => acc + count, 0);
-	const ui = getUi();
 
-	{
+	if (total > 0) {
 		using bar = ui.createProgressBar('Entries', total);
 
 		for (const contentType of summary.keys()) {
@@ -31,16 +31,21 @@ export default async function* pullModules(
 		}
 	}
 
-	yield [
-		'Stale Entries',
-		clean(ui.options.schema.schemaPath, new Set(ctx.cs.contentTypes.keys())),
-	];
+	yield ['Stale Entries', clean(new Set(ctx.cs.contentTypes.keys()))];
 }
 
 function summarizeContentTypes(ctx: Ctx): ReadonlyMap<ContentType, number> {
 	const sorter = new Intl.Collator();
+	const {
+		options: {
+			schema: {
+				entries: { isIncluded },
+			},
+		},
+	} = getUi();
 
 	return [...ctx.cs.contentTypes.values()]
+		.filter((contentType) => isIncluded(contentType.uid))
 		.sort((a, b) => sorter.compare(a.title, b.title))
 		.reduce((acc, contentType) => {
 			const titles = new Set([

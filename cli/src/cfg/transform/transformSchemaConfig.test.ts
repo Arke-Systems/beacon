@@ -4,6 +4,7 @@ import transformSchemaConfig from './transformSchemaConfig';
 
 describe(transformSchemaConfig.name, () => {
 	it('should merge baseSchema and envSchema correctly', () => {
+		// Arrange
 		const baseSchema: Config['schema'] = {
 			assets: { exclude: ['asset2'], include: ['asset1'] },
 			extension: { ext1: 'value1' },
@@ -16,10 +17,10 @@ describe(transformSchemaConfig.name, () => {
 			taxonomies: { tax2: 'taxonomy and terms' },
 		};
 
-		const result = transformSchemaConfig(baseSchema, envSchema);
+		// Act
+		const result = transformSchemaConfig(baseSchema, envSchema)!;
 
-		if (!result) throw new Error('Result is undefined');
-
+		// Assert
 		expect(result.extension?.byName?.get('ext1')).toBe('value1');
 		expect(result.extension?.byName?.get('ext2')).toBe('value2');
 		expect(result.taxonomies?.get('tax1')).toBe('only taxonomy');
@@ -31,28 +32,76 @@ describe(transformSchemaConfig.name, () => {
 	});
 
 	it('should handle empty schemas gracefully', () => {
+		// Arrange
 		const baseSchema: Config['schema'] = {};
 		const envSchema: Config['schema'] = {};
 
+		// Act
 		const result = transformSchemaConfig(baseSchema, envSchema);
 
+		// Assert
 		expect(result).toBeUndefined();
 	});
 
 	it('should prioritize envSchema over baseSchema for overlapping keys', () => {
-		const baseSchema: Config['schema'] = {
-			extension: { key: 'baseValue' },
-		};
+		// Arrange
+		const baseSchema: Config['schema'] = { extension: { key: 'baseValue' } };
+		const envSchema: Config['schema'] = { extension: { key: 'envValue' } };
 
-		const envSchema: Config['schema'] = {
-			extension: { key: 'envValue' },
-		};
+		// Act
+		const result = transformSchemaConfig(baseSchema, envSchema)!;
 
-		const result = transformSchemaConfig(baseSchema, envSchema);
-
-		if (!result) throw new Error('Result is undefined');
-
+		// Assert
 		expect(result.extension?.byName).toBeDefined();
 		expect(result.extension?.byName?.get('key')).toBe('envValue');
+	});
+
+	it('includes other content types when only an exclusion exists', () => {
+		// Arrange
+		const baseSchema = { entries: { exclude: ['archived_*'] } };
+
+		// Act
+		const result = transformSchemaConfig(baseSchema, undefined)!;
+
+		// Assert
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(true);
+		expect(result.entries?.isIncluded?.('archived_post')).toBe(false);
+	});
+
+	it('preserves an explicitly empty entry include list', () => {
+		// Arrange
+		const baseSchema = { entries: { include: [] } };
+
+		// Act
+		const result = transformSchemaConfig(baseSchema, undefined)!;
+
+		// Assert
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(false);
+	});
+
+	it('preserves an empty entry include list from an environment', () => {
+		// Arrange
+		const baseSchema = { entries: { exclude: ['archived_*'] } };
+		const envSchema = { entries: { include: [] } };
+
+		// Act
+		const result = transformSchemaConfig(baseSchema, envSchema)!;
+
+		// Assert
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(false);
+	});
+
+	it('prioritizes exclusions over inclusions', () => {
+		// Arrange
+		const baseSchema = {
+			entries: { exclude: ['archived_*'], include: ['*_post'] },
+		};
+
+		// Act
+		const result = transformSchemaConfig(baseSchema, undefined)!;
+
+		// Assert
+		expect(result.entries?.isIncluded?.('blog_post')).toBe(true);
+		expect(result.entries?.isIncluded?.('archived_post')).toBe(false);
 	});
 });

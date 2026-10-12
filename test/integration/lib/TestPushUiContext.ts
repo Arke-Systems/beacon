@@ -32,6 +32,7 @@ export default class TestPushUiContext extends TestUiContext {
 				schema: {
 					assets: { isIncluded: () => true },
 					deletionStrategy: 'delete',
+					entries: { isIncluded: () => true },
 					extension: parseMapFromEnv(extension),
 					jsonRtePlugin: parseMapFromEnv(jsonRtePlugin),
 					schemaPath,

@@ -29,11 +29,13 @@ export default async function pushTerms({
 		expect(value).toEqual({
 			taxonomy: {
 				description: 'Taxonomy Description',
+				locale: 'en-us',
 				name: 'New Taxonomy',
 				uid: 'new_taxonomy',
 			},
 			terms: expect.arrayContaining([
 				{
+					locale: 'en-us',
 					name: 'Term 2.2.2',
 					parent_uid: 'term_2_2',
 					uid: 'term_2_2_2',

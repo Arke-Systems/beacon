@@ -3,19 +3,25 @@ import type { Entry } from '#cli/cs/entries/Types.js';
 import { isEntry } from '#cli/cs/entries/Types.js';
 import type OmitIndex from '#cli/util/OmitIndex.js';
 import indexContentTypes from '../content-types/indexFromFilesystem.js';
+import getUi from '../lib/SchemaUi.js';
 import indexFromFilesystem from '../xfer/indexFromFilesystem.js';
 import schemaDirectory from './schemaDirectory.js';
 
 export default async function indexAllFsEntries(): Promise<
 	ReadonlyMap<ContentType, ReadonlySet<Entry>>
 > {
+	const { isIncluded } = getUi().options.schema.entries;
 	const contentTypes = await indexContentTypes();
 	const entries = new Map<ContentType, ReadonlySet<Entry>>();
 
 	for (const contentType of contentTypes.values()) {
-		const dir = schemaDirectory(contentType.uid);
 		const x = new Set<Entry>();
 		entries.set(contentType, x);
+		if (!isIncluded(contentType.uid)) {
+			continue;
+		}
+
+		const dir = schemaDirectory(contentType.uid);
 		const raw = await indexFromFilesystem(dir, isFsEntry, key);
 
 		for (const entry of raw.values()) {
