@@ -26,17 +26,29 @@ export default async function indexAllCsEntries(
 	const sorted = [...rawContentTypes.values()].sort((a, b) =>
 		a.title.localeCompare(b.title),
 	);
+	const ui = getUi();
+	const { isIncluded } = ui.options.schema.entries;
 
-	if (sorted.length === 0) {
+	// Pull needs every entry to resolve references when even one content type
+	// is included. When all are excluded, no entry indexing is needed.
+	const toIndex = sorted.some((contentType) => isIncluded(contentType.uid))
+		? sorted
+		: [];
+
+	// Keep all content types in the context so schema synchronization
+	// still works.
+	for (const contentType of sorted) {
+		allEntries.set(contentType, new Set());
+	}
+
+	if (toIndex.length === 0) {
 		return [globalFields, allEntries];
 	}
 
-	const ui = getUi();
-
 	{
-		using bar = ui.createProgressBar('Indexing entries', sorted.length);
+		using bar = ui.createProgressBar('Indexing entries', toIndex.length);
 
-		for (const contentType of sorted) {
+		for (const contentType of toIndex) {
 			using reporter = new ProgressReporter(bar, 'indexing', contentType.title);
 
 			const entries = await index(client, globalFields, contentType);
